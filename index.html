@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0A0A0B">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="description" content="PATO — hand-finished mechanical timepieces from the atelier. Obsidian, Ember and Lunar collections.">
   <title>PATO · Horology Atelier</title>
 
@@ -122,9 +123,12 @@
         <div class="grid" id="home-shop-grid"></div>
       </section>
 
-      <!-- marquee -->
+      <!-- marquee (two tracks: desktop JS-driven + mobile CSS-driven) -->
       <div class="marquee" aria-hidden="true">
-        <div class="mq-inner">
+        <div class="mq-inner mq-desktop">
+          <span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span><span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span>
+        </div>
+        <div class="mq-track mq-mobile">
           <span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span><span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span>
         </div>
       </div>

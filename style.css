@@ -43,7 +43,7 @@ body.no-scroll { overflow: hidden; }
 img { display: block; max-width: 100%; }
 
 /* PATO wordmark & logo — Spicy Rice (per spec) */
-.psychedelic-title, .logo, .footer-logo, .splash-word {
+.psychedelic-title, .logo, .footer-logo {
   font-family: 'Spicy Rice', var(--font-brand);
   font-weight: 400;
   font-style: normal;

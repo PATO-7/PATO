@@ -12,7 +12,7 @@
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGSAP = typeof window.gsap !== 'undefined';
   const hasST = hasGSAP && typeof window.ScrollTrigger !== 'undefined';
-  const hasTHREE = typeof window.THREE !== 'undefined';
+  const hasTHREE = false; /* Three.js removed — hero is now 2D SVG */
   if (hasST) gsap.registerPlugin(ScrollTrigger);
 
   /* ============================================================
@@ -622,63 +622,56 @@
     }
   })();
 
-  /* ---------------- three.js hero watch ---------------- */
-  (function heroWatch() {
-    const canvas = $('#hero-canvas');
-    if (!canvas || !hasTHREE || REDUCED) { if (canvas) canvas.style.display = 'none'; return; }
+  /* ---------------- 2D hero watch (SVG, real-time hands + parallax tilt) ---------------- */
+  (function heroWatch2D() {
+    const wrap = $('#hero-watch');
+    if (!wrap) return;
     try {
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(35, 1, .1, 100);
-      camera.position.set(0, 0, 7);
-      const gold = new THREE.MeshStandardMaterial({ color: 0xB8964E, metalness: .9, roughness: .25 });
-      const dark = new THREE.MeshStandardMaterial({ color: 0x0A0A0B, metalness: .4, roughness: .6 });
-      const ivory = new THREE.MeshStandardMaterial({ color: 0xEDE6D6, metalness: .2, roughness: .4 });
-      const watch = new THREE.Group();
-      const bezel = new THREE.Mesh(new THREE.TorusGeometry(1.7, .16, 24, 90), gold); watch.add(bezel);
-      const dial = new THREE.Mesh(new THREE.CircleGeometry(1.62, 64), dark); dial.position.z = .05; watch.add(dial);
-      const crystal = new THREE.Mesh(new THREE.SphereGeometry(1.75, 48, 24, 0, Math.PI * 2, 0, Math.PI / 3.4),
-        new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: .07, roughness: 0, metalness: 0 }));
-      crystal.rotation.x = Math.PI; crystal.position.z = .1; watch.add(crystal);
-      for (let i = 0; i < 12; i++) {
-        const t = i * Math.PI / 6;
-        const mk = new THREE.Mesh(new THREE.BoxGeometry(.05, .18, .03), i % 3 ? ivory : gold);
-        mk.position.set(Math.sin(t) * 1.35, Math.cos(t) * 1.35, .1); mk.rotation.z = -t; watch.add(mk);
+      // generate hour markers
+      const NS = 'http://www.w3.org/2000/svg';
+      const mk = $('#hw-markers');
+      if (mk) {
+        for (let i = 0; i < 12; i++) {
+          const a = i * Math.PI / 6;
+          const big = i % 3 === 0;
+          const r1 = big ? 128 : 134, r2 = 144;
+          const line = document.createElementNS(NS, 'line');
+          line.setAttribute('x1', (200 + Math.sin(a) * r1).toFixed(1));
+          line.setAttribute('y1', (200 - Math.cos(a) * r1).toFixed(1));
+          line.setAttribute('x2', (200 + Math.sin(a) * r2).toFixed(1));
+          line.setAttribute('y2', (200 - Math.cos(a) * r2).toFixed(1));
+          line.setAttribute('stroke', big ? '#B8964E' : '#EDE6D6');
+          line.setAttribute('stroke-opacity', big ? '.95' : '.5');
+          line.setAttribute('stroke-width', big ? '4' : '2');
+          line.setAttribute('stroke-linecap', 'round');
+          mk.appendChild(line);
+        }
       }
-      const hourH = new THREE.Mesh(new THREE.BoxGeometry(.07, .9, .03), gold); hourH.position.y = .45; hourH.position.z = .14;
-      const hourG = new THREE.Group(); hourG.add(hourH); watch.add(hourG);
-      const minH = new THREE.Mesh(new THREE.BoxGeometry(.05, 1.25, .03), ivory); minH.position.y = .62; minH.position.z = .16;
-      const minG = new THREE.Group(); minG.add(minH); watch.add(minG);
-      const pin = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .1, 20), gold); pin.rotation.x = Math.PI / 2; pin.position.z = .18; watch.add(pin);
-      const crown = new THREE.Mesh(new THREE.CylinderGeometry(.12, .12, .22, 12), gold); crown.rotation.z = Math.PI / 2; crown.position.x = 1.95; watch.add(crown);
-      watch.rotation.x = .25;
-      scene.add(watch);
-      scene.add(new THREE.AmbientLight(0xE8DCC0, .5));
-      const key = new THREE.PointLight(0xB8964E, 60, 30); key.position.set(4, 4, 6); scene.add(key);
-      const rim = new THREE.PointLight(0x5C1A1B, 30, 30); rim.position.set(-5, -3, 4); scene.add(rim);
+      const hourG = $('#hw-hour-hand'), minG = $('#hw-min-hand'), secG = $('#hw-sec-hand');
+      function tick() {
+        const d = new Date();
+        const s = d.getSeconds() + d.getMilliseconds() / 1000;
+        const m = d.getMinutes() + s / 60;
+        const h = (d.getHours() % 12) + m / 60;
+        if (hourG) hourG.setAttribute('transform', `rotate(${h * 30} 200 200)`);
+        if (minG)  minG.setAttribute('transform', `rotate(${m * 6} 200 200)`);
+        if (secG)  secG.setAttribute('transform', `rotate(${s * 6} 200 272)`);
+      }
+      tick(); setInterval(tick, REDUCED ? 1000 : 120);
 
-      let tx = 0, ty = 0;
-      addEventListener('mousemove', e => { tx = (e.clientX / innerWidth - .5); ty = (e.clientY / innerHeight - .5); });
-      function resize() {
-        const r = canvas.getBoundingClientRect();
-        renderer.setSize(r.width, r.height, false);
-        camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+      // gentle mouse/touch parallax tilt (micro-animation) — skipped when reduced motion
+      if (!REDUCED) {
+        let tx = 0, ty = 0, cx = 0, cy = 0;
+        addEventListener('mousemove', e => {
+          tx = (e.clientX / innerWidth - .5); ty = (e.clientY / innerHeight - .5);
+        }, { passive: true });
+        (function loop() {
+          requestAnimationFrame(loop);
+          cx += (tx - cx) * .045; cy += (ty - cy) * .045;
+          wrap.style.transform = `perspective(900px) rotateY(${cx * 10}deg) rotateX(${-cy * 8}deg) translateZ(0)`;
+        })();
       }
-      addEventListener('resize', resize); resize();
-      (function loop(t) {
-        requestAnimationFrame(loop);
-        const s = new Date().getSeconds() + new Date().getMilliseconds() / 1000;
-        const m = new Date().getMinutes() + s / 60;
-        const h = (new Date().getHours() % 12) + m / 60;
-        minG.rotation.z = -m * Math.PI / 30;
-        hourG.rotation.z = -h * Math.PI / 6;
-        watch.rotation.y += (tx * .7 - watch.rotation.y) * .04;
-        watch.rotation.x += (.25 + ty * .5 - watch.rotation.x) * .04;
-        watch.rotation.z = Math.sin(t / 4000) * .04; // slow idle spin feel
-        renderer.render(scene, camera);
-      })(0);
-    } catch (err) { canvas.style.display = 'none'; }
+    } catch (err) { /* never block page boot */ }
   })();
 
   /* ---------------- scroll storytelling ---------------- */

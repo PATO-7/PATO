@@ -1,12 +1,9 @@
-/* PATO sample catalogue — 12 watches across 3 series.
-   Images are generated SVG data-URIs (chiaroscuro gradients) so the site
-   works offline with zero external assets. */
-
+/* PATO catalogue — watches with real photos where available, SVG placeholders otherwise. */
 (function () {
   const PAL = {
-    Obsidian:        { case: '#17181c', dial: '#0A0A0B', accent: '#B8964E', strap: '#101013' },
-    Ember:           { case: '#5C1A1B', dial: '#1A1816', accent: '#E8DCC0', strap: '#3a1414' },
-    Lunar:           { case: '#B8964E', dial: '#E8DCC0', accent: '#5C1A1B', strap: '#8a7350' }
+    Obsidian: { case: '#17181c', dial: '#0A0A0B', accent: '#B8964E', strap: '#101013' },
+    Ember:    { case: '#5C1A1B', dial: '#1A1816', accent: '#E8DCC0', strap: '#3a1414' },
+    Lunar:    { case: '#B8964E', dial: '#E8DCC0', accent: '#5C1A1B', strap: '#8a7350' }
   };
 
   function watchSVG(p, angle) {
@@ -38,40 +35,31 @@
   }
 
   const RAW = [
-    ['PATO Signature', 'PT-0800', 'Obsidian', 800, 40, 'Obsidian steel', 'Leather', 'One photograph, one hour — kept forever.'],
-    ['Obsidian Nocturne', 'OB-4201', 'Obsidian', 96000, 42, 'Obsidian steel', 'Alligator', 'Night falls once; it keeps it forever.'],
-    ['Obsidian Vantablack', 'OB-4202', 'Obsidian', 88000, 40, 'Obsidian steel', 'Steel bracelet', 'A dial cut from a moonless hour.'],
-    ['Obsidian Gallery', 'OB-4203', 'Obsidian', 74000, 38, 'Obsidian steel', 'Calf leather', 'For rooms where light walks softly.'],
-    ['Obsidian Meridian', 'OB-4204', 'Obsidian', 112000, 42, 'Rose gold', 'Alligator', 'Two hemispheres, one heartbeat.'],
-    ['Ember Candlelight', 'EM-3801', 'Ember', 68000, 38, 'Rose gold', 'Calf leather', 'The flame remembers what the day forgets.'],
-    ['Ember Oxblood', 'EM-3802', 'Ember', 84000, 40, 'Obsidian steel', 'Alligator', 'A quiet fire under lacquered dusk.'],
-    ['Ember Kiln', 'EM-3803', 'Ember', 56000, 36, 'Champagne gold', 'Calf leather', 'Fired slowly, worn quickly through years.'],
-    ['Ember Hearth', 'EM-3804', 'Ember', 61000, 40, 'Rose gold', 'Steel bracelet', 'Warm as a hand on a cold brass clock.'],
-    ['Lunar_PHASE I', 'LU-4001', 'Lunar', 128000, 40, 'Champagne gold', 'Alligator', 'It counts the sky in silver fractions.'],
-    ['Lunar Crescent', 'LU-4002', 'Lunar', 98000, 38, 'Champagne gold', 'Calf leather', 'A sliver of evening, pinned to the wrist.'],
-    ['Lunar Eclipse', 'LU-4003', 'Lunar', 145000, 42, 'Obsidian steel', 'Alligator', 'When shadows borrow the sun’s watch.'],
-    ['Lunar Tide', 'LU-4004', 'Lunar', 72000, 36, 'Rose gold', 'Steel bracelet', 'The sea keeps its hours elsewhere.']
+    { id: 'signature', name: 'PATO Signature', ref: 'PT-0800', collection: 'Obsidian', price: 800,
+      photo: 'images/watch.webp',
+      desc: 'The house classic — a whisper of gold on obsidian, made to be worn every day and remembered forever.',
+      specs: { Movement: 'Automatic, 38h reserve', Case: '40mm steel', Strap: 'Black leather', Water: '50m' } },
+    { id: 'noir-royale', name: 'Noir Royale', ref: 'PT-1101', collection: 'Obsidian', price: 1350,
+      desc: 'Midnight polished to a mirror. The dial holds light the way still water holds the moon.',
+      specs: { Movement: 'Automatic, 42h reserve', Case: '41mm steel', Strap: 'Alligator', Water: '100m' } },
+    { id: 'ember-hour', name: 'Ember Hour', ref: 'PT-2210', collection: 'Ember', price: 1180,
+      desc: 'Oxblood warmth caught in a brass frame — for those who wear fire quietly.',
+      specs: { Movement: 'Automatic, 40h reserve', Case: '39mm bronze', Strap: 'Cognac leather', Water: '50m' } },
+    { id: 'lunar-tide', name: 'Lunar Tide', ref: 'PT-3305', collection: 'Lunar', price: 1490,
+      desc: 'Champagne dial under a pale gold sky. It keeps time like the sea keeps its promises.',
+      specs: { Movement: 'Automatic, 45h reserve', Case: '38mm gold-tone', Strap: 'Milanese', Water: '30m' } },
+    { id: 'ash-eclipse', name: 'Ash Eclipse', ref: 'PT-1140', collection: 'Obsidian', price: 980,
+      desc: 'The moment between light and dark, frozen at three o\u2019clock.',
+      specs: { Movement: 'Quartz precision', Case: '40mm steel', Strap: 'Rubber', Water: '100m' } },
+    { id: 'golden-quiet', name: 'Golden Quiet', ref: 'PT-3312', collection: 'Lunar', price: 1620,
+      desc: 'Nothing shouts here. Only gold, patience, and the softest tick in the atelier.',
+      specs: { Movement: 'Automatic, 50h reserve', Case: '37mm gold-tone', Strap: 'Leather', Water: '30m' } }
   ];
 
-  window.PATO_PRODUCTS = RAW.map((r, i) => ({
-    id: 'p' + (i + 1),
-    name: r[0], ref: r[1], collection: r[2], priceEGP: r[3], size: r[4],
-    material: r[5], strap: r[6], poem: r[7],
-    soldOut: i === 11, // Lunar Eclipse — demonstrates "Notify me"
-    colors: ['#0A0A0B', '#B8964E', '#5C1A1B'],
-    images: i === 0 ? ['images/watch.webp', 'https://i.ibb.co/HDXbGSk2/s-l1600.webp'] : [watchSVG({ collection: r[2] }, 40), watchSVG({ collection: r[2] }, 165), watchSVG({ collection: r[2] }, 285)],
-    specs: [
-      ['Movement', 'Cal. PT-' + (100 + i) + ' · manual wind · 212 parts'],
-      ['Power reserve', '72 hours'],
-      ['Case', r[4] + ' mm · ' + r[5] + ' · sapphire crystal'],
-      ['Water resistance', '50 m'],
-      ['Finishing', 'Hand-bevelled bridges · 312 atelier hours']
-    ]
+  window.PATO_PRODUCTS = RAW.map(p => ({
+    ...p,
+    images: p.photo
+      ? [p.photo, p.photo, p.photo]
+      : [watchSVG(p, 30), watchSVG(p, 150), watchSVG(p, 260)]
   }));
-
-  window.PATO_JOURNAL = [
-    ['On Silence', 'Why our escapements are regulated by ear, not machine.', 'I'],
-    ['Eleven Passes', 'The lacquer ritual that gives an Ember dial its dusk.', 'II'],
-    ['A Moon You Can Wear', 'Notes from building the Lunar phase disc.', 'III']
-  ].map((j, i) => ({ title: j[0], blurb: j[1], num: j[2], img: watchSVG({ collection: ['Obsidian', 'Ember', 'Lunar'][i] }, i * 90) }));
 })();

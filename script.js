@@ -23,15 +23,26 @@ if (splash) {
     }, 700);
   }
 
-  window.setTimeout(() => {
+  /* remove the splash from the flow once its exit animation has finished,
+     so it can never block clicks on the page underneath */
+  const dismissSplash = () => {
     document.body.classList.remove("splash-lock");
     splash.classList.add("is-hidden");
-  }, 1600); // shorter intro: ~1.2s hold + quick merge fade
+    window.setTimeout(() => { if (splash.parentNode) splash.remove(); }, 650);
+  };
+  window.setTimeout(dismissSplash, 1600); // shorter intro: ~1.2s hold + quick merge fade
+  splash.addEventListener("click", dismissSplash); // tap to skip instantly
 }
 
-/* ============ FIXED DARK GENTLE THEME (no switcher UI) ============ */
+/* ============ FIXED PALETTE (no theme switcher) ============ */
 document.documentElement.removeAttribute("data-theme");
 try { localStorage.removeItem("pato-theme"); } catch (e) { /* storage unavailable */ }
+
+/* If the splash was already dismissed/removed, make sure nothing blocks clicks */
+window.addEventListener("pageshow", () => {
+  const s = document.getElementById("splash");
+  if (s) { s.remove(); document.body.classList.remove("splash-lock"); }
+});
 
 /* ============ CATALOGUE ============ */
 const IMG = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1100&q=85`;
@@ -62,6 +73,10 @@ const pages = document.querySelectorAll(".page");
 const shopSection = document.getElementById("page-shop");
 let lastScrollY = 0;
 
+/* mark that JS is running — if this script ever fails to load,
+   CSS keeps the splash hidden so the page stays clickable */
+document.body.classList.remove("no-js");
+
 function showPage(id) {
   closeViewer();
   const goingHome = id === "page-home";
@@ -70,6 +85,11 @@ function showPage(id) {
     p.classList.toggle("is-active", active);
     if (p !== document.getElementById("page-home")) p.hidden = !active;
   });
+  /* while a sub-page is open, hide the home hero & shop so only that page shows */
+  const homeHero = document.getElementById("page-home");
+  if (!goingHome && homeHero) homeHero.style.display = "none";
+  else if (homeHero) homeHero.style.display = "";
+  document.body.classList.toggle("on-subpage", !goingHome);
   if (goingHome) {
     shopSection.hidden = false;
     window.scrollTo({ top: lastScrollY || 0, behavior: "auto" });
@@ -86,7 +106,10 @@ document.body.addEventListener("click", (event) => {
   event.preventDefault();
   const target = link.dataset.nav;
   closeMenuSheet();
-  if (target === "back") showPage("page-home");
+  if (target === "back") {
+    showPage("page-home");
+    window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  }
   else if (target === "basket") { renderCart(); showPage("page-basket"); }
   else if (target === "home") showPage("page-home");
   else if (target === "shop") {

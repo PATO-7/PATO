@@ -17,8 +17,8 @@
   --muted: var(--grey-d);
   --line: color-mix(in srgb, var(--grey-l) 55%, white);
   --btn-text: var(--white);
-  /* PATO word/logo = Spicy Rice; every other text = Ribes */
-  --pato: "Spicy Rice", "Eckmannpsych Small", "Eckmannpsych Large", cursive;
+  /* PATO word/logo = Spicy Rice (per spec); every other text = Ribes */
+  --pato: "Spicy Rice", cursive;
   --ribes: "Ribes", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
   --serif: var(--ribes);
   --sans: var(--ribes);
@@ -76,6 +76,11 @@ h1, h2, .brand-logo { letter-spacing: -0.02em; }
   pointer-events: none;
 }
 .splash.is-hidden { display: none; }
+/* safety: the splash must never intercept clicks on the page underneath */
+.splash, .splash * { pointer-events: none !important; }
+/* if script.js fails to load (no .js class), hide the splash entirely so nothing blocks the page */
+html:not(.js) .splash { display: none !important; }
+body.no-js .splash { display: none; }
 .splash-inner { display: flex; align-items: baseline; overflow: hidden; padding: 8px 4px; }
 .splash-letter, .splash-dot {
   font-family: var(--pato);
@@ -487,6 +492,8 @@ dialog::backdrop { background: rgba(5, 7, 6, .65); backdrop-filter: blur(2px); }
   border-bottom: 1px solid var(--line); border-radius: 0;
   box-shadow: 0 6px 24px color-mix(in srgb, var(--grey-l) 35%, transparent);
 }
+/* the fixed header belongs to the home flow only — hide it on sub-pages */
+body.on-subpage .hero .site-header { display: none !important; }
 .header-actions { display: flex; align-items: center; gap: 10px; }
 .icon-btn {
   display: grid; place-items: center; width: 46px; height: 46px;
@@ -518,8 +525,11 @@ dialog::backdrop { background: rgba(5, 7, 6, .65); backdrop-filter: blur(2px); }
   border-radius: 22px 22px 0 0;
   box-shadow: 0 -18px 50px rgba(0,0,0,.5);
   transform: translateY(102%); transition: transform .32s cubic-bezier(.2,.7,.2,1);
+  visibility: hidden; /* stays fully closed (and unclickable) until opened */
 }
-.menu-sheet.is-open { transform: translateY(0); }
+.menu-sheet[hidden] { display: none !important; }
+.menu-sheet.is-open { transform: translateY(0); visibility: visible; }
+.menu-backdrop[hidden] { display: none !important; }
 .sheet-close { align-self: flex-end; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: none; color: var(--muted); font-size: 20px; cursor: pointer; transition: color .2s, border-color .2s; }
 .sheet-close:hover { color: var(--accent); border-color: var(--accent); }
 .sheet-item {

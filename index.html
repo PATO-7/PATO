@@ -11,9 +11,10 @@
   <!-- PATO word/logo font: Spicy Rice (Cheee/Eckmannpsych-like alternative) -->
   <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add("js");</script>
   <script src="script.js" defer></script>
 </head>
-<body>
+<body class="no-js">
   <!-- ============ SPLASH SCREEN — animated wallpaper behind PATO ============ -->
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-bg">
@@ -32,7 +33,6 @@
       <span class="splash-letter">A</span>
       <span class="splash-letter">T</span>
       <span class="splash-letter">O</span>
-      <span class="splash-dot">.</span>
     </div>
     <div class="splash-line"></div>
   </div>
@@ -42,7 +42,7 @@
     <section id="page-home" class="page is-active hero">
       <!-- top bar on first page: PATO · menu (3 chars) · basket -->
       <header class="site-header">
-        <a class="logo" href="#" data-nav="home">PATO<span>.</span></a>
+        <a class="logo" href="#" data-nav="home">PATO</a>
         <div class="header-actions">
           <button class="icon-btn" type="button" id="basket-btn" aria-label="Open basket">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
@@ -87,7 +87,7 @@
 
     <!-- ============ PAGE 4: CONTACT ============ -->
     <section id="page-contact" class="page contact-section" hidden>
-      <span class="brand-big">PATO<span>.</span></span>
+      <span class="brand-big">PATO</span>
       <h2>We are one message away.</h2>
       <a class="wa-big" href="https://wa.me/201280001351" target="_blank" rel="noopener">
         <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
@@ -98,7 +98,7 @@
   </main>
 
   <footer class="site-footer">
-    <a class="logo footer-logo" href="#" data-nav="home">PATO<span>.</span></a>
+    <a class="logo footer-logo" href="#" data-nav="home">PATO</a>
     <p class="footer-phone">
       <a class="wa-icon" href="https://wa.me/201280001351" target="_blank" rel="noopener" aria-label="WhatsApp PATO">
         <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>

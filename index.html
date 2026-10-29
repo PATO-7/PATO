@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#18251f">
-  <meta name="description" content="Discover hand-crafted Swiss timepieces designed for sophisticated perfection at PATO.">
-  <title>PATO
-| Luxury Timepieces</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101411">
+  <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection. Shop online with delivery across Egypt.">
+  <title>PATO | Luxury Timepieces</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +13,21 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="announcement">Complimentary worldwide delivery on orders over $1,000</div>
+  <!-- ============ SPLASH SCREEN (2s fullscreen PATO intro) ============ -->
+  <div class="splash" id="splash" aria-hidden="true">
+    <div class="splash-inner">
+      <span class="splash-letter">P</span>
+      <span class="splash-letter">A</span>
+      <span class="splash-letter">T</span>
+      <span class="splash-letter">O</span>
+      <span class="splash-dot">.</span>
+    </div>
+    <p class="splash-tag">Luxury Timepieces</p>
+    <div class="splash-line"></div>
+  </div>
+
+  <div class="announcement">Complimentary delivery on orders over 5,000 EGP</div>
+
   <header class="site-header">
     <nav class="navbar" aria-label="Main navigation">
       <a class="logo" href="#home" aria-label="PATO home">PATO<span>.</span></a>
@@ -28,6 +41,7 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-dialog">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.6H9a1.8 1.8 0 0 1-1.8-1.6L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
         Bag <span class="cart-count" aria-live="polite">0</span>
       </button>
     </nav>
@@ -40,16 +54,16 @@
       <div class="hero-content">
         <p class="eyebrow">A study in precision · Est. 1987</p>
         <h1>Elegance<br>Written in Time</h1>
-        <p class="hero-copy">Hand-crafted Swiss timepieces, made for the moments that matter.</p>
+        <p class="hero-copy">Hand-crafted timepieces, made for the moments that matter.</p>
         <a href="#collection" class="btn">Explore the collection <span aria-hidden="true">↗</span></a>
       </div>
       <p class="hero-caption">The Meridian — Automatic, 38 mm</p>
     </section>
 
-    <section class="features" aria-label="The AURA standard">
+    <section class="features" aria-label="The PATO standard">
       <article class="feature-item">
         <span class="feature-index">01</span>
-        <div><h2>Swiss movement</h2><p>Precision, perfected over generations.</p></div>
+        <div><h2>Precision movement</h2><p>Calibrated to keep perfect time.</p></div>
       </article>
       <article class="feature-item">
         <span class="feature-index">02</span>
@@ -70,24 +84,24 @@
         <p>Four signatures. A lifetime of keeping time.</p>
       </div>
       <div class="product-grid">
-        <article class="product-card" data-name="The Sovereign Silver" data-price="1250">
+        <article class="product-card" data-name="The Sovereign Silver" data-price="64900">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85" alt="The Sovereign Silver wristwatch" loading="lazy"><span class="product-tag">Bestseller</span></div>
-          <div class="product-info"><div><h3>The Sovereign Silver</h3><p class="product-detail">Automatic · 40 mm</p></div><p class="price">$1,250</p></div>
+          <div class="product-info"><div><h3>The Sovereign Silver</h3><p class="product-detail">Automatic · 40 mm</p></div><p class="price">64,900 EGP</p></div>
           <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
         </article>
-        <article class="product-card" data-name="Chronograph Onyx" data-price="2100">
+        <article class="product-card" data-name="Chronograph Onyx" data-price="108500">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=85" alt="Chronograph Onyx in a polished finish" loading="lazy"><span class="product-tag">New</span></div>
-          <div class="product-info"><div><h3>Chronograph Onyx</h3><p class="product-detail">Chronograph · 42 mm</p></div><p class="price">$2,100</p></div>
+          <div class="product-info"><div><h3>Chronograph Onyx</h3><p class="product-detail">Chronograph · 42 mm</p></div><p class="price">108,500 EGP</p></div>
           <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
         </article>
-        <article class="product-card" data-name="Heritage Vintage" data-price="890">
+        <article class="product-card" data-name="Heritage Vintage" data-price="45900">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=900&q=85" alt="Heritage Vintage watch with a leather strap" loading="lazy"></div>
-          <div class="product-info"><div><h3>Heritage Vintage</h3><p class="product-detail">Hand-wound · 38 mm</p></div><p class="price">$890</p></div>
+          <div class="product-info"><div><h3>Heritage Vintage</h3><p class="product-detail">Hand-wound · 38 mm</p></div><p class="price">45,900 EGP</p></div>
           <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
         </article>
-        <article class="product-card" data-name="AURA Rose Edition" data-price="1750">
-          <div class="product-image"><img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=900&q=85" alt="AURA Rose Edition wristwatch" loading="lazy"></div>
-          <div class="product-info"><div><h3>AURA Rose Edition</h3><p class="product-detail">Automatic · 36 mm</p></div><p class="price">$1,750</p></div>
+        <article class="product-card" data-name="PATO Rose Edition" data-price="89500">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=900&q=85" alt="PATO Rose Edition wristwatch" loading="lazy"></div>
+          <div class="product-info"><div><h3>PATO Rose Edition</h3><p class="product-detail">Automatic · 36 mm</p></div><p class="price">89,500 EGP</p></div>
           <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
         </article>
       </div>
@@ -98,43 +112,78 @@
       <div class="story-copy">
         <p class="eyebrow">Made to be kept</p>
         <h2>Time deserves<br>a human touch.</h2>
-        <p>Since 1987, our watchmakers have brought together Swiss engineering and an enduring respect for materials. Every AURA timepiece is assembled by hand, then tested for a life of everyday moments.</p>
-        <a class="text-link" href="#contact">Discover our story <span aria-hidden="true">↗</span></a>
+        <p>Since 1987, our watchmakers have brought together precise engineering and an enduring respect for materials. Every PATO timepiece is assembled by hand, then tested for a life of everyday moments.</p>
+        <a class="text-link" href="#contact">Speak with us <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
     <section id="contact" class="contact-section">
-      <p class="eyebrow">A personal consultation</p>
-      <h2>Find your forever watch.</h2>
-      <a class="contact-link" href="mailto:concierge@auratime.com">Speak with our concierge <span aria-hidden="true">↗</span></a>
+      <span class="brand-big">PATO<span>.</span></span>
+      <h2>Luxury Timepieces — find your forever watch.</h2>
+      <a class="contact-link" href="tel:01289659621">☎ 01289659621 <span aria-hidden="true">↗</span></a>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-main">
-      <div class="footer-brand"><a class="logo" href="#home">PATO
-    <span>.</span></a><p>Timeless craftsmanship<br>for the modern world.</p></div>
-      <div class="footer-links"><h2>Explore</h2><a href="#collection">Collection</a><a href="#about">Our story</a><a href="#contact">Contact</a></div>
-      <div class="footer-links"><h2>Client care</h2><a href="mailto:concierge@auratime.com">Shipping & returns</a><a href="mailto:concierge@auratime.com">Warranty</a><a href="mailto:concierge@auratime.com">Privacy</a></div>
-      <p class="footer-note">Designed for the hours<br>you'll remember.</p>
-    </div>
-    <div class="footer-bottom"><span>© 2026 PATO Timepieces</span><span>Swiss made. Time well spent.</span></div>
+    <a class="logo footer-logo" href="#home">PATO<span>.</span></a>
+    <p class="footer-phone">Contact · <a href="tel:01289659621">01289659621</a></p>
   </footer>
 
   <div class="theme-switcher" role="group" aria-label="Color theme">
     <span class="theme-label">Theme</span>
-    <button class="theme-btn is-active" type="button" data-theme="light" aria-label="Warm Light theme" title="Warm Light"></button>
-    <button class="theme-btn" type="button" data-theme="dark" aria-label="Midnight Dark theme" title="Midnight Dark"></button>
-    <button class="theme-btn" type="button" data-theme="ocean" aria-label="Ocean Breeze theme" title="Ocean Breeze"></button>
-    <button class="theme-btn" type="button" data-theme="blush" aria-label="Blush Rose theme" title="Blush Rose"></button>
-    <button class="theme-btn" type="button" data-theme="mono" aria-label="Slate Mono theme" title="Slate Mono"></button>
+    <button class="theme-btn" type="button" data-theme="noir" aria-label="Noir Dark theme" title="Noir Dark"></button>
+    <button class="theme-btn" type="button" data-theme="mocha" aria-label="Mocha Grey theme" title="Mocha Grey"></button>
+    <button class="theme-btn" type="button" data-theme="slate" aria-label="Deep Slate theme" title="Deep Slate"></button>
+    <button class="theme-btn" type="button" data-theme="olive" aria-label="Forest Olive theme" title="Forest Olive"></button>
+    <button class="theme-btn" type="button" data-theme="plum" aria-label="Plum Dusk theme" title="Plum Dusk"></button>
   </div>
 
   <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="cart-title">
-    <div class="cart-header"><h2 id="cart-title">Your bag <span class="dialog-count">(0)</span></h2><button class="cart-close" type="button" aria-label="Close bag">×</button></div>
+    <div class="cart-header"><h2 id="cart-title">Your basket <span class="dialog-count">(0)</span></h2><button class="cart-close" type="button" aria-label="Close basket">×</button></div>
     <div class="cart-items"></div>
-    <div class="cart-empty">Your bag is waiting for something timeless.</div>
-    <div class="cart-footer"><div class="cart-total"><span>Subtotal</span><strong>$0</strong></div><p>Shipping and taxes calculated at checkout.</p><button class="checkout-btn" type="button" disabled>Continue to checkout</button></div>
+    <div class="cart-empty">Your basket is waiting for something timeless.</div>
+    <div class="cart-footer">
+      <div class="cart-total"><span>Subtotal</span><strong>0 EGP</strong></div>
+      <p>Shipping calculated at checkout.</p>
+      <button class="checkout-btn" type="button" disabled>Checkout</button>
+    </div>
+  </dialog>
+
+  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
+    <div class="checkout-scroll">
+      <div class="cart-header"><h2 id="checkout-title">Checkout</h2><button class="checkout-close" type="button" aria-label="Close checkout">×</button></div>
+
+      <section class="checkout-summary">
+        <h3 class="checkout-sub">Order summary</h3>
+        <div class="summary-items"></div>
+        <div class="summary-line"><span>Subtotal</span><strong class="sum-subtotal">0 EGP</strong></div>
+        <div class="summary-line"><span>Delivery</span><strong class="sum-shipping">—</strong></div>
+        <div class="summary-line total"><span>Total</span><strong class="sum-total">0 EGP</strong></div>
+      </section>
+
+      <form class="checkout-form" id="checkout-form" novalidate>
+        <h3 class="checkout-sub">Delivery details</h3>
+        <label>Full name<input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
+        <label>Phone number<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" title="Enter a valid 11-digit phone starting with 01"></label>
+        <label>Address<textarea name="address" rows="3" required placeholder="Street, building, area, city"></textarea></label>
+        <fieldset>
+          <legend>Payment method</legend>
+          <label class="radio"><input type="radio" name="pay" value="Cash on delivery" checked><span>Cash on delivery</span></label>
+          <label class="radio"><input type="radio" name="pay" value="Instapay"><span>Instapay transfer</span></label>
+          <label class="radio"><input type="radio" name="pay" value="Card on delivery"><span>Card on delivery</span></label>
+        </fieldset>
+        <button class="place-order-btn" type="submit">Place order</button>
+        <p class="form-hint">We will confirm your order by phone at <a href="tel:01289659621">01289659621</a>.</p>
+      </form>
+
+      <section class="order-success" hidden>
+        <div class="success-mark">✓</div>
+        <h3>Thank you — your order is confirmed.</h3>
+        <p class="success-ref"></p>
+        <p>Our team will call you shortly to arrange delivery. For anything else, contact <a href="tel:01289659621">01289659621</a>.</p>
+        <button class="btn continue-btn" type="button">Continue shopping</button>
+      </section>
+    </div>
   </dialog>
 </body>
 </html>

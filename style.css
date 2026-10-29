@@ -110,7 +110,7 @@ button { background: none; border: none; color: var(--ivory); font-family: var(-
 .bar-left a, .bar-left button { font-family: var(--mono); font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ivory); position: relative; padding: 4px 0; }
 .bar-left a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: var(--gold); transition: width .4s cubic-bezier(.2,.8,.2,1); }
 .bar-left a:hover::after, .bar-left button:hover::after { width: 100%; }
-.logo-word { justify-self: center; font-family: var(--serif); font-weight: 500; font-size: 1.7rem; letter-spacing: .5em; padding-left: .5em; color: var(--champagne); }
+.logo-word { justify-self: center; font-family: 'Spicy Rice', var(--serif); font-weight: 400; font-size: 1.7rem; letter-spacing: .3em; padding-left: .3em; color: var(--champagne); }
 .bar-right { display: flex; gap: 16px; justify-self: end; align-items: center; }
 .bar-right button { font-size: .95rem; color: var(--champagne); position: relative; transition: color .3s, transform .3s; }
 .bar-right button:hover { color: var(--gold); transform: translateY(-1px); }
@@ -396,7 +396,7 @@ figcaption { margin-top: 10px; }
 /* ---------- footer ---------- */
 #site-footer { text-align: center; padding: 4vh 6vw 3vh; border-top: 1px solid var(--hairline); position: relative; }
 .foot-divider { width: 1px; height: 60px; background: linear-gradient(var(--gold), transparent); margin: 0 auto 30px; }
-.foot-brand { font-family: var(--serif); font-size: 3rem; letter-spacing: .6em; padding-left: .6em; color: var(--champagne); display: inline-block; transition: color .4s, letter-spacing .4s; }
+.foot-brand { font-family: 'Spicy Rice', var(--serif); font-weight: 400; font-size: 3rem; letter-spacing: .35em; padding-left: .35em; color: var(--champagne); display: inline-block; transition: color .4s, letter-spacing .4s; }
 .foot-brand:hover { color: var(--gold); letter-spacing: .7em; }
 .foot-tag { margin-top: 8px; }
 .hairline-rule { width: 120px; height: 1px; background: var(--hairline); margin: 26px auto; }

@@ -17,22 +17,42 @@
   --muted: var(--grey-d);
   --line: color-mix(in srgb, var(--grey-l) 55%, white);
   --btn-text: var(--white);
-  /* PATO wordmark = Eckmannpsych stack; everything else = Ribes stack */
-  --pato: "Eckmannpsych Small", "Eckmannpsych Large", "Patrick Hand", "Caveat", sans-serif;
+  /* PATO word/logo = Spicy Rice; every other text = Ribes */
+  --pato: "Spicy Rice", "Eckmannpsych Small", "Eckmannpsych Large", cursive;
   --ribes: "Ribes", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
   --serif: var(--ribes);
   --sans: var(--ribes);
 }
 
-/* Ribes display font — loaded from local files when available, graceful fallback otherwise */
+/* Import Ribes Regular from the official repository */
 @font-face {
   font-family: 'Ribes';
-  src: url('fonts/ribes-black.woff2') format('woff2'),
-       url('fonts/ribes-black.woff') format('woff'),
-       url('fonts/ribes-black.ttf') format('truetype');
+  src: url('https://githubusercontent.com') format('woff2'),
+       url('https://githubusercontent.com') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Import Ribes Black */
+@font-face {
+  font-family: 'Ribes';
+  src: url('https://githubusercontent.com') format('woff2'),
+       url('https://githubusercontent.com') format('woff');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
+}
+
+/* Base style application — all text except PATO is Ribes */
+body {
+  font-family: 'Ribes', sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-family: 'Ribes', sans-serif;
+  font-weight: 900;
 }
 
 h1, h2, .brand-logo { letter-spacing: -0.02em; }

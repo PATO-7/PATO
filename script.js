@@ -15,6 +15,34 @@
   const hasTHREE = typeof window.THREE !== 'undefined';
   if (hasST) gsap.registerPlugin(ScrollTrigger);
 
+  /* ============================================================
+     ANTI-BLACK-SCREEN GUARANTEES (run first, before anything else)
+     No matter what crashes later, the page must never stay dark:
+     - loader/wipe overlays are force-removed within 3s
+     - any .reveal stuck invisible becomes visible
+     ============================================================ */
+  function forceVisible() {
+    try {
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+      document.querySelectorAll('.hero-title .w i').forEach(i => { i.style.transform = 'none'; });
+      const l = document.getElementById('loader'); if (l) l.remove();
+      const w = document.getElementById('wipe');   if (w) w.style.display = 'none';
+      if (!document.querySelector('.view.active')) {
+        const vh = document.getElementById('view-home'); if (vh) vh.classList.add('active');
+      }
+    } catch (_) {}
+  }
+  setTimeout(forceVisible, 3000);
+  setInterval(() => {
+    try {
+      const vh = innerHeight;
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('in');
+      });
+    } catch (_) {}
+  }, 700);
+
   /* ---------------- state (Context-style store) ---------------- */
   const store = {
     cart: JSON.parse(localStorage.getItem('pato_cart') || '[]'),

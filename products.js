@@ -39,6 +39,10 @@
       photo: 'images/watch.webp',
       desc: 'The house classic — a whisper of gold on obsidian, made to be worn every day and remembered forever.',
       specs: { Movement: 'Automatic, 38h reserve', Case: '40mm steel', Strap: 'Black leather', Water: '50m' } },
+    { id: 'naviforce-men', name: 'Naviforce Watch For Men', ref: 'NF-8054', collection: 'Obsidian', price: 800,
+      photos: ['images/naviforce-1.jpg', 'images/naviforce-2.jpg', 'images/naviforce-3.jpg', 'images/naviforce-4.jpg'],
+      desc: 'A chronograph built for the bold — black dial, rubber strap and quartz precision. Water resistant to 3ATM, it keeps time like a promise kept quietly.',
+      specs: { Movement: 'Quartz battery', Chronograph: 'Yes', Case: '45mm', Strap: 'Black rubber', Water: '3ATM (30m)' } },
     { id: 'noir-royale', name: 'Noir Royale', ref: 'PT-1101', collection: 'Obsidian', price: 1350,
       desc: 'Midnight polished to a mirror. The dial holds light the way still water holds the moon.',
       specs: { Movement: 'Automatic, 42h reserve', Case: '41mm steel', Strap: 'Alligator', Water: '100m' } },
@@ -58,8 +62,10 @@
 
   window.PATO_PRODUCTS = RAW.map(p => ({
     ...p,
-    images: p.photo
-      ? [p.photo, p.photo, p.photo]
-      : [watchSVG(p, 30), watchSVG(p, 150), watchSVG(p, 260)]
+    images: p.photos
+      ? p.photos.slice()
+      : p.photo
+        ? [p.photo, p.photo, p.photo]
+        : [watchSVG(p, 30), watchSVG(p, 150), watchSVG(p, 260)]
   }));
 })();

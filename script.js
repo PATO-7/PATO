@@ -15,6 +15,34 @@
   const hasTHREE = typeof window.THREE !== 'undefined';
   if (hasST) gsap.registerPlugin(ScrollTrigger);
 
+  /* ============================================================
+     ANTI-BLACK-SCREEN GUARANTEES (run first, before anything else)
+     No matter what crashes later, the page must never stay dark:
+     - loader/wipe overlays are force-removed within 3s
+     - any .reveal stuck invisible becomes visible
+     ============================================================ */
+  function forceVisible() {
+    try {
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+      document.querySelectorAll('.hero-title .w i').forEach(i => { i.style.transform = 'none'; });
+      const l = document.getElementById('loader'); if (l) l.remove();
+      const w = document.getElementById('wipe');   if (w) w.style.display = 'none';
+      if (!document.querySelector('.view.active')) {
+        const vh = document.getElementById('view-home'); if (vh) vh.classList.add('active');
+      }
+    } catch (_) {}
+  }
+  setTimeout(forceVisible, 3000);
+  setInterval(() => {
+    try {
+      const vh = innerHeight;
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('in');
+      });
+    } catch (_) {}
+  }, 700);
+
   /* ---------------- state (Context-style store) ---------------- */
   const store = {
     cart: JSON.parse(localStorage.getItem('pato_cart') || '[]'),
@@ -181,9 +209,17 @@
   }
   function show(view) {
     VIEWS.forEach(v => { const el = $('#view-' + v); if (el) el.classList.toggle('active', v === view); });
+    // HOME is the landing page ("Quiet Luxury, Loud Craft"): it stays visible unless a subpage is active.
+    document.body.classList.toggle('on-subpage', view !== 'home');
   }
   function route(first) {
     const r = parseHash();
+    // Landing rule: any unknown/empty route goes straight to the Quiet Luxury home page.
+    if (!VIEWS.includes(r.view)) {
+      if (first && location.hash) { history.replaceState(null, '', location.pathname + location.search + '#/'); }
+      else if (r.view !== 'home') { location.hash = '#/'; return; }
+      r.view = 'home';
+    }
     const go = () => {
       switch (r.view) {
         case 'collections': renderCollections(r.query.c); break;
@@ -561,15 +597,7 @@
     tick(); tickTimer = setInterval(tick, 1000); this.classList.add('on');
   });
 
-  /* ---------------- newsletter ---------------- */
-  $('#news-form').addEventListener('submit', e => {
-    e.preventDefault();
-    e.target.style.display = 'none';
-    $('#news-ok').classList.remove('hidden');
-    if (hasGSAP) gsap.from('#news-ok', { y: 20, opacity: 0, duration: .8 });
-  });
-
-  /* ---------------- home gallery + drag scroll ---------------- */
+  /* ---------------- home gallery + drag scroll (optional) ---------------- */
   (function buildHomeGallery() {
     const track = $('#home-gallery');
     if (!track) return;
@@ -741,7 +769,7 @@
       const l = document.getElementById('loader');
       if (l) l.remove();
       const vh = document.querySelector('#view-home');
-      if (vh && !document.querySelector('.view.active')) vh.classList.add('active');
+      if (vh && !document.querySelector('.view.active')) { vh.classList.add('active'); document.body.classList.remove('on-subpage'); }
       document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
     } catch (_) {}
   }

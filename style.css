@@ -1,14 +1,80 @@
+/* ============ THEME TOKENS ============ */
+/* Default theme: Warm Light */
 :root {
   color-scheme: light;
-  --ink: #000000;
-  --forest: #869c92;
-  --paper: #ffffff;
-  --white: #faf8f8;
-  --muted: #f10e06;
-  --line: #eeeee8;
-  --copper: #fcfcfc;
+  --ink: #1d1a17;
+  --forest: #2f4a3e;
+  --paper: #f4efe7;
+  --white: #faf8f5;
+  --muted: #7b756c;
+  --line: #e5dfd4;
+  --copper: #a4744a;
   --serif: "Playfair Display", Georgia, serif;
   --sans: "DM Sans", sans-serif;
+}
+
+/* Theme 2: Midnight Dark */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #ece7de;
+  --forest: #24362d;
+  --paper: #141815;
+  --white: #1b201c;
+  --muted: #9aa096;
+  --line: #2e352f;
+  --copper: #d7b79a;
+}
+
+/* Theme 3: Ocean Breeze */
+[data-theme="ocean"] {
+  color-scheme: light;
+  --ink: #10273d;
+  --forest: #14556e;
+  --paper: #e3edf2;
+  --white: #f7fbfd;
+  --muted: #5f7484;
+  --line: #d3e0e8;
+  --copper: #1d7a9c;
+}
+
+/* Theme 4: Blush Rose */
+[data-theme="blush"] {
+  color-scheme: light;
+  --ink: #3a2029;
+  --forest: #8a5568;
+  --paper: #f7e8ec;
+  --white: #fdf6f7;
+  --muted: #8d7078;
+  --line: #eedadf;
+  --copper: #b0657e;
+}
+
+/* Theme 5: Slate Mono */
+[data-theme="mono"] {
+  color-scheme: light;
+  --ink: #17181a;
+  --forest: #2b2d31;
+  --paper: #ebecee;
+  --white: #f8f8f9;
+  --muted: #6f7175;
+  --line: #e0e1e3;
+  --copper: #4b4d52;
+}
+
+.theme-switcher { position: fixed; right: 18px; bottom: 18px; z-index: 6; display: flex; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); box-shadow: 0 8px 24px rgba(17, 26, 21, .14); }
+.theme-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.theme-btn { width: 22px; height: 22px; padding: 0; border: 2px solid transparent; border-radius: 50%; cursor: pointer; transition: transform .15s ease, border-color .15s ease; }
+.theme-btn:hover { transform: scale(1.15); }
+.theme-btn.is-active { border-color: var(--ink); }
+.theme-btn[data-theme="light"] { background: linear-gradient(135deg, #faf8f5 50%, #2f4a3e 50%); }
+.theme-btn[data-theme="dark"] { background: linear-gradient(135deg, #1b201c 50%, #d7b79a 50%); }
+.theme-btn[data-theme="ocean"] { background: linear-gradient(135deg, #f7fbfd 50%, #14556e 50%); }
+.theme-btn[data-theme="blush"] { background: linear-gradient(135deg, #fdf6f7 50%, #8a5568 50%); }
+.theme-btn[data-theme="mono"] { background: linear-gradient(135deg, #f8f8f9 50%, #2b2d31 50%); }
+
+@media (max-width: 640px) {
+  .theme-switcher { right: 12px; bottom: 12px; padding: 6px 8px; }
+  .theme-label { display: none; }
 }
 
 * { box-sizing: border-box; }
@@ -165,6 +231,20 @@ button { font: inherit; }
   .cart-dialog { padding: 22px; }
   .cart-footer { right: 22px; bottom: 22px; left: 22px; }
 }
+
+/* Dark theme tweaks for hardcoded colors */
+[data-theme="dark"] .announcement { color: #1b201c; }
+[data-theme="dark"] .nav-links a, [data-theme="dark"] .cart-btn { color: #b9beb4; }
+[data-theme="dark"] .hero .eyebrow { color: var(--copper); }
+[data-theme="dark"] .btn { background: var(--forest); color: #ece7de; }
+[data-theme="dark"] .btn:hover { background: #35503f; }
+[data-theme="dark"] .product-image { background: #232a24; }
+[data-theme="dark"] .product-tag { background: rgba(27, 32, 28, .9); color: var(--ink); }
+[data-theme="dark"] .add-to-cart-btn { border-color: #3d453e; }
+[data-theme="dark"] .story-copy > p:not(.eyebrow) { color: #b3b8ae; }
+[data-theme="dark"] .site-footer { background: #10140f; }
+[data-theme="dark"] .checkout-btn { color: #ece7de; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

@@ -1,4 +1,32 @@
 const cart = new Map();
+
+/* ============ THEME SWITCHER ============ */
+const THEMES = ["light", "dark", "ocean", "blush", "mono"];
+const themeButtons = document.querySelectorAll(".theme-btn");
+
+function applyTheme(name) {
+  if (!THEMES.includes(name)) name = "light";
+  if (name === "light") {
+    document.documentElement.removeAttribute("data-theme");
+  } else {
+    document.documentElement.setAttribute("data-theme", name);
+  }
+  try { localStorage.setItem("pato-theme", name); } catch (e) { /* storage unavailable */ }
+  themeButtons.forEach((btn) => {
+    const active = btn.dataset.theme === name;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+}
+
+themeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => applyTheme(btn.dataset.theme));
+});
+
+let savedTheme = "light";
+try { savedTheme = localStorage.getItem("pato-theme") || "light"; } catch (e) { /* storage unavailable */ }
+applyTheme(savedTheme);
+
 const cartDialog = document.querySelector("#cart-dialog");
 const cartItems = document.querySelector(".cart-items");
 const cartEmpty = document.querySelector(".cart-empty");

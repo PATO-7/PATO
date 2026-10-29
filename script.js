@@ -1,12 +1,28 @@
 /* ============================================================
-   PATO — splash, half-menu pages, catalogue, photo viewer,
-   basket & checkout
+   PATO — animated splash, scroll flow (hero → watches),
+   fullscreen photo viewer, basket & checkout
    ============================================================ */
 
-/* ============ SPLASH SCREEN (3s fullscreen PATO intro) ============ */
+/* ============ SPLASH SCREEN (animated wallpaper behind PATO) ============ */
 const splash = document.getElementById("splash");
 if (splash) {
   document.body.classList.add("splash-lock");
+
+  /* rotate wallpaper images inside the splash */
+  const sbImgs = splash.querySelectorAll(".sb-img");
+  if (sbImgs.length > 1) {
+    let sbIndex = 0;
+    window.setInterval(() => {
+      sbImgs[sbIndex].classList.remove("is-active");
+      sbIndex = (sbIndex + 1) % sbImgs.length;
+      const next = sbImgs[sbIndex];
+      next.classList.add("is-active");
+      next.style.animation = "none";
+      void next.offsetWidth;
+      next.style.animation = "";
+    }, 1500);
+  }
+
   window.setTimeout(() => {
     document.body.classList.remove("splash-lock");
     splash.classList.add("is-hidden");
@@ -56,38 +72,22 @@ const PRODUCTS = [
   { id: "navigator", name: "Navigator Steel", detail: "Quartz · 41 mm", price: 38900, tag: "Offer", oldPrice: 44900,
     photos: [IMG("photo-1522312352255-9d8153d4d2d8"), IMG("photo-1542496658-e33a6d0d50f6"), IMG("photo-1533139501650-bd3c0b4e411a")] },
 ];
-const OFFER_IDS = PRODUCTS.filter((p) => p.oldPrice).map((p) => p.id);
-
 const formatPrice = (price) => `${new Intl.NumberFormat("en-EG", { maximumFractionDigits: 0 }).format(price)} EGP`;
 
-/* ============ PAGES + HALF MENU ============ */
+/* ============ PAGES (home + shop are one scroll flow) ============ */
 const pages = document.querySelectorAll(".page");
-const halfMenu = document.getElementById("half-menu");
-const menuToggle = document.querySelector(".menu-toggle");
-const shopTitle = document.getElementById("shop-title");
-const shopEyebrow = document.getElementById("shop-eyebrow");
-
-function openMenu() {
-  halfMenu.hidden = false;
-  requestAnimationFrame(() => halfMenu.classList.add("is-open"));
-  menuToggle.setAttribute("aria-expanded", "true");
-  menuToggle.classList.add("is-open");
-}
-function closeMenu() {
-  halfMenu.classList.remove("is-open");
-  menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.classList.remove("is-open");
-  window.setTimeout(() => { halfMenu.hidden = true; }, 260);
-}
-menuToggle.addEventListener("click", () => (halfMenu.hidden ? openMenu() : closeMenu()));
-document.querySelector(".hm-close").addEventListener("click", closeMenu);
-halfMenu.addEventListener("click", (e) => { if (e.target === halfMenu) closeMenu(); });
+const shopSection = document.getElementById("page-shop");
 
 function showPage(id) {
-  closeMenu();
-  hideViewer();
+  closeViewer();
   pages.forEach((p) => p.classList.toggle("is-active", p.id === id));
-  window.scrollTo({ top: 0, behavior: "auto" });
+  if (id === "page-home") {
+    shopSection.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    shopSection.hidden = true;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
 }
 
 document.body.addEventListener("click", (event) => {
@@ -96,13 +96,15 @@ document.body.addEventListener("click", (event) => {
   event.preventDefault();
   const target = link.dataset.nav;
   if (target === "home") showPage("page-home");
-  else if (target === "category") { renderProducts(PRODUCTS); shopTitle.textContent = "Our watches"; shopEyebrow.textContent = "Considered in every detail"; showPage("page-shop"); }
-  else if (target === "offers") { renderProducts(PRODUCTS.filter((p) => OFFER_IDS.includes(p.id))); shopTitle.textContent = "Special offers"; shopEyebrow.textContent = "Limited time · reduced prices"; showPage("page-shop"); }
+  else if (target === "shop") {
+    showPage("page-home");
+    window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  }
   else if (target === "contact") showPage("page-contact");
   else if (target === "pato") showPage("page-pato");
 });
 
-/* ============ PRODUCT GRID (tap card → photos on same page) ============ */
+/* ============ PRODUCT GRID (tap card → fullscreen photos) ============ */
 const productGrid = document.getElementById("product-grid");
 
 function renderProducts(list) {
@@ -121,20 +123,20 @@ function renderProducts(list) {
         <p class="price">${formatPrice(product.price)}${product.oldPrice ? `<s>${formatPrice(product.oldPrice)}</s>` : ""}</p>
       </div>
       <button class="add-to-cart-btn" type="button" data-id="${product.id}">Add to basket <span aria-hidden="true">+</span></button>`;
-    card.querySelector("img").addEventListener("click", () => openViewer(product.id));
+    card.querySelector(".product-image").addEventListener("click", () => openViewer(product.id));
     card.querySelector("h3").addEventListener("click", () => openViewer(product.id));
     productGrid.append(card);
   });
 }
 
-/* ============ PHOTO VIEWER (same page, under the grid) ============ */
-const viewer = document.getElementById("photo-viewer");
-const pvMain = viewer.querySelector(".pv-main");
-const pvName = viewer.querySelector(".pv-name");
-const pvDetail = viewer.querySelector(".pv-detail");
-const pvPrice = viewer.querySelector(".pv-price");
-const pvThumbs = viewer.querySelector(".pv-thumbs");
-const pvAdd = viewer.querySelector(".pv-add");
+/* ============ FULLSCREEN PHOTO VIEWER (gentle professional animation) ============ */
+const viewer = document.getElementById("fullscreen-viewer");
+const fvMain = viewer.querySelector(".fv-main");
+const fvName = viewer.querySelector(".fv-name");
+const fvDetail = viewer.querySelector(".fv-detail");
+const fvPrice = viewer.querySelector(".fv-price");
+const fvThumbs = viewer.querySelector(".fv-thumbs");
+const fvAdd = viewer.querySelector(".fv-add");
 let currentProduct = null;
 let currentPhoto = 0;
 
@@ -143,44 +145,71 @@ function openViewer(id) {
   if (!product) return;
   currentProduct = product;
   currentPhoto = 0;
-  pvName.textContent = product.name;
-  pvDetail.textContent = product.detail;
-  pvPrice.innerHTML = `${formatPrice(product.price)}${product.oldPrice ? ` <s>${formatPrice(product.oldPrice)}</s>` : ""}`;
-  pvThumbs.replaceChildren();
+  fvName.textContent = product.name;
+  fvDetail.textContent = product.detail;
+  fvPrice.innerHTML = `${formatPrice(product.price)}${product.oldPrice ? ` <s>${formatPrice(product.oldPrice)}</s>` : ""}`;
+  fvThumbs.replaceChildren();
   product.photos.forEach((src, i) => {
     const thumb = document.createElement("button");
     thumb.type = "button";
-    thumb.className = "pv-thumb";
+    thumb.className = "fv-thumb";
     thumb.setAttribute("aria-label", `Photo ${i + 1}`);
     thumb.innerHTML = `<img src="${src}" alt="">`;
     thumb.addEventListener("click", () => setPhoto(i));
-    pvThumbs.append(thumb);
+    fvThumbs.append(thumb);
   });
   setPhoto(0);
   viewer.hidden = false;
-  viewer.scrollIntoView({ behavior: "smooth", block: "start" });
+  requestAnimationFrame(() => viewer.classList.add("is-open"));
+  document.body.classList.add("viewer-lock");
 }
 
 function setPhoto(index) {
   if (!currentProduct) return;
   currentPhoto = (index + currentProduct.photos.length) % currentProduct.photos.length;
-  pvMain.src = currentProduct.photos[currentPhoto];
-  pvMain.alt = `${currentProduct.name} — photo ${currentPhoto + 1}`;
-  viewer.querySelectorAll(".pv-thumb").forEach((t, i) => t.classList.toggle("is-active", i === currentPhoto));
+  /* gentle crossfade: fade out, swap, fade in */
+  fvMain.classList.remove("is-swapping");
+  void fvMain.offsetWidth;
+  fvMain.classList.add("is-swapping");
+  window.setTimeout(() => {
+    fvMain.src = currentProduct.photos[currentPhoto];
+    fvMain.alt = `${currentProduct.name} — photo ${currentPhoto + 1}`;
+    fvMain.classList.remove("is-swapping");
+  }, 180);
+  viewer.querySelectorAll(".fv-thumb").forEach((t, i) => t.classList.toggle("is-active", i === currentPhoto));
 }
 
-function hideViewer() {
-  viewer.hidden = true;
-  currentProduct = null;
+function closeViewer() {
+  if (viewer.hidden) return;
+  viewer.classList.remove("is-open");
+  document.body.classList.remove("viewer-lock");
+  window.setTimeout(() => { viewer.hidden = true; currentProduct = null; }, 300);
 }
 
-viewer.querySelector(".pv-close").addEventListener("click", hideViewer);
+viewer.querySelector(".fv-close").addEventListener("click", closeViewer);
+viewer.querySelector(".fv-backdrop").addEventListener("click", closeViewer);
 viewer.querySelector(".prev").addEventListener("click", () => setPhoto(currentPhoto - 1));
 viewer.querySelector(".next").addEventListener("click", () => setPhoto(currentPhoto + 1));
+document.addEventListener("keydown", (e) => {
+  if (viewer.hidden) return;
+  if (e.key === "Escape") closeViewer();
+  if (e.key === "ArrowLeft") setPhoto(currentPhoto - 1);
+  if (e.key === "ArrowRight") setPhoto(currentPhoto + 1);
+});
 
-pvAdd.addEventListener("click", () => {
+/* swipe left/right on the fullscreen photo */
+let touchX = null;
+fvMain.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+fvMain.addEventListener("touchend", (e) => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 45) setPhoto(currentPhoto + (dx < 0 ? 1 : -1));
+  touchX = null;
+});
+
+fvAdd.addEventListener("click", () => {
   if (!currentProduct) return;
-  addToBasket(currentProduct.name, currentProduct.price, pvAdd);
+  addToBasket(currentProduct.name, currentProduct.price, fvAdd);
 });
 
 /* ============ BASKET ============ */
@@ -249,7 +278,6 @@ productGrid.addEventListener("click", (event) => {
   if (product) addToBasket(product.name, product.price, button);
 });
 
-document.querySelector(".cart-btn").addEventListener("click", () => cartDialog.showModal());
 document.querySelector(".cart-close").addEventListener("click", () => cartDialog.close());
 cartDialog.addEventListener("click", (event) => { if (event.target === cartDialog) cartDialog.close(); });
 
@@ -324,24 +352,9 @@ document.querySelector(".continue-btn").addEventListener("click", () => {
   checkoutDialog.close();
   checkoutForm.reset();
   checkoutForm.querySelectorAll(".field-error").forEach((el) => el.classList.remove("field-error"));
-  showPage("page-shop");
+  showPage("page-home");
+  window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
 });
 
 renderProducts(PRODUCTS);
 renderCart();
-
-/* ============ HERO SLIDESHOW (animated wallpaper) ============ */
-const heroImages = document.querySelectorAll(".hs-img");
-if (heroImages.length > 1) {
-  let heroIndex = 0;
-  window.setInterval(() => {
-    heroImages[heroIndex].classList.remove("is-active");
-    heroIndex = (heroIndex + 1) % heroImages.length;
-    const next = heroImages[heroIndex];
-    next.classList.add("is-active");
-    /* restart ken-burns animation */
-    next.style.animation = "none";
-    void next.offsetWidth;
-    next.style.animation = "";
-  }, 4500);
-}

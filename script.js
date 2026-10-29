@@ -22,7 +22,7 @@
     b.textContent = n; b.hidden = n === 0;
   }
 
-  /* ---------- splash: live watch hands + 3s then reveal ---------- */
+  /* ---------- splash: live watch hands + dust + 3s then reveal ---------- */
   function initSplash() {
     const splash = $('#splash');
     // hour markers on splash dial
@@ -34,6 +34,16 @@
         m += `<line x1="${(100 + 60 * Math.sin(t)).toFixed(1)}" y1="${(130 - 60 * Math.cos(t)).toFixed(1)}" x2="${(100 + 66 * Math.sin(t)).toFixed(1)}" y2="${(130 - 66 * Math.cos(t)).toFixed(1)}" stroke="#B8964E" stroke-width="2"/>`;
       }
       marks.innerHTML = m;
+    }
+    // drifting gold dust particles in the light beam
+    const dustBox = $('#sp-dust');
+    if (dustBox && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let d = '';
+      for (let i = 0; i < 26; i++) {
+        const size = (Math.random() * 3.5 + 1).toFixed(1);
+        d += `<span class="dust" style="left:${(Math.random() * 100).toFixed(1)}%;width:${size}px;height:${size}px;animation-duration:${(Math.random() * 5 + 4).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s"></span>`;
+      }
+      dustBox.innerHTML = d;
     }
     // sweep splash hands to current time
     const now = new Date();
@@ -137,7 +147,7 @@
       setTimeout(() => { btn.textContent = old; btn.style.pointerEvents = ''; }, 900);
     }
     const bb = $('#basket-btn');
-    if (bb) { bb.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 400, easing: 'ease-out' }); }
+    if (bb && typeof bb.animate === 'function') { try { bb.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.25)' }, { transform: 'scale(1)' }], { duration: 400, easing: 'ease-out' }); } catch (e) {} }
   }
 
   /* ---------- basket view ---------- */

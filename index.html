@@ -15,38 +15,53 @@
 </head>
 <body>
 
-  <!-- ============ OPENING PAGE (3s) ============ -->
+  <!-- ============ OPENING PAGE (3s — cinematic luxury intro) ============ -->
   <div id="splash" aria-hidden="true">
     <div class="splash-bg"></div>
+    <div class="splash-beam"></div>
+    <div class="splash-dust" id="sp-dust"></div>
     <div class="splash-ring r1"></div>
     <div class="splash-ring r2"></div>
-    <div class="splash-watch">
-      <svg viewBox="0 0 200 260" width="150" height="195" aria-hidden="true">
-        <defs>
-          <radialGradient id="swbg" cx="35%" cy="30%">
-            <stop offset="0%" stop-color="#2a2a2e"/><stop offset="100%" stop-color="#0A0A0B"/>
-          </radialGradient>
-          <linearGradient id="swgold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#E8DCC0"/><stop offset="50%" stop-color="#B8964E"/><stop offset="100%" stop-color="#7c6333"/>
-          </linearGradient>
-        </defs>
-        <rect width="200" height="260" fill="url(#swbg)" rx="18"/>
-        <path d="M78 12 h44 v34 h-44 z M78 214 h44 v34 h-44 z" fill="#141317"/>
-        <circle cx="100" cy="130" r="84" fill="url(#swgold)"/>
-        <circle cx="100" cy="130" r="70" fill="#0A0A0B"/>
-        <circle cx="100" cy="130" r="70" fill="none" stroke="#B8964E" stroke-width=".8" opacity=".7"/>
-        <g id="sw-marks"></g>
-        <line id="sw-hour" x1="100" y1="130" x2="100" y2="86" stroke="#B8964E" stroke-width="4" stroke-linecap="round"/>
-        <line id="sw-min"  x1="100" y1="130" x2="100" y2="66" stroke="#EDE6D6" stroke-width="2.4" stroke-linecap="round"/>
-        <line id="sw-sec"  x1="100" y1="130" x2="100" y2="62" stroke="#5C1A1B" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="100" cy="130" r="4.5" fill="#B8964E"/>
-        <text x="100" y="108" text-anchor="middle" fill="#B8964E" font-size="11" letter-spacing="4" font-family="serif">PATO</text>
-        <rect x="182" y="122" width="9" height="16" rx="3" fill="#B8964E"/>
-      </svg>
+    <div class="splash-ring r3"></div>
+
+    <div class="splash-stage">
+      <div class="splash-halo"></div>
+      <div class="splash-watch">
+        <svg viewBox="0 0 200 260" width="150" height="195" aria-hidden="true">
+          <defs>
+            <radialGradient id="swbg" cx="35%" cy="30%">
+              <stop offset="0%" stop-color="#2a2a2e"/><stop offset="100%" stop-color="#0A0A0B"/>
+            </radialGradient>
+            <linearGradient id="swgold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#E8DCC0"/><stop offset="50%" stop-color="#B8964E"/><stop offset="100%" stop-color="#7c6333"/>
+            </linearGradient>
+            <linearGradient id="swshine" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="rgba(255,255,255,0)"/><stop offset="50%" stop-color="rgba(255,255,255,.55)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+          </defs>
+          <rect width="200" height="260" fill="url(#swbg)" rx="18"/>
+          <path d="M78 12 h44 v34 h-44 z M78 214 h44 v34 h-44 z" fill="#141317"/>
+          <circle cx="100" cy="130" r="84" fill="url(#swgold)"/>
+          <circle cx="100" cy="130" r="70" fill="#0A0A0B"/>
+          <circle cx="100" cy="130" r="70" fill="none" stroke="#B8964E" stroke-width=".8" opacity=".7"/>
+          <g id="sw-marks"></g>
+          <line id="sw-hour" x1="100" y1="130" x2="100" y2="86" stroke="#B8964E" stroke-width="4" stroke-linecap="round"/>
+          <line id="sw-min"  x1="100" y1="130" x2="100" y2="66" stroke="#EDE6D6" stroke-width="2.4" stroke-linecap="round"/>
+          <line id="sw-sec"  x1="100" y1="130" x2="100" y2="62" stroke="#5C1A1B" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="100" cy="130" r="4.5" fill="#B8964E"/>
+          <text x="100" y="108" text-anchor="middle" fill="#B8964E" font-size="11" letter-spacing="4" font-family="serif">PATO</text>
+          <rect x="182" y="122" width="9" height="16" rx="3" fill="#B8964E"/>
+          <!-- crystal light sweep -->
+          <ellipse class="sw-glint" cx="72" cy="96" rx="52" ry="30" fill="url(#swshine)" opacity="0"/>
+        </svg>
+      </div>
+
+      <h1 class="splash-word"><span>P</span><span>A</span><span>T</span><span>O</span></h1>
+      <p class="splash-sub">Timepieces · Atelier</p>
     </div>
-    <h1 class="splash-word"><span>P</span><span>A</span><span>T</span><span>O</span></h1>
-    <p class="splash-sub">Timepieces · Atelier</p>
+
     <div class="splash-bar"><i></i></div>
+    <p class="splash-skip">tap to enter</p>
   </div>
 
   <!-- ============ TOP BAR ============ -->

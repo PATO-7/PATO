@@ -209,9 +209,17 @@
   }
   function show(view) {
     VIEWS.forEach(v => { const el = $('#view-' + v); if (el) el.classList.toggle('active', v === view); });
+    // HOME is the landing page ("Quiet Luxury, Loud Craft"): it stays visible unless a subpage is active.
+    document.body.classList.toggle('on-subpage', view !== 'home');
   }
   function route(first) {
     const r = parseHash();
+    // Landing rule: any unknown/empty route goes straight to the Quiet Luxury home page.
+    if (!VIEWS.includes(r.view)) {
+      if (first && location.hash) { history.replaceState(null, '', location.pathname + location.search + '#/'); }
+      else if (r.view !== 'home') { location.hash = '#/'; return; }
+      r.view = 'home';
+    }
     const go = () => {
       switch (r.view) {
         case 'collections': renderCollections(r.query.c); break;
@@ -761,7 +769,7 @@
       const l = document.getElementById('loader');
       if (l) l.remove();
       const vh = document.querySelector('#view-home');
-      if (vh && !document.querySelector('.view.active')) vh.classList.add('active');
+      if (vh && !document.querySelector('.view.active')) { vh.classList.add('active'); document.body.classList.remove('on-subpage'); }
       document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
     } catch (_) {}
   }

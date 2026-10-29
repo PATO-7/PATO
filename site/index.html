@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0B">
+  <meta name="description" content="PATO — hand-finished mechanical timepieces from the atelier. Obsidian, Ember and Lunar collections.">
+  <title>PATO · Horology Atelier</title>
+
+  <!-- Fonts: Cormorant Garamond (editorial serif) + Space Mono (detail type) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ AMBIENT LAYERS ============ -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="lightleak" aria-hidden="true"></div>
+
+  <!-- ============ CUSTOM CURSOR ============ -->
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"><span class="cursor-label"></span></div>
+
+  <!-- ============ INTRO LOADER (watch bezel) ============ -->
+  <div id="loader" aria-hidden="true">
+    <svg class="bezel" viewBox="0 0 200 200" width="220" height="220">
+      <circle class="bezel-line" cx="100" cy="100" r="80"></circle>
+      <g class="markers"></g>
+      <line class="hand hand-min" x1="100" y1="100" x2="100" y2="45"></line>
+      <line class="hand hand-hour" x1="100" y1="100" x2="100" y2="62"></line>
+      <circle class="bezel-pin" cx="100" cy="100" r="3.5"></circle>
+    </svg>
+    <p class="loader-word">P A T O</p>
+  </div>
+
+  <!-- ============ PAGE TRANSITION WIPE ============ -->
+  <div id="wipe" aria-hidden="true">
+    <svg viewBox="0 0 100 100" width="140" height="140"><line x1="50" y1="50" x2="50" y2="12" stroke="#B8964E" stroke-width="1.5"/></svg>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <header id="topbar">
+    <div class="utility-strip">
+      <span>Complimentary engraving &amp; shipping on every PATO</span>
+      <span class="u-hide">Cairo · Atelier No. 1</span>
+    </div>
+    <div class="bar-main">
+      <nav class="bar-left" aria-label="Primary">
+        <a href="#/collections" data-nav>Collections</a>
+        <a href="#/shop" data-nav>Shop</a>
+        <button type="button" id="search-open" aria-label="Search">Search</button>
+      </nav>
+      <a href="#/" data-nav class="logo-word" id="site-logo">PATO</a>
+      <div class="bar-right">
+        <button type="button" id="sound-toggle" aria-label="Toggle ambience" title="Tick ambience">♪</button>
+        <button type="button" id="currency-toggle" aria-label="Toggle currency" title="Currency">EGP</button>
+        <button type="button" id="wish-open" aria-label="Wishlist" title="Wishlist">♡</button>
+        <button type="button" id="cart-open" aria-label="Cart" title="Cart">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 8h12l-1.2 12H7.2L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span id="cart-count" class="dot hidden"></span>
+        </button>
+        <button type="button" id="menu-open" aria-label="Menu" class="burger"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- live analog clock ornament -->
+  <div id="clock-ornament" aria-hidden="true">
+    <svg viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="27" class="co-face"/>
+      <line x1="30" y1="30" x2="30" y2="16" class="co-hour"/>
+      <line x1="30" y1="30" x2="30" y2="11" class="co-min"/>
+      <line x1="30" y1="30" x2="30" y2="9"  class="co-sec"/>
+      <circle cx="30" cy="30" r="1.6" class="co-pin"/>
+    </svg>
+  </div>
+
+  <!-- ============ FULL-SCREEN MENU ============ -->
+  <div id="menu-sheet" role="dialog" aria-modal="true" aria-label="Menu">
+    <button type="button" id="menu-close" aria-label="Close menu">✕</button>
+    <nav class="menu-nav">
+      <a href="#/" data-menu style="--i:0"><em>I.</em> Home</a>
+      <a href="#/collections" data-menu style="--i:1"><em>II.</em> Collections</a>
+      <a href="#/shop" data-menu style="--i:2"><em>III.</em> Shop</a>
+      <a href="#/about" data-menu style="--i:3"><em>IV.</em> The Atelier</a>
+      <a href="#/journal" data-menu style="--i:4"><em>V.</em> Journal</a>
+      <a href="#/contact" data-menu style="--i:5"><em>VI.</em> Contact</a>
+    </nav>
+    <p class="menu-foot">Time · Craft · Silence · Legacy</p>
+  </div>
+
+  <!-- ============ SEARCH OVERLAY ============ -->
+  <div id="search-overlay" role="dialog" aria-modal="true" aria-label="Search">
+    <button type="button" id="search-close" aria-label="Close search">✕</button>
+    <input type="text" id="search-input" placeholder="Search references, names…" autocomplete="off">
+    <ul id="search-results" aria-live="polite"></ul>
+  </div>
+
+  <!-- ============ MAIN VIEWS (hash router) ============ -->
+  <main id="app">
+
+    <!-- HOME -->
+    <section class="view" id="view-home">
+      <div class="hero">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="particles" aria-hidden="true"></div>
+        <div class="beam" aria-hidden="true"></div>
+        <h1 class="hero-title" aria-label="Quiet Luxury, Loud Craft">
+          <span class="w"><i>Quiet</i></span>
+          <span class="w"><i>Luxury,</i></span>
+          <span class="w"><i class="accent">Loud</i></span>
+          <span class="w"><i class="accent">Craft</i></span>
+        </h1>
+        <p class="hero-sub mono">Mechanical timepieces — finished by hand, in three acts.</p>
+        <a href="#/shop" data-nav class="btn-magnet">Enter the vitrine</a>
+        <div class="scroll-hint mono">Scroll<i class="hint-arrow"></i></div>
+      </div>
+
+      <!-- pinned explode/reassemble storytelling -->
+      <div id="explode-wrap">
+        <div class="explode-sticky">
+          <svg id="explode-svg" viewBox="0 0 400 400" aria-hidden="true">
+            <g class="ex ex-case">
+              <circle cx="200" cy="200" r="150" class="ex-ring"/>
+              <rect x="342" y="188" width="16" height="24" rx="4" class="ex-crown"/>
+            </g>
+            <g class="ex ex-dial"><circle cx="200" cy="200" r="122" class="ex-disc"/></g>
+            <g class="ex ex-movement">
+              <circle cx="200" cy="200" r="60" class="ex-barrel"/>
+              <circle cx="240" cy="235" r="26" class="ex-wheel"/>
+              <circle cx="160" cy="238" r="18" class="ex-wheel small"/>
+            </g>
+            <g class="ex ex-hands">
+              <line x1="200" y1="200" x2="200" y2="110" class="ex-hand"/>
+              <line x1="200" y1="200" x2="258" y2="200" class="ex-hand"/>
+            </g>
+          </svg>
+          <div class="ex-caption mono" data-stage="0">I · THE CASE — cold-forged obsidian steel</div>
+          <div class="ex-caption mono" data-stage="1">II · THE DIAL — lacquered champagne light</div>
+          <div class="ex-caption mono" data-stage="2">III · THE MOVEMENT — 212 components, one breath</div>
+          <div class="ex-caption mono" data-stage="3">IV · THE HANDS — blued by candle flame</div>
+          <div class="ex-caption mono" data-stage="4">V · REASSEMBLED — a PATO is born</div>
+        </div>
+        <div class="explode-track" aria-hidden="true"></div>
+      </div>
+
+      <!-- marquee -->
+      <div class="marquee" aria-hidden="true">
+        <div class="mq-inner">
+          <span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span><span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span>
+        </div>
+      </div>
+
+      <!-- collections trio -->
+      <section class="triptych">
+        <h2 class="reveal">Three series</h2>
+        <div class="tri-grid">
+          <a href="#/collections?c=obsidian" data-nav class="tri-card reveal" style="--d:0">
+            <div class="tri-img grad-obsidian"></div><span class="roman">I</span><h3>Obsidian</h3><p class="mono">Midnight gallery steel</p>
+          </a>
+          <a href="#/collections?c=ember" data-nav class="tri-card reveal" style="--d:1">
+            <div class="tri-img grad-ember"></div><span class="roman">II</span><h3>Ember</h3><p class="mono">Candlelit oxblood warmth</p>
+          </a>
+          <a href="#/collections?c=lunar" data-nav class="tri-card reveal" style="--d:2">
+            <div class="tri-img grad-lunar"></div><span class="roman">III</span><h3>Lunar</h3><p class="mono">Champagne moon phases</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- stats count-up -->
+      <section class="stats hairline-top">
+        <div class="stat reveal"><b class="count" data-to="312">0</b><span class="mono">hours of hand finishing</span></div>
+        <div class="stat reveal"><b class="count" data-to="212">0</b><span class="mono">components per movement</span></div>
+        <div class="stat reveal"><b class="count" data-to="1847">0</b><span class="mono">hours power reserve test</span></div>
+      </section>
+
+      <!-- horizontal scroll gallery -->
+      <section class="h-gallery">
+        <h2 class="reveal">Selected pieces</h2>
+        <div class="hg-track" id="home-gallery"></div>
+      </section>
+
+      <!-- newsletter -->
+      <section class="newsletter reveal">
+        <h2>Join the quiet list</h2>
+        <p class="mono">One letter per season. No noise.</p>
+        <form id="news-form">
+          <input type="email" required placeholder="your@email.com" aria-label="Email">
+          <button type="submit" class="btn-magnet">Subscribe</button>
+        </form>
+        <p id="news-ok" class="hidden mono">Welcome to the quiet side.</p>
+      </section>
+    </section>
+
+    <!-- COLLECTIONS -->
+    <section class="view" id="view-collections">
+      <header class="page-head"><span class="roman big">II</span><h1>Collections</h1><p class="mono">Three series, one obsession.</p></header>
+      <div id="collections-body"></div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="view" id="view-shop">
+      <header class="page-head"><span class="roman big">III</span><h1>The Vitrine</h1><p class="mono">Every piece, lit for you.</p></header>
+      <div class="filters" id="filters">
+        <select id="f-collection" aria-label="Collection"><option value="">All collections</option><option>Obsidian</option><option>Ember</option><option>Lunar</option></select>
+        <select id="f-strap" aria-label="Strap"><option value="">All straps</option><option>Alligator</option><option>Steel bracelet</option><option>Calf leather</option></select>
+        <select id="f-material" aria-label="Material"><option value="">All materials</option><option>Obsidian steel</option><option>Rose gold</option><option>Champagne gold</option></select>
+        <select id="f-size" aria-label="Case size"><option value="">Any size</option><option>36</option><option>38</option><option>40</option><option>42</option></select>
+        <select id="f-price" aria-label="Price"><option value="">Any price</option><option value="lo">Under EGP 60k</option><option value="mid">EGP 60–100k</option><option value="hi">Over EGP 100k</option></select>
+        <select id="f-sort" aria-label="Sort"><option value="">Featured</option><option value="asc">Price ↑</option><option value="desc">Price ↓</option></select>
+        <button type="button" id="f-clear" class="mono">Clear</button>
+      </div>
+      <div class="grid" id="shop-grid"></div>
+    </section>
+
+    <!-- PRODUCT -->
+    <section class="view" id="view-product"><div id="product-body"></div></section>
+
+    <!-- ABOUT -->
+    <section class="view" id="view-about">
+      <header class="page-head"><span class="roman big">IV</span><h1>The Atelier</h1></header>
+      <div class="prose reveal">
+        <p class="dropcap">In a candlelit workshop where dust drifts through single beams of light, PATO assembles time by hand. No conveyors. No hurry. Each movement rests on 212 components, bevelled until they mirror the flame.</p>
+        <figure class="clip-reveal"><div class="fig-img grad-workshop"></div><figcaption class="mono">Atelier No. 1 — Cairo</figcaption></figure>
+        <p>We release only three series a year: Obsidian for the midnight gallery, Ember for those who keep candle hours, and Lunar for patient watchers of the sky. Every case is cold-forged, every dial lacquered in eleven passes, every second hand balanced like a whispered promise.</p>
+        <blockquote>“A watch should wind the wearer’s day, not the other way around.”<cite class="mono">— Head of Atelier</cite></blockquote>
+      </div>
+    </section>
+
+    <!-- JOURNAL -->
+    <section class="view" id="view-journal">
+      <header class="page-head"><span class="roman big">V</span><h1>Journal</h1><p class="mono">Notes from the bench.</p></header>
+      <div class="journal-grid" id="journal-body"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="view" id="view-contact">
+      <header class="page-head"><span class="roman big">VI</span><h1>Contact</h1><p class="mono">By appointment, or by whisper.</p></header>
+      <div class="contact-box reveal">
+        <a href="tel:+201289659621" class="contact-line"><span class="mono">Call the boutique</span><b>01289659621</b></a>
+        <a href="https://wa.me/201280001351" target="_blank" rel="noopener" class="contact-line"><span class="mono">WhatsApp the atelier</span><b>01280001351</b></a>
+        <p class="mono faint">Atelier No. 1 · Cairo · Tue–Sun, 12:00–20:00</p>
+      </div>
+    </section>
+
+    <!-- CART PAGE -->
+    <section class="view" id="view-cart">
+      <header class="page-head"><h1>Your Selection</h1></header>
+      <div id="cart-page-body"></div>
+    </section>
+
+    <!-- CHECKOUT -->
+    <section class="view" id="view-checkout">
+      <header class="page-head"><h1>Checkout</h1></header>
+      <div id="checkout-body"></div>
+    </section>
+
+  </main>
+
+  <!-- ============ CART DRAWER ============ -->
+  <aside id="cart-drawer" role="dialog" aria-modal="true" aria-label="Cart">
+    <div class="cd-head"><h2>Selection</h2><button type="button" id="cart-close" aria-label="Close cart">✕</button></div>
+    <div id="cart-items"></div>
+    <label class="cd-extra mono"><input type="checkbox" id="opt-engraving"> Free engraving</label>
+    <label class="cd-extra mono"><input type="checkbox" id="opt-gift"> Gift wrap (+EGP 250)</label>
+    <div class="cd-foot">
+      <div class="cd-total"><span class="mono">Subtotal</span><b id="cart-total">EGP 0</b></div>
+      <button type="button" id="cart-checkout" class="btn-magnet wide">Proceed to checkout</button>
+    </div>
+  </aside>
+  <div id="scrim"></div>
+
+  <!-- flying item for add-to-cart animation -->
+  <div id="fly-item" aria-hidden="true"></div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="site-footer">
+    <div class="foot-divider" aria-hidden="true"></div>
+    <a href="#/" data-nav class="foot-brand">PATO</a>
+    <p class="mono foot-tag">Horology Atelier</p>
+    <div class="hairline-rule" aria-hidden="true"></div>
+    <div class="foot-links">
+      <a href="tel:+201289659621" class="foot-phone"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg> 01289659621</a>
+      <a href="https://wa.me/201280001351" target="_blank" rel="noopener" class="foot-wa" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.1-.9-2.6-1.3-4.2-3.8-4.3-4-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2 .9.7 1.7 1 2 1.1.2 0 .4 0 .5-.2l.7-1c.2-.2.4-.1.6-.1l1.9.9c.3.1.5.2.5.4 0 .1 0 .7-.2 1.3z"/></svg>
+      </a>
+    </div>
+    <p class="mono faint">© <span id="year"></span> PATO</p>
+  </footer>
+
+  <!-- Libraries (vendored for GitHub Pages reliability) -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="vendor/three.min.js"></script>
+  <script src="products.js"></script>
+  <script>
+    /* LAST-RESORT GUARD: if script.js below fails for any reason, the page must
+       still show all content and never keep a dark overlay. */
+    setTimeout(function () {
+      var l = document.getElementById('loader'); if (l) l.remove();
+      var w = document.getElementById('wipe');   if (w) w.style.display = 'none';
+      document.body.classList.add('reveal-all');
+    }, 2000);
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

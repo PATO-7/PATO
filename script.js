@@ -561,15 +561,7 @@
     tick(); tickTimer = setInterval(tick, 1000); this.classList.add('on');
   });
 
-  /* ---------------- newsletter ---------------- */
-  $('#news-form').addEventListener('submit', e => {
-    e.preventDefault();
-    e.target.style.display = 'none';
-    $('#news-ok').classList.remove('hidden');
-    if (hasGSAP) gsap.from('#news-ok', { y: 20, opacity: 0, duration: .8 });
-  });
-
-  /* ---------------- home gallery + drag scroll ---------------- */
+  /* ---------------- home gallery + drag scroll (optional) ---------------- */
   (function buildHomeGallery() {
     const track = $('#home-gallery');
     if (!track) return;

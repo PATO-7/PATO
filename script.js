@@ -100,10 +100,19 @@
   function pulseClock() { if (!coBox) return; coBox.classList.add('pulse'); setTimeout(() => coBox.classList.remove('pulse'), 450); }
 
   /* ---------------- intro loader ---------------- */
+  let loaderDone = false;
+  function killLoader() {
+    if (loaderDone) return;
+    loaderDone = true;
+    const l = $('#loader');
+    if (l) l.remove();
+  }
   function runLoader(done) {
     const loader = $('#loader');
     if (!loader) return done();
-    if (REDUCED || !hasGSAP) { loader.remove(); return done(); }
+    if (REDUCED || !hasGSAP) { loader.remove(); loaderDone = true; return done(); }
+    // SAFETY: never leave the screen black — force-remove the overlay after 3.5s
+    setTimeout(killLoader, 3500);
     const g = $('.markers');
     for (let i = 0; i < 12; i++) {
       const t = i * 30 * Math.PI / 180;
@@ -115,7 +124,8 @@
     const now = new Date();
     const hourA = ((now.getHours() % 12) + now.getMinutes() / 60) * 30;
     const minA = now.getMinutes() * 6;
-    const tl = gsap.timeline({ onComplete: () => { loader.remove(); done(); } });
+    const tl = gsap.timeline({ onComplete: () => { killLoader(); done(); } });
+    try {
     tl.to('.bezel-line', { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' })
       .to('.markers line', { opacity: 1, duration: .05, stagger: .055 }, '-=.3')
       .to('.bezel-pin', { opacity: 1, duration: .2 }, '<')
@@ -128,8 +138,10 @@
           gsap.to('.loader-word', { opacity: 0, duration: .4 });
         } }, '+=.5')
       .to(loader, { autoAlpha: 0, duration: .4 }, '<0.7');
-    loader.style.clipPath = 'circle(0% at 50% 50%)';
-    gsap.set(loader, { clipPath: 'none' });
+    } catch (err) {
+      console.error('PATO loader error:', err);
+      killLoader(); done();
+    }
     // circle-expand trick: animate svg scale then fade overlay
   }
 
@@ -710,14 +722,40 @@
   $('#year').textContent = new Date().getFullYear();
 
   /* ---------------- boot ---------------- */
-  renderCartItems();
-  runLoader(() => {
-    route(true);
-    if (hasGSAP && !REDUCED) {
-      gsap.to('.hero-title .w i', { y: 0, duration: 1.2, stagger: .12, ease: 'power4.out', delay: .15 });
-      gsap.from('.hero-sub, .hero .btn-magnet, .scroll-hint', { y: 30, opacity: 0, stagger: .15, duration: 1, delay: .6, clearProps: 'all' });
-    } else {
-      $$('.hero-title .w i').forEach(i => i.style.transform = 'none');
+  function fatalRecover() {
+    // Last-resort: if script.js crashed before the loader ran, remove any
+    // stuck black overlay and reveal content via CSS fallback classes.
+    try {
+      const l = document.getElementById('loader');
+      if (l) l.remove();
+      const vh = document.querySelector('#view-home');
+      if (vh && !document.querySelector('.view.active')) vh.classList.add('active');
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    } catch (_) {}
+  }
+  window.addEventListener('error', fatalRecover);
+
+  try {
+    renderCartItems();
+
+    // SAFETY NET: even if the loader animation hangs, force-show the site after 3.5s
+    setTimeout(() => { killLoader(); doneBoot(); }, 3500);
+
+    function doneBoot() {
+      if (window.__patoBooted) return;   // avoid double-boot from the safety net
+      window.__patoBooted = true;
+      route(true);
+      if (hasGSAP && !REDUCED) {
+        gsap.to('.hero-title .w i', { y: 0, duration: 1.2, stagger: .12, ease: 'power4.out', delay: .15 });
+        gsap.from('.hero-sub, .hero .btn-magnet, .scroll-hint', { y: 30, opacity: 0, stagger: .15, duration: 1, delay: .6, clearProps: 'all' });
+      } else {
+        $$('.hero-title .w i').forEach(i => i.style.transform = 'none');
+      }
     }
-  });
+
+    runLoader(doneBoot);
+  } catch (err) {
+    console.error('PATO boot error:', err);
+    fatalRecover();
+  }
 })();

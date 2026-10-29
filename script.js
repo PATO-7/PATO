@@ -12,26 +12,6 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const formatPrice = (price) => "LE " + Number(price).toLocaleString("en-EG", { maximumFractionDigits: 0 });
 
 /* ============================================================
-   1) SPLASH — short kinetic/glitch intro that MERGES into the hero
-   ============================================================ */
-(function splash() {
-  const el = document.getElementById("splash");
-  if (!el) return;
-  if (reduceMotion) { el.remove(); return; }
-
-  // after ~1.4s of glitch/kinetic letters, the word scales & flies up to
-  // its position in the top bar while the page fades in underneath.
-  window.setTimeout(() => {
-    el.classList.add("is-morphing");
-    document.body.classList.add("site-ready");
-  }, 1400);
-
-  window.setTimeout(() => {
-    el.remove();
-  }, 2050);
-})();
-
-/* ============================================================
    2) SCROLLYTELLING — reveal-on-scroll + parallax layers
    ============================================================ */
 (function scrollytelling() {
@@ -88,31 +68,78 @@ const formatPrice = (price) => "LE " + Number(price).toLocaleString("en-EG", { m
 })();
 
 /* ============================================================
-   4) TOP BAR — menu toggle + smooth anchor clicks (all working)
+   4) TOP BAR — drawer menu (hidden until clicked), main nav, smooth scroll
    ============================================================ */
 const menuToggle = document.querySelector(".menu-toggle");
-const navLinks = document.querySelector("#nav-links");
+const drawer = document.getElementById("nav-drawer");
+const backdrop = document.getElementById("drawer-backdrop");
+
+function openDrawer() {
+  backdrop.hidden = false;
+  const raf = window.requestAnimationFrame || ((fn) => setTimeout(fn, 16));
+  raf(() => {
+    backdrop.classList.add("is-open");
+    drawer.classList.add("is-open");
+  });
+  drawer.setAttribute("aria-hidden", "false");
+  menuToggle.setAttribute("aria-expanded", "true");
+  document.body.classList.add("no-scroll");
+}
+function closeDrawer() {
+  backdrop.classList.remove("is-open");
+  drawer.classList.remove("is-open");
+  drawer.setAttribute("aria-hidden", "true");
+  menuToggle.setAttribute("aria-expanded", "false");
+  document.body.classList.remove("no-scroll");
+  setTimeout(() => { backdrop.hidden = true; }, 400);
+}
 
 menuToggle.addEventListener("click", () => {
-  const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-  menuToggle.setAttribute("aria-expanded", String(!isOpen));
-  menuToggle.setAttribute("aria-label", isOpen ? "Open menu" : "Close menu");
-  navLinks.classList.toggle("is-open", !isOpen);
+  menuToggle.getAttribute("aria-expanded") === "true" ? closeDrawer() : openDrawer();
+});
+document.querySelector(".drawer-close").addEventListener("click", closeDrawer);
+backdrop.addEventListener("click", closeDrawer);
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && drawer.classList.contains("is-open")) closeDrawer();
 });
 
-// close menu + smooth scroll for in-page links
-navLinks.querySelectorAll("a").forEach((link) => {
+// any link inside the drawer closes it first, then behaves normally
+drawer.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", (ev) => {
-    menuToggle.setAttribute("aria-expanded", "false");
-    navLinks.classList.remove("is-open");
+    closeDrawer();
     const href = link.getAttribute("href") || "";
     if (href.startsWith("#")) {
       ev.preventDefault();
       const target = document.querySelector(href);
       if (target) target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      if (link.dataset.filter) applyFilter(link.dataset.filter);
     }
   });
 });
+
+// desktop main nav — smooth scroll + offer filter
+document.querySelectorAll(".main-nav a").forEach((link) => {
+  link.addEventListener("click", (ev) => {
+    const href = link.getAttribute("href") || "";
+    if (href.startsWith("#")) {
+      ev.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+      if (link.dataset.filter) applyFilter(link.dataset.filter);
+    }
+  });
+});
+
+// collection filter chips
+const chips = document.querySelectorAll(".chip");
+function applyFilter(mode) {
+  chips.forEach((c) => c.classList.toggle("is-active", c.dataset.chip === mode));
+  document.querySelectorAll(".product-card[data-id]").forEach((card) => {
+    const show = mode === "all" || card.dataset.offer === "true";
+    card.classList.toggle("is-hidden", !show);
+  });
+}
+chips.forEach((chip) => chip.addEventListener("click", () => applyFilter(chip.dataset.chip)));
 
 // logo -> home
 document.querySelector(".logo").addEventListener("click", (ev) => {

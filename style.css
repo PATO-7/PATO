@@ -60,104 +60,6 @@ h1, h2, h3, .brand-logo {
 ::selection { background: var(--teal); color: var(--white); }
 
 /* ============================================================
-   SPLASH — short kinetic/glitch intro that morphs into the page
-   ============================================================ */
-.splash {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  background: var(--white);
-  transition: opacity 0.55s ease, transform 0.65s cubic-bezier(0.7, 0, 0.3, 1);
-}
-.splash-bg {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(42% 38% at 30% 32%, rgba(5, 173, 152, 0.14), transparent 70%),
-    radial-gradient(38% 34% at 72% 66%, rgba(187, 191, 191, 0.5), transparent 70%);
-  animation: bgDrift 2.4s ease-in-out infinite alternate;
-}
-@keyframes bgDrift { from { transform: scale(1) translateY(0); } to { transform: scale(1.06) translateY(-12px); } }
-
-.splash-word {
-  position: relative;
-  display: flex;
-  gap: 0.06em;
-  font-family: var(--font-brand);
-  font-size: clamp(4rem, 18vw, 9rem);
-  letter-spacing: 0.08em;
-  color: var(--ink-strong);
-  z-index: 2;
-}
-.glitch-letter {
-  position: relative;
-  display: inline-block;
-  animation: letterIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-             jitter 0.9s steps(2, end) 0.55s 2;
-  animation-delay: calc(var(--i) * 90ms), 0.55s;
-}
-/* expressive glitch: RGB-split shadows flicker on the letters */
-.glitch-letter::before,
-.glitch-letter::after {
-  content: attr(data-x);
-  position: absolute; left: 0; top: 0;
-  opacity: 0;
-}
-.glitch-letter::before { color: var(--teal); animation: glitchA 0.9s steps(2, end) 0.5s 2; }
-.glitch-letter::after  { color: var(--silver); animation: glitchB 0.9s steps(2, end) 0.5s 2; }
-
-@keyframes letterIn {
-  from { opacity: 0; transform: translateY(46px) rotateX(60deg) scale(0.86); filter: blur(6px); }
-  to   { opacity: 1; transform: none; filter: blur(0); }
-}
-@keyframes jitter {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(-2px, 1px); }
-  50% { transform: translate(2px, -1px); }
-  75% { transform: translate(-1px, -1px); }
-}
-@keyframes glitchA {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  20% { opacity: 0.85; transform: translate(-4px, 2px); }
-  40% { opacity: 0.6; transform: translate(3px, -2px); }
-  60% { opacity: 0.8; transform: translate(-2px, 1px); }
-}
-@keyframes glitchB {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  30% { opacity: 0.8; transform: translate(4px, -2px); }
-  55% { opacity: 0.6; transform: translate(-3px, 2px); }
-  80% { opacity: 0.75; transform: translate(2px, 1px); }
-}
-
-.splash-line {
-  position: absolute;
-  bottom: 34%;
-  left: 50%;
-  width: 0;
-  height: 3px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--teal), var(--silver));
-  transform: translateX(-50%);
-  animation: lineGrow 1.2s cubic-bezier(0.6, 0, 0.2, 1) 0.35s forwards;
-  z-index: 2;
-}
-@keyframes lineGrow { to { width: min(240px, 46vw); } }
-
-/* the merge: wordmark flies up-left into the top bar while page fades in */
-.splash.is-morphing {
-  opacity: 0;
-  transform: translateY(-42vh) scale(0.32);
-  pointer-events: none;
-}
-
-/* page appears as splash morphs */
-.site-header, main, .site-footer { opacity: 0; transition: opacity 0.6s ease 0.15s; }
-body.site-ready .site-header,
-body.site-ready main,
-body.site-ready .site-footer { opacity: 1; }
-
-/* ============================================================
    TOP BAR — full page width
    ============================================================ */
 .site-header {
@@ -170,14 +72,37 @@ body.site-ready .site-footer { opacity: 1; }
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
+.topline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 8px clamp(16px, 4vw, 40px);
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--line);
+}
+.topline-link {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+.topline-link:hover { color: var(--teal); }
+.topline-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--grey); }
+
 .navbar {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 14px;
   padding: 14px clamp(16px, 4vw, 40px);
 }
+.navbar .logo { justify-self: center; }
+.navbar .menu-toggle { justify-self: start; }
+.navbar .cart-btn { justify-self: end; }
 .logo {
   font-family: var(--font-brand);
   font-size: 1.5rem;
@@ -188,6 +113,9 @@ body.site-ready .site-footer { opacity: 1; }
 }
 .logo:hover { color: var(--teal); transform: translateY(-1px); }
 
+.icon-btn {
+  display: inline-flex;
+}
 .cart-btn {
   display: inline-flex;
   align-items: center;
@@ -230,33 +158,88 @@ body.site-ready .site-footer { opacity: 1; }
 .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-.nav-links {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 38px);
   list-style: none;
-  background: var(--white);
-  border-bottom: 1px solid var(--line);
-  display: grid;
-  grid-template-rows: 0fr;
-  overflow: hidden;
-  transition: grid-template-rows 0.4s cubic-bezier(0.6, 0, 0.2, 1);
+  padding: 0 clamp(16px, 4vw, 40px) 12px;
+  border-top: 1px solid var(--line);
 }
-.nav-links > li { display: flex; }
-.nav-links.is-open { grid-template-rows: 1fr; }
-.nav-links a {
-  flex: 1;
-  display: block;
-  padding: 16px clamp(16px, 4vw, 40px);
+.main-nav a {
+  position: relative;
+  display: inline-block;
+  padding: 4px 2px;
   color: var(--ink);
   text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
-  border-top: 1px solid var(--line);
-  transition: background 0.25s ease, color 0.25s ease, padding-left 0.25s ease;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.25s ease;
 }
-.nav-links a:hover { background: var(--bg-soft); color: var(--teal); padding-left: calc(clamp(16px, 4vw, 40px) + 8px); }
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1.5px;
+  background: var(--teal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.main-nav a:hover { color: var(--teal); }
+.main-nav a:hover::after { transform: scaleX(1); }
+
+/* menu drawer — hidden until clicked */
+.drawer-backdrop {
+  position: fixed; inset: 0; z-index: 70;
+  background: rgba(95, 96, 96, 0.35);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.drawer-backdrop.is-open { opacity: 1; }
+.nav-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  z-index: 80;
+  width: min(340px, 86vw);
+  background: var(--white);
+  box-shadow: -18px 0 40px rgba(95, 96, 96, 0.18);
+  transform: translateX(102%);
+  visibility: hidden;
+  transition: transform 0.45s cubic-bezier(0.6, 0, 0.2, 1), visibility 0.45s;
+  padding: 72px 28px 28px;
+}
+.nav-drawer.is-open { transform: none; visibility: visible; }
+.nav-drawer ul { list-style: none; }
+.nav-drawer li { border-bottom: 1px solid var(--line); }
+.nav-drawer li:first-child a { animation-delay: 0.05s; }
+.nav-drawer a {
+  display: block;
+  padding: 18px 4px;
+  color: var(--ink-strong);
+  text-decoration: none;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.25s ease, padding-left 0.25s ease;
+}
+.nav-drawer a:hover { color: var(--teal); padding-left: 12px; }
+.drawer-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  color: var(--ink-strong);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.drawer-close:hover { transform: rotate(90deg); border-color: var(--teal); color: var(--teal); }
 
 /* ============================================================
    HERO
@@ -309,6 +292,27 @@ body.site-ready .site-footer { opacity: 1; }
 @keyframes accentPulse { 0%,100% { transform: none; } 50% { transform: translateY(-3px); } }
 
 .hero-copy { max-width: 420px; margin: 18px auto 26px; color: var(--ink); font-weight: 400; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.btn-ghost { background: transparent; color: var(--ink-strong); border: 1.5px solid var(--grey); }
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); box-shadow: none; }
+
+.filter-chips { display: flex; justify-content: center; gap: 10px; margin: 0 0 26px; }
+.chip {
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.chip:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-1px); }
+.chip.is-active { background: var(--teal); border-color: var(--teal); color: var(--white); }
+.product-card.is-hidden { display: none; }
 
 .btn {
   display: inline-flex;

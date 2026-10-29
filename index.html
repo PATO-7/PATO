@@ -58,33 +58,41 @@
 </head>
 <body>
 
-  <!-- ============ SPLASH — short kinetic/glitch intro that morphs into the hero ============ -->
-  <div class="splash" id="splash" aria-hidden="true">
-    <div class="splash-bg"></div>
-    <div class="splash-word" id="splashWord">
-      <span class="glitch-letter" data-x="P" style="--i:0">P</span><span class="glitch-letter" data-x="A" style="--i:1">A</span><span class="glitch-letter" data-x="T" style="--i:2">T</span><span class="glitch-letter" data-x="O" style="--i:3">O</span>
-    </div>
-    <div class="splash-line"></div>
-  </div>
-
-  <!-- ============ TOP BAR — full page width ============ -->
+  <!-- ============ TOP BAR — Bucherer style: utility row + brand + nav ============ -->
   <header class="site-header">
+    <div class="topline">
+      <a class="topline-link" href="https://wa.me/201280001351" target="_blank" rel="noopener">Concierge on WhatsApp</a>
+      <span class="topline-dot" aria-hidden="true"></span>
+      <a class="topline-link" href="tel:01289659621">Call 01289659621</a>
+    </div>
     <nav class="navbar" aria-label="Main navigation">
-      <a class="logo psychedelic-title" href="#home" aria-label="PATO home">PATO</a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+      <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#collection">Category</a></li>
-        <li><a href="#collection">Offers</a></li>
-        <li><a href="https://wa.me/201280001351" target="_blank" rel="noopener">Contact</a></li>
-        <li><a href="#about">PATO</a></li>
-      </ul>
-      <button class="cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-dialog" aria-label="Open basket">
+      <a class="logo psychedelic-title" href="#home" aria-label="PATO home">PATO</a>
+      <button class="icon-btn cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-dialog" aria-label="Open basket">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1.2 11a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
       </button>
     </nav>
+    <ul class="main-nav" aria-label="Shop navigation">
+      <li><a href="#collection" data-filter="all">Watches</a></li>
+      <li><a href="#collection" data-filter="offer">Offers</a></li>
+      <li><a href="#about">Our house</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
   </header>
+
+  <!-- ============ MENU DRAWER (hidden until ☰ is clicked) ============ -->
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <nav class="nav-drawer" id="nav-drawer" aria-hidden="true" aria-label="Menu">
+    <button class="drawer-close" type="button" aria-label="Close menu">×</button>
+    <ul>
+      <li><a href="#collection" data-filter="all">Category</a></li>
+      <li><a href="#collection" data-filter="offer">Offers</a></li>
+      <li><a href="https://wa.me/201280001351" target="_blank" rel="noopener">Contact</a></li>
+      <li><a href="#about">PATO</a></li>
+    </ul>
+  </nav>
 
   <main>
     <!-- ============ HERO ============ -->
@@ -94,13 +102,16 @@
       </div>
       <div class="hero-shade"></div>
       <div class="hero-content reveal" data-reveal>
-        <p class="eyebrow">A study in precision · Est. 1987</p>
+        <p class="eyebrow">The watch house of PATO</p>
         <h1 class="kinetic-h1">
-          <span class="k-line"><span class="k-word">Elegance</span></span>
-          <span class="k-line"><span class="k-word">Written</span> <span class="k-word">in</span> <span class="k-word accent">Time</span></span>
+          <span class="k-line"><span class="k-word">Timepieces</span></span>
+          <span class="k-line"><span class="k-word">worth</span> <span class="k-word">keeping</span> <span class="k-word accent">forever</span></span>
         </h1>
-        <p class="hero-copy">Hand-crafted timepieces, made for the moments that matter.</p>
-        <a href="#collection" class="btn magnetic">Explore the collection <span aria-hidden="true">↓</span></a>
+        <p class="hero-copy">Discover hand-crafted watches — and speak with our concierge at any time.</p>
+        <div class="hero-actions">
+          <a href="#collection" class="btn magnetic">Explore the collection <span aria-hidden="true">&darr;</span></a>
+          <a href="https://wa.me/201280001351" target="_blank" rel="noopener" class="btn btn-ghost magnetic">Talk to us</a>
+        </div>
       </div>
       <div class="scroll-cue" aria-hidden="true"><span></span></div>
     </section>
@@ -130,20 +141,24 @@
         </div>
         <p>Tap any watch to open its full page.</p>
       </div>
+      <div class="filter-chips" role="group" aria-label="Filter watches">
+        <button class="chip is-active" type="button" data-chip="all">All watches</button>
+        <button class="chip" type="button" data-chip="offer">Offers</button>
+      </div>
       <div class="product-grid">
-        <article class="product-card reveal" data-reveal data-id="sovereign" tabindex="0" role="link" aria-label="Open The Sovereign Silver details">
+        <article class="product-card reveal" data-reveal data-id="sovereign" data-offer="false" tabindex="0" role="link" aria-label="Open The Sovereign Silver details">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85" alt="The Sovereign Silver wristwatch" loading="lazy"><span class="product-tag">Bestseller</span></div>
           <div class="product-info"><div><h3>The Sovereign Silver</h3><p class="product-detail">Automatic · 40 mm</p></div><p class="price">$1,250</p></div>
         </article>
-        <article class="product-card reveal" data-reveal data-id="onyx" tabindex="0" role="link" aria-label="Open Chronograph Onyx details">
+        <article class="product-card reveal" data-reveal data-id="onyx" data-offer="true" tabindex="0" role="link" aria-label="Open Chronograph Onyx details">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=85" alt="Chronograph Onyx in a polished finish" loading="lazy"><span class="product-tag">New</span></div>
           <div class="product-info"><div><h3>Chronograph Onyx</h3><p class="product-detail">Chronograph · 42 mm</p></div><p class="price">$2,100</p></div>
         </article>
-        <article class="product-card reveal" data-reveal data-id="heritage" tabindex="0" role="link" aria-label="Open Heritage Vintage details">
+        <article class="product-card reveal" data-reveal data-id="heritage" data-offer="true" tabindex="0" role="link" aria-label="Open Heritage Vintage details">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=900&q=85" alt="Heritage Vintage watch with a leather strap" loading="lazy"></div>
           <div class="product-info"><div><h3>Heritage Vintage</h3><p class="product-detail">Hand-wound · 38 mm</p></div><p class="price">$890</p></div>
         </article>
-        <article class="product-card reveal" data-reveal data-id="rose" tabindex="0" role="link" aria-label="Open PATO Rose Edition details">
+        <article class="product-card reveal" data-reveal data-id="rose" data-offer="false" tabindex="0" role="link" aria-label="Open PATO Rose Edition details">
           <div class="product-image"><img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=900&q=85" alt="PATO Rose Edition wristwatch" loading="lazy"></div>
           <div class="product-info"><div><h3>PATO Rose Edition</h3><p class="product-detail">Automatic · 36 mm</p></div><p class="price">$1,750</p></div>
         </article>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#18251f">
+  <meta name="description" content="Discover hand-crafted Swiss timepieces designed for sophisticated perfection at PATO.">
+  <title>PATO
+| Luxury Timepieces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="announcement">Complimentary worldwide delivery on orders over $1,000</div>
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="logo" href="#home" aria-label="PATO home">PATO<span>.</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#collection">Collection</a></li>
+        <li><a href="#about">Our story</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-dialog">
+        Bag <span class="cart-count" aria-live="polite">0</span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <img class="hero-image" src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=2200&q=88" alt="A refined wristwatch in warm light">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow">A study in precision · Est. 1987</p>
+        <h1>Elegance<br>Written in Time</h1>
+        <p class="hero-copy">Hand-crafted Swiss timepieces, made for the moments that matter.</p>
+        <a href="#collection" class="btn">Explore the collection <span aria-hidden="true">↗</span></a>
+      </div>
+      <p class="hero-caption">The Meridian — Automatic, 38 mm</p>
+    </section>
+
+    <section class="features" aria-label="The AURA standard">
+      <article class="feature-item">
+        <span class="feature-index">01</span>
+        <div><h2>Swiss movement</h2><p>Precision, perfected over generations.</p></div>
+      </article>
+      <article class="feature-item">
+        <span class="feature-index">02</span>
+        <div><h2>Sapphire crystal</h2><p>Exceptional clarity. Remarkable resilience.</p></div>
+      </article>
+      <article class="feature-item">
+        <span class="feature-index">03</span>
+        <div><h2>Five-year warranty</h2><p>Confidence that travels with you.</p></div>
+      </article>
+    </section>
+
+    <section id="collection" class="products-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Considered in every detail</p>
+          <h2>Featured timepieces</h2>
+        </div>
+        <p>Four signatures. A lifetime of keeping time.</p>
+      </div>
+      <div class="product-grid">
+        <article class="product-card" data-name="The Sovereign Silver" data-price="1250">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85" alt="The Sovereign Silver wristwatch" loading="lazy"><span class="product-tag">Bestseller</span></div>
+          <div class="product-info"><div><h3>The Sovereign Silver</h3><p class="product-detail">Automatic · 40 mm</p></div><p class="price">$1,250</p></div>
+          <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
+        </article>
+        <article class="product-card" data-name="Chronograph Onyx" data-price="2100">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=85" alt="Chronograph Onyx in a polished finish" loading="lazy"><span class="product-tag">New</span></div>
+          <div class="product-info"><div><h3>Chronograph Onyx</h3><p class="product-detail">Chronograph · 42 mm</p></div><p class="price">$2,100</p></div>
+          <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
+        </article>
+        <article class="product-card" data-name="Heritage Vintage" data-price="890">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=900&q=85" alt="Heritage Vintage watch with a leather strap" loading="lazy"></div>
+          <div class="product-info"><div><h3>Heritage Vintage</h3><p class="product-detail">Hand-wound · 38 mm</p></div><p class="price">$890</p></div>
+          <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
+        </article>
+        <article class="product-card" data-name="AURA Rose Edition" data-price="1750">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=900&q=85" alt="AURA Rose Edition wristwatch" loading="lazy"></div>
+          <div class="product-info"><div><h3>AURA Rose Edition</h3><p class="product-detail">Automatic · 36 mm</p></div><p class="price">$1,750</p></div>
+          <button class="add-to-cart-btn" type="button">Add to bag <span aria-hidden="true">+</span></button>
+        </article>
+      </div>
+    </section>
+
+    <section id="about" class="story-section">
+      <div class="story-image"><img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=85" alt="A watchmaker's careful hands at work" loading="lazy"></div>
+      <div class="story-copy">
+        <p class="eyebrow">Made to be kept</p>
+        <h2>Time deserves<br>a human touch.</h2>
+        <p>Since 1987, our watchmakers have brought together Swiss engineering and an enduring respect for materials. Every AURA timepiece is assembled by hand, then tested for a life of everyday moments.</p>
+        <a class="text-link" href="#contact">Discover our story <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+      <p class="eyebrow">A personal consultation</p>
+      <h2>Find your forever watch.</h2>
+      <a class="contact-link" href="mailto:concierge@auratime.com">Speak with our concierge <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand"><a class="logo" href="#home">PATO
+    <span>.</span></a><p>Timeless craftsmanship<br>for the modern world.</p></div>
+      <div class="footer-links"><h2>Explore</h2><a href="#collection">Collection</a><a href="#about">Our story</a><a href="#contact">Contact</a></div>
+      <div class="footer-links"><h2>Client care</h2><a href="mailto:concierge@auratime.com">Shipping & returns</a><a href="mailto:concierge@auratime.com">Warranty</a><a href="mailto:concierge@auratime.com">Privacy</a></div>
+      <p class="footer-note">Designed for the hours<br>you'll remember.</p>
+    </div>
+    <div class="footer-bottom"><span>© 2026 PATO Timepieces</span><span>Swiss made. Time well spent.</span></div>
+  </footer>
+
+  <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="cart-title">
+    <div class="cart-header"><h2 id="cart-title">Your bag <span class="dialog-count">(0)</span></h2><button class="cart-close" type="button" aria-label="Close bag">×</button></div>
+    <div class="cart-items"></div>
+    <div class="cart-empty">Your bag is waiting for something timeless.</div>
+    <div class="cart-footer"><div class="cart-total"><span>Subtotal</span><strong>$0</strong></div><p>Shipping and taxes calculated at checkout.</p><button class="checkout-btn" type="button" disabled>Continue to checkout</button></div>
+  </dialog>
+</body>
+</html>

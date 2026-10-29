@@ -1,7 +1,7 @@
 /* ============================================================
    PATO — style.css
    Palette (whole site): #BBBFBF  #878787  #05AD98  #FFFFFF
-   Fonts: PATO wordmark = Eckmannpsych stack · everything else = Ribes
+   Fonts: PATO wordmark/logo = Spicy Rice · everything else = Ribes
    ============================================================ */
 
 :root {
@@ -19,8 +19,8 @@
   --accent: var(--teal);
   --on-accent: var(--white);
 
-  /* font stacks with graceful fallbacks until webfont files are added */
-  --font-brand: "Eckmannpsych Small", "Eckmannpsych Large", "Trebuchet MS", sans-serif;
+  /* font stacks: PATO = Spicy Rice (Google Fonts) · body = Ribes with graceful fallbacks */
+  --font-brand: "Spicy Rice", "Eckmannpsych Small", "Eckmannpsych Large", cursive;
   --font-body: "Ribes", "Segoe UI", Arial, sans-serif;
 }
 
@@ -42,18 +42,19 @@ body.no-scroll { overflow: hidden; }
 
 img { display: block; max-width: 100%; }
 
-/* Apply Ribes to headers & brand logo per spec */
-h1, h2, h3, .brand-logo, .logo {
-  font-family: var(--font-body);
+/* PATO wordmark & logo — Spicy Rice (per spec) */
+.psychedelic-title, .logo, .footer-logo, .splash-word {
+  font-family: 'Spicy Rice', var(--font-brand);
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* All other text & headers — Ribes (per spec) */
+h1, h2, h3, .brand-logo {
+  font-family: 'Ribes', var(--font-body);
   letter-spacing: -0.02em;
   color: var(--ink-strong);
   line-height: 1.12;
-}
-
-.psychedelic-title, .footer-logo {
-  font-family: var(--font-brand);
-  font-weight: 400;
-  font-style: normal;
 }
 
 ::selection { background: var(--teal); color: var(--white); }

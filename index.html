@@ -7,32 +7,47 @@
   <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection.">
   <title>PATO</title>
 
-  <!-- ===== Fonts: PATO logo/wordmark = Eckmannpsych stack; everything else = Ribes (with graceful fallbacks) ===== -->
+  <!-- ===== Fonts: PATO word/logo = Spicy Rice; every other text = Ribes ===== -->
+  <!-- Import Cheee-like / Eckmannpsych-like alternative (Spicy Rice) for PATO -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap">
+
   <style>
-    @font-face {
-      font-family: 'Eckmannpsych Small';
-      src: url('fonts/eckmannpsych-small.woff2') format('woff2'),
-           url('fonts/eckmannpsych-small.woff') format('woff');
-      font-weight: 400; font-style: normal; font-display: swap;
-    }
-    @font-face {
-      font-family: 'Eckmannpsych Large';
-      src: url('fonts/eckmannpsych-large.woff2') format('woff2'),
-           url('fonts/eckmannpsych-large.woff') format('woff');
-      font-weight: 400; font-style: normal; font-display: swap;
-    }
-    /* Define the Ribes Font Family */
+    /* Import Ribes Regular from the official repository */
     @font-face {
       font-family: 'Ribes';
-      src: url('fonts/ribes-black.woff2') format('woff2'),
-           url('fonts/ribes-black.woff') format('woff'),
-           url('fonts/ribes-black.ttf') format('truetype');
+      src: url('https://githubusercontent.com') format('woff2'),
+           url('https://githubusercontent.com') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Import Ribes Black */
+    @font-face {
+      font-family: 'Ribes';
+      src: url('https://githubusercontent.com') format('woff2'),
+           url('https://githubusercontent.com') format('woff');
       font-weight: 900;
       font-style: normal;
       font-display: swap;
     }
-    .psychedelic-title {
-      font-family: "Eckmannpsych Small", "Eckmannpsych Large", sans-serif;
+
+    /* Base style application — all text except PATO uses Ribes */
+    body {
+      font-family: 'Ribes', sans-serif;
+      font-weight: 400;
+    }
+
+    h1 {
+      font-family: 'Ribes', sans-serif;
+      font-weight: 900;
+    }
+
+    /* PATO word & logo use Spicy Rice (Eckmannpsych-like display face) */
+    .psychedelic-title, .logo, .footer-logo, .splash-word {
+      font-family: 'Spicy Rice', serif;
       font-weight: 400;
       font-style: normal;
     }

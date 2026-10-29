@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#101411">
+  <meta name="theme-color" content="#FFFFFF">
   <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection. Shop online with delivery across Egypt.">
   <title>PATO</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- PATO wordmark font: Eckmannpsych (with kid-friendly fallbacks) -->
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
@@ -74,7 +75,7 @@
     </section>
 
     <!-- ============ PAGE 3: PATO (our story) ============ -->
-    <section id="page-pato" class="page story-section">
+    <section id="page-pato" class="page story-section" hidden>
       <div class="story-image"><img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=85" alt="A watchmaker's careful hands at work" loading="lazy"></div>
       <div class="story-copy">
         <p class="eyebrow">Made to be kept</p>
@@ -85,7 +86,7 @@
     </section>
 
     <!-- ============ PAGE 4: CONTACT ============ -->
-    <section id="page-contact" class="page contact-section">
+    <section id="page-contact" class="page contact-section" hidden>
       <span class="brand-big">PATO<span>.</span></span>
       <h2>We are one message away.</h2>
       <a class="wa-big" href="https://wa.me/201280001351" target="_blank" rel="noopener">
@@ -105,6 +106,20 @@
       <a href="tel:01289659621">01289659621</a>
     </p>
   </footer>
+
+  <!-- ============ BASKET PAGE (opens from the basket icon) ============ -->
+  <section id="page-basket" class="page basket-page" aria-label="Your basket">
+    <div class="bk-wrap">
+      <button class="pd-back" type="button" data-nav="back">← Continue shopping</button>
+      <h1>Your basket</h1>
+      <div class="bk-items"></div>
+      <p class="bk-empty">Your basket is waiting for something timeless.</p>
+      <div class="bk-footer" hidden>
+        <div class="bk-subtotal"><span>Subtotal</span><strong>0 EGP</strong></div>
+        <button class="checkout-btn bk-checkout" type="button">Checkout</button>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ HALF-PAGE MENU SHEET (Category / Offers / Contact / PATO) ============ -->
   <div class="menu-backdrop" id="menu-backdrop" hidden></div>
@@ -132,20 +147,40 @@
       </div>
       <p class="fv-price price"></p>
     </div>
+    <div class="fv-colors" id="fv-colors"></div>
     <div class="fv-thumbs"></div>
     <button class="add-to-cart-btn fv-add" type="button">Add to basket <span aria-hidden="true">+</span></button>
   </div>
 
-  <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="cart-title">
-    <div class="cart-header"><h2 id="cart-title">Your basket <span class="dialog-count">(0)</span></h2><button class="cart-close" type="button" aria-label="Close basket">×</button></div>
-    <div class="cart-items"></div>
-    <div class="cart-empty">Your basket is waiting for something timeless.</div>
-    <div class="cart-footer">
-      <div class="cart-total"><span>Subtotal</span><strong>0 EGP</strong></div>
-      <p>Shipping calculated at checkout.</p>
-      <button class="checkout-btn" type="button" disabled>Checkout</button>
+  <!-- ============ PRODUCT DETAIL PAGE (opens when a watch is clicked) ============ -->
+  <section id="page-product" class="page product-page" aria-label="Product details">
+    <div class="pd-wrap">
+      <button class="pd-back" type="button" data-nav="back">← Back</button>
+      <div class="pd-gallery">
+        <div class="pd-main-wrap">
+          <img class="pd-main" src="" alt="">
+          <button class="pd-arrow prev" type="button" aria-label="Previous photo">‹</button>
+          <button class="pd-arrow next" type="button" aria-label="Next photo">›</button>
+        </div>
+        <div class="pd-thumbs"></div>
+      </div>
+      <div class="pd-info">
+        <p class="eyebrow pd-tagline">PATO Collection</p>
+        <h1 class="pd-name"></h1>
+        <p class="pd-detail"></p>
+        <p class="price pd-price"></p>
+        <div class="pd-colors">
+          <p class="pd-colors-label">Colour</p>
+          <div class="swatches" role="group" aria-label="Choose colour"></div>
+        </div>
+        <button class="btn pd-buy" type="button">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          Buy now
+        </button>
+        <p class="pd-note">Delivery across Egypt · We confirm every order by phone</p>
+      </div>
     </div>
-  </dialog>
+  </section>
 
   <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
     <div class="checkout-scroll">

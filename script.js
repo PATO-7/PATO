@@ -20,13 +20,13 @@ if (splash) {
       next.style.animation = "none";
       void next.offsetWidth;
       next.style.animation = "";
-    }, 900);
+    }, 700);
   }
 
   window.setTimeout(() => {
     document.body.classList.remove("splash-lock");
     splash.classList.add("is-hidden");
-  }, 2000); // ~1.6s hold + 0.45s fade-out (shortened intro)
+  }, 1600); // shorter intro: ~1.2s hold + quick merge fade
 }
 
 /* ============ FIXED DARK GENTLE THEME (no switcher UI) ============ */
@@ -35,6 +35,12 @@ try { localStorage.removeItem("pato-theme"); } catch (e) { /* storage unavailabl
 
 /* ============ CATALOGUE ============ */
 const IMG = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1100&q=85`;
+const COLORS = [
+  { name: "Silver", hex: "#BBBFBF" },
+  { name: "Graphite", hex: "#878787" },
+  { name: "Jade", hex: "#05AD98" },
+  { name: "Pearl", hex: "#FFFFFF" },
+];
 const PRODUCTS = [
   { id: "sovereign", name: "The Sovereign Silver", detail: "Automatic · 40 mm", price: 64900, tag: "Bestseller",
     photos: [IMG("photo-1523275335684-37898b6baf30"), IMG("photo-1524592094714-0f0654e20314"), IMG("photo-1522312352255-9d8153d4d2d8")] },
@@ -54,14 +60,21 @@ const formatPrice = (price) => `${new Intl.NumberFormat("en-EG", { maximumFracti
 /* ============ PAGES (home + shop are one scroll flow) ============ */
 const pages = document.querySelectorAll(".page");
 const shopSection = document.getElementById("page-shop");
+let lastScrollY = 0;
 
 function showPage(id) {
   closeViewer();
-  pages.forEach((p) => p.classList.toggle("is-active", p.id === id));
-  if (id === "page-home") {
+  const goingHome = id === "page-home";
+  pages.forEach((p) => {
+    const active = p.id === id;
+    p.classList.toggle("is-active", active);
+    if (p !== document.getElementById("page-home")) p.hidden = !active;
+  });
+  if (goingHome) {
     shopSection.hidden = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: lastScrollY || 0, behavior: "auto" });
   } else {
+    lastScrollY = window.scrollY;
     shopSection.hidden = true;
     window.scrollTo({ top: 0, behavior: "auto" });
   }
@@ -73,7 +86,9 @@ document.body.addEventListener("click", (event) => {
   event.preventDefault();
   const target = link.dataset.nav;
   closeMenuSheet();
-  if (target === "home") showPage("page-home");
+  if (target === "back") showPage("page-home");
+  else if (target === "basket") { renderCart(); showPage("page-basket"); }
+  else if (target === "home") showPage("page-home");
   else if (target === "shop") {
     showPage("page-home");
     renderProducts(PRODUCTS);
@@ -141,11 +156,51 @@ function renderProducts(list) {
         <p class="price">${formatPrice(product.price)}${product.oldPrice ? `<s>${formatPrice(product.oldPrice)}</s>` : ""}</p>
       </div>
       <button class="add-to-cart-btn" type="button" data-id="${product.id}">Add to basket <span aria-hidden="true">+</span></button>`;
-    card.querySelector(".product-image").addEventListener("click", () => openViewer(product.id));
-    card.querySelector("h3").addEventListener("click", () => openViewer(product.id));
+    card.querySelector(".product-image").addEventListener("click", () => openProductPage(product.id));
+    card.querySelector("h3").addEventListener("click", () => openProductPage(product.id));
+    card.classList.add("reveal");
     productGrid.append(card);
   });
+  observeReveals();
 }
+
+/* ---- scrollytelling: reveal-on-scroll observer ---- */
+const revealObserver = ("IntersectionObserver" in window)
+  ? new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 })
+  : null;
+
+function observeReveals() {
+  document.querySelectorAll(".reveal:not(.is-revealed)").forEach((el) => {
+    if (revealObserver) revealObserver.observe(el);
+    else el.classList.add("is-revealed");
+  });
+}
+
+/* ---- micro-animations: section headings reveal on scroll ---- */
+document.querySelectorAll(".section-heading, .story-copy, .story-image").forEach((el) => el.classList.add("reveal"));
+
+/* ---- parallax: hero content drifts slowly while scrolling (Scrollytelling 2.0) ---- */
+const heroContent = document.querySelector(".hero-content");
+let ticking = false;
+window.addEventListener("scroll", () => {
+  if (ticking || !heroContent) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    const y = window.scrollY;
+    if (y < window.innerHeight) {
+      heroContent.style.transform = `translateY(${y * 0.28}px)`;
+      heroContent.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.85)));
+    }
+    ticking = false;
+  });
+}, { passive: true });
 
 /* ============ FULLSCREEN PHOTO VIEWER (gentle professional animation) ============ */
 const viewer = document.getElementById("fullscreen-viewer");
@@ -230,15 +285,89 @@ fvAdd.addEventListener("click", () => {
   addToBasket(currentProduct.name, currentProduct.price, fvAdd);
 });
 
+/* ============ PRODUCT DETAIL PAGE (photos, colours, price, buy icon) ============ */
+const productPage = document.getElementById("page-product");
+const pdMain = productPage.querySelector(".pd-main");
+const pdName = productPage.querySelector(".pd-name");
+const pdDetail = productPage.querySelector(".pd-detail");
+const pdPrice = productPage.querySelector(".pd-price");
+const pdThumbs = productPage.querySelector(".pd-thumbs");
+const pdSwatches = productPage.querySelector(".swatches");
+const pdBuy = productPage.querySelector(".pd-buy");
+let pdProduct = null;
+let pdPhoto = 0;
+let pdColor = COLORS[0];
+
+function setPdPhoto(index) {
+  if (!pdProduct) return;
+  pdPhoto = (index + pdProduct.photos.length) % pdProduct.photos.length;
+  pdMain.classList.remove("is-swapping");
+  void pdMain.offsetWidth;
+  pdMain.classList.add("is-swapping");
+  window.setTimeout(() => {
+    pdMain.src = pdProduct.photos[pdPhoto];
+    pdMain.alt = `${pdProduct.name} — photo ${pdPhoto + 1}`;
+    pdMain.classList.remove("is-swapping");
+  }, 170);
+  pdThumbs.querySelectorAll(".fv-thumb").forEach((t, i) => t.classList.toggle("is-active", i === pdPhoto));
+}
+
+function openProductPage(id) {
+  const product = PRODUCTS.find((p) => p.id === id);
+  if (!product) return;
+  pdProduct = product;
+  pdColor = COLORS[0];
+  pdName.textContent = product.name;
+  pdDetail.textContent = product.detail;
+  pdPrice.innerHTML = `${formatPrice(product.price)}${product.oldPrice ? ` <s>${formatPrice(product.oldPrice)}</s>` : ""}`;
+  pdThumbs.replaceChildren();
+  product.photos.forEach((src, i) => {
+    const thumb = document.createElement("button");
+    thumb.type = "button";
+    thumb.className = "fv-thumb";
+    thumb.setAttribute("aria-label", `Photo ${i + 1}`);
+    thumb.innerHTML = `<img src="${src}" alt="">`;
+    thumb.addEventListener("click", () => setPdPhoto(i));
+    pdThumbs.append(thumb);
+  });
+  pdSwatches.replaceChildren();
+  COLORS.forEach((c) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "swatch" + (c === pdColor ? " is-active" : "");
+    chip.title = c.name;
+    chip.setAttribute("aria-label", `Colour: ${c.name}`);
+    chip.style.setProperty("--sw", c.hex);
+    chip.addEventListener("click", () => {
+      pdColor = c;
+      pdSwatches.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("is-active", s === chip));
+    });
+    pdSwatches.append(chip);
+  });
+  setPdPhoto(0);
+  showPage("page-product");
+}
+
+productPage.querySelector(".pd-arrow.prev").addEventListener("click", () => setPdPhoto(pdPhoto - 1));
+productPage.querySelector(".pd-arrow.next").addEventListener("click", () => setPdPhoto(pdPhoto + 1));
+
+/* buying icon → adds to basket and opens checkout */
+pdBuy.addEventListener("click", () => {
+  if (!pdProduct) return;
+  const label = pdColor && pdColor.name !== "Silver" ? `${pdProduct.name} · ${pdColor.name}` : pdProduct.name;
+  addToBasket(label, pdProduct.price, pdBuy);
+  openCheckout();
+});
+
 /* ============ BASKET ============ */
 const cart = new Map();
-const cartDialog = document.getElementById("cart-dialog");
 const checkoutDialog = document.getElementById("checkout-dialog");
-const cartItems = document.querySelector(".cart-items");
-const cartEmpty = document.querySelector(".cart-empty");
-const dialogCount = document.querySelector(".dialog-count");
-const cartTotal = document.querySelector(".cart-total strong");
-const checkoutButton = document.querySelector(".checkout-btn");
+const basketPage = document.getElementById("page-basket");
+const cartItems = basketPage.querySelector(".bk-items");
+const cartEmpty = basketPage.querySelector(".bk-empty");
+const bkFooter = basketPage.querySelector(".bk-footer");
+const cartTotal = basketPage.querySelector(".bk-subtotal strong");
+const checkoutButton = basketPage.querySelector(".bk-checkout");
 
 try {
   const saved = JSON.parse(localStorage.getItem("pato-basket") || "[]");
@@ -255,7 +384,7 @@ function subtotal() {
 
 function renderCart() {
   const quantity = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
-  dialogCount.textContent = `(${quantity})`;
+  bkFooter.hidden = quantity === 0;
   cartTotal.textContent = formatPrice(subtotal());
   cartEmpty.hidden = quantity > 0;
   checkoutButton.disabled = quantity === 0;
@@ -263,7 +392,7 @@ function renderCart() {
 
   for (const [name, item] of cart) {
     const row = document.createElement("article");
-    row.className = "cart-row";
+    row.className = "cart-row reveal is-revealed";
     row.innerHTML = `<div><h3>${name}</h3><p>Quantity: ${item.quantity} · ${formatPrice(item.price)} each</p></div><span class="cart-row-price">${formatPrice(item.price * item.quantity)}</span>`;
     const removeButton = document.createElement("button");
     removeButton.className = "cart-remove";
@@ -273,6 +402,12 @@ function renderCart() {
     row.append(removeButton);
     cartItems.append(row);
   }
+}
+
+/* guard for environments without native dialog support */
+function showModalSafe(dialog) {
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");
 }
 
 function addToBasket(name, price, button) {
@@ -296,12 +431,9 @@ productGrid.addEventListener("click", (event) => {
   if (product) addToBasket(product.name, product.price, button);
 });
 
-document.querySelector(".cart-close").addEventListener("click", () => cartDialog.close());
-cartDialog.addEventListener("click", (event) => { if (event.target === cartDialog) cartDialog.close(); });
-
-/* basket icon on the first page opens the saved basket */
+/* basket icon on the first page opens the basket page */
 const basketBtn = document.getElementById("basket-btn");
-if (basketBtn) basketBtn.addEventListener("click", () => { closeMenuSheet(); renderCart(); cartDialog.showModal(); });
+if (basketBtn) basketBtn.addEventListener("click", () => { closeMenuSheet(); renderCart(); showPage("page-basket"); });
 
 /* ============ CHECKOUT ============ */
 const SHIPPING_FLAT = 100;
@@ -334,13 +466,14 @@ function renderSummary() {
   sumTotal.textContent = ship === null ? "0 EGP" : formatPrice(sub + ship);
 }
 
-checkoutButton.addEventListener("click", () => {
-  cartDialog.close();
+function openCheckout() {
+  renderSummary();
   checkoutForm.hidden = false;
   orderSuccess.hidden = true;
-  renderSummary();
-  checkoutDialog.showModal();
-});
+  showModalSafe(checkoutDialog);
+}
+
+checkoutButton.addEventListener("click", openCheckout);
 
 document.querySelector(".checkout-close").addEventListener("click", () => checkoutDialog.close());
 checkoutDialog.addEventListener("click", (event) => { if (event.target === checkoutDialog) checkoutDialog.close(); });
@@ -380,3 +513,5 @@ document.querySelector(".continue-btn").addEventListener("click", () => {
 
 renderProducts(PRODUCTS);
 renderCart();
+observeReveals();
+

@@ -23,6 +23,16 @@ html { scroll-behavior: smooth; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
+/* ---------- phone optimization ---------- */
+* { -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { padding-bottom: env(safe-area-inset-bottom); }
+img { max-width: 100%; height: auto; }
+button, a, select, input { touch-action: manipulation; }          /* kills 300ms double-tap zoom delay */
+input, select, textarea { font-size: 16px; }                       /* prevents iOS auto-zoom on focus */
+select option { background: #1A1816; color: #EDE6D6; }             /* readable dropdowns on Android */
+::selection { background: rgba(184,150,78,.35); }
+
 body {
   background: var(--obsidian);
   color: var(--ivory);
@@ -207,8 +217,8 @@ body.reveal-all .reveal { opacity: 1 !important; transform: none !important; }
 
 /* ---------- marquee ---------- */
 .marquee { overflow: hidden; padding: 4vh 0; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
-.mq-inner { display: flex; width: max-content; }
-.mq-inner span { font-size: clamp(3rem, 9vw, 8rem); font-weight: 300; white-space: nowrap; color: transparent;
+.mq-inner, .mq-track { display: flex; width: max-content; }
+.mq-inner span, .mq-track span { font-size: clamp(3rem, 9vw, 8rem); font-weight: 300; white-space: nowrap; color: transparent;
   -webkit-text-stroke: 1px var(--gold); letter-spacing: .04em; }
 
 /* ---------- triptych ---------- */
@@ -428,4 +438,58 @@ figcaption { margin-top: 10px; }
   .prod { grid-template-columns: 1fr; }
   .prod-viewer { position: static; }
   .utility-strip { justify-content: center; }
+
+  /* compact fixed top bar — more usable screen on phones */
+  #topbar { padding-bottom: 0; }
+  .utility-strip { display: none; }
+  .bar-main { padding: 10px 14px; gap: 8px; }
+  .bar-right { gap: 10px; }
+  .bar-right button { min-width: 34px; }
+  .view { padding-top: 64px; }
+  .hero { min-height: 58vh; }
+  .btn-magnet { padding: 14px 26px; }
+
+  /* marquee: hide JS-driven desktop track, use pure-CSS loop (works without JS/velocity code) */
+  .mq-desktop { display: none; }
+  .mq-mobile { display: flex !important; transform: none !important; animation: mqLoop 26s linear infinite; will-change: transform; }
+  @keyframes mqLoop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* touch-friendly controls */
+  .qty button { width: 40px; height: 40px; font-size: 1.1rem; }
+  .filters { gap: 8px; padding: 0 5vw 4vh; }
+  .filters select, .filters button { padding: 12px 10px; }
+  .card h3 { margin-top: 12px; }
+  .add-mini, .wish-btn { padding: 10px 6px; }
+  .grid { gap: 6vw; padding: 0 5vw 8vh; }
+  #menu-close, #search-close { top: 70px; right: 20px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .menu-nav a { padding: 14px 0; }
+  #cart-drawer { padding: 18px calc(18px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)); }
+  .cd-head h2 { font-size: 1.5rem; }
+  .ci img { width: 60px; }
+  .foot-brand { font-size: 2.2rem; letter-spacing: .25em; padding-left: .25em; }
+  .prose { font-size: 1.15rem; }
+  .prod-info h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+  .page-head { padding: 4vh 6vw 2vh; }
+  .stats { gap: 8vw; padding: 5vh 6vw; }
+}
+
+/* very small phones (<=400px): two-column product grid instead of one huge card */
+@media (max-width: 400px) {
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 4vw; }
+  .card h3 { font-size: 1.05rem; }
+  .card .price { font-size: .95rem; }
+  .card .ref { font-size: .5rem; }
+  .journal-grid { grid-template-columns: 1fr; }
+  .step-labels { gap: 12px; }
+}
+
+/* landscape phones: don't waste vertical space */
+@media (max-height: 480px) and (orientation: landscape) {
+  .hero { min-height: 70vh; }
+  .explode-track { height: 60vh; }
+}
+
+/* tablets */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }

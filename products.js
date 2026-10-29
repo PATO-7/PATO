@@ -38,6 +38,7 @@
   }
 
   const RAW = [
+    ['PATO Signature', 'PT-0800', 'Obsidian', 800, 40, 'Obsidian steel', 'Leather', 'One photograph, one hour — kept forever.'],
     ['Obsidian Nocturne', 'OB-4201', 'Obsidian', 96000, 42, 'Obsidian steel', 'Alligator', 'Night falls once; it keeps it forever.'],
     ['Obsidian Vantablack', 'OB-4202', 'Obsidian', 88000, 40, 'Obsidian steel', 'Steel bracelet', 'A dial cut from a moonless hour.'],
     ['Obsidian Gallery', 'OB-4203', 'Obsidian', 74000, 38, 'Obsidian steel', 'Calf leather', 'For rooms where light walks softly.'],
@@ -56,9 +57,9 @@
     id: 'p' + (i + 1),
     name: r[0], ref: r[1], collection: r[2], priceEGP: r[3], size: r[4],
     material: r[5], strap: r[6], poem: r[7],
-    soldOut: i === 10, // Lunar Eclipse — demonstrates "Notify me"
+    soldOut: i === 11, // Lunar Eclipse — demonstrates "Notify me"
     colors: ['#0A0A0B', '#B8964E', '#5C1A1B'],
-    images: [watchSVG({ collection: r[2] }, 40), watchSVG({ collection: r[2] }, 165), watchSVG({ collection: r[2] }, 285)],
+    images: i === 0 ? ['images/watch.webp', 'https://i.ibb.co/HDXbGSk2/s-l1600.webp'] : [watchSVG({ collection: r[2] }, 40), watchSVG({ collection: r[2] }, 165), watchSVG({ collection: r[2] }, 285)],
     specs: [
       ['Movement', 'Cal. PT-' + (100 + i) + ' · manual wind · 212 parts'],
       ['Power reserve', '72 hours'],

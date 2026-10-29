@@ -40,6 +40,19 @@
   <main>
     <!-- ============ PAGE 1: HOME (scroll down → watches) ============ -->
     <section id="page-home" class="page is-active hero">
+      <!-- top bar on first page: PATO · menu (3 chars) · basket -->
+      <header class="site-header">
+        <a class="logo" href="#" data-nav="home">PATO<span>.</span></a>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" id="basket-btn" aria-label="Open basket">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          </button>
+          <button class="icon-btn" type="button" id="menu-btn" aria-label="Open menu" aria-expanded="false">
+            <span class="ham"></span><span class="ham"></span><span class="ham"></span>
+          </button>
+        </div>
+      </header>
+
       <div class="hero-content">
         <p class="eyebrow">A study in precision · Est. 1987</p>
         <h1>Elegance<br>Written in Time</h1>
@@ -94,14 +107,15 @@
     </p>
   </footer>
 
-  <div class="theme-switcher" role="group" aria-label="Color theme">
-    <span class="theme-label">Theme</span>
-    <button class="theme-btn" type="button" data-theme="noir" aria-label="Noir Dark theme" title="Noir Dark"></button>
-    <button class="theme-btn" type="button" data-theme="mocha" aria-label="Mocha Grey theme" title="Mocha Grey"></button>
-    <button class="theme-btn" type="button" data-theme="slate" aria-label="Deep Slate theme" title="Deep Slate"></button>
-    <button class="theme-btn" type="button" data-theme="olive" aria-label="Forest Olive theme" title="Forest Olive"></button>
-    <button class="theme-btn" type="button" data-theme="plum" aria-label="Plum Dusk theme" title="Plum Dusk"></button>
-  </div>
+  <!-- ============ HALF-PAGE MENU SHEET (Category / Offers / Contact / PATO) ============ -->
+  <div class="menu-backdrop" id="menu-backdrop" hidden></div>
+  <nav class="menu-sheet" id="menu-sheet" aria-label="Main menu" hidden>
+    <button class="sheet-close" type="button" aria-label="Close menu">×</button>
+    <a class="sheet-item" href="#" data-nav="shop"><span class="si-num">01</span>Category<span class="si-arrow">→</span></a>
+    <a class="sheet-item" href="#" data-nav="offers"><span class="si-num">02</span>Offers<span class="si-arrow">→</span></a>
+    <a class="sheet-item" href="https://wa.me/201280001351" target="_blank" rel="noopener"><span class="si-num">03</span>Contact<span class="si-arrow">→</span></a>
+    <a class="sheet-item" href="#" data-nav="pato"><span class="si-num">04</span>PATO<span class="si-arrow">→</span></a>
+  </nav>
 
   <!-- ============ FULLSCREEN PHOTO VIEWER (opens over the page, gentle animation) ============ -->
   <div class="fullscreen-viewer" id="fullscreen-viewer" hidden>

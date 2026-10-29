@@ -29,32 +29,9 @@ if (splash) {
   }, 3600); // 3s hold + 0.6s fade-out
 }
 
-/* ============ THEME SWITCHER (5 dark gentle themes) ============ */
-const THEMES = ["noir", "mocha", "slate", "olive", "plum"];
-const themeButtons = document.querySelectorAll(".theme-btn");
-
-function applyTheme(name) {
-  if (!THEMES.includes(name)) name = "noir";
-  if (name === "noir") {
-    document.documentElement.removeAttribute("data-theme");
-  } else {
-    document.documentElement.setAttribute("data-theme", name);
-  }
-  try { localStorage.setItem("pato-theme", name); } catch (e) { /* storage unavailable */ }
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#101411");
-  themeButtons.forEach((btn) => {
-    const active = btn.dataset.theme === name;
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-pressed", String(active));
-  });
-}
-
-themeButtons.forEach((btn) => btn.addEventListener("click", () => applyTheme(btn.dataset.theme)));
-
-let savedTheme = "noir";
-try { savedTheme = localStorage.getItem("pato-theme") || "noir"; } catch (e) { /* storage unavailable */ }
-applyTheme(savedTheme);
+/* ============ FIXED DARK GENTLE THEME (no switcher UI) ============ */
+document.documentElement.removeAttribute("data-theme");
+try { localStorage.removeItem("pato-theme"); } catch (e) { /* storage unavailable */ }
 
 /* ============ CATALOGUE ============ */
 const IMG = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1100&q=85`;
@@ -95,14 +72,55 @@ document.body.addEventListener("click", (event) => {
   if (!link) return;
   event.preventDefault();
   const target = link.dataset.nav;
+  closeMenuSheet();
   if (target === "home") showPage("page-home");
   else if (target === "shop") {
     showPage("page-home");
+    renderProducts(PRODUCTS);
+    window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  }
+  else if (target === "offers") {
+    showPage("page-home");
+    renderProducts(PRODUCTS.filter((p) => p.oldPrice));
     window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   }
   else if (target === "contact") showPage("page-contact");
   else if (target === "pato") showPage("page-pato");
 });
+
+/* ============ HALF-PAGE MENU SHEET ============ */
+const menuBtn = document.getElementById("menu-btn");
+const menuSheet = document.getElementById("menu-sheet");
+const menuBackdrop = document.getElementById("menu-backdrop");
+
+function openMenuSheet() {
+  if (!menuSheet || menuBtn.getAttribute("aria-expanded") === "true") return;
+  menuBackdrop.hidden = false;
+  menuSheet.hidden = false;
+  menuBtn.setAttribute("aria-expanded", "true");
+  requestAnimationFrame(() => {
+    menuBackdrop.classList.add("is-open");
+    menuSheet.classList.add("is-open");
+  });
+}
+
+function closeMenuSheet() {
+  if (!menuSheet || menuSheet.hidden) return;
+  menuBtn && menuBtn.setAttribute("aria-expanded", "false");
+  menuBackdrop.classList.remove("is-open");
+  menuSheet.classList.remove("is-open");
+  window.setTimeout(() => { menuBackdrop.hidden = true; menuSheet.hidden = true; }, 280);
+}
+
+if (menuBtn) menuBtn.addEventListener("click", openMenuSheet);
+if (menuBackdrop) menuBackdrop.addEventListener("click", closeMenuSheet);
+if (menuSheet) {
+  menuSheet.querySelector(".sheet-close").addEventListener("click", closeMenuSheet);
+  /* when a nav item inside the sheet is clicked, the body listener closes it;
+     direct WhatsApp link should also dismiss the sheet visually */
+  menuSheet.querySelectorAll('a[href^="https://wa.me"]').forEach((a) => a.addEventListener("click", closeMenuSheet));
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenuSheet(); });
 
 /* ============ PRODUCT GRID (tap card → fullscreen photos) ============ */
 const productGrid = document.getElementById("product-grid");
@@ -280,6 +298,10 @@ productGrid.addEventListener("click", (event) => {
 
 document.querySelector(".cart-close").addEventListener("click", () => cartDialog.close());
 cartDialog.addEventListener("click", (event) => { if (event.target === cartDialog) cartDialog.close(); });
+
+/* basket icon on the first page opens the saved basket */
+const basketBtn = document.getElementById("basket-btn");
+if (basketBtn) basketBtn.addEventListener("click", () => { closeMenuSheet(); renderCart(); cartDialog.showModal(); });
 
 /* ============ CHECKOUT ============ */
 const SHIPPING_FLAT = 100;

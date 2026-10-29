@@ -1,517 +1,349 @@
 /* ============================================================
-   PATO — animated splash, scroll flow (hero → watches),
-   fullscreen photo viewer, basket & checkout
+   PATO — main script
+   Palette: #BBBFBF #878787 #05AD98 #FFFFFF
+   Splash -> hero morph, scrollytelling parallax + reveals,
+   micro-animations, product detail pages, basket + checkout.
    ============================================================ */
 
-/* ============ SPLASH SCREEN (animated wallpaper behind PATO) ============ */
-const splash = document.getElementById("splash");
-if (splash) {
-  document.body.classList.add("splash-lock");
-
-  /* rotate wallpaper images inside the splash */
-  const sbImgs = splash.querySelectorAll(".sb-img");
-  if (sbImgs.length > 1) {
-    let sbIndex = 0;
-    window.setInterval(() => {
-      sbImgs[sbIndex].classList.remove("is-active");
-      sbIndex = (sbIndex + 1) % sbImgs.length;
-      const next = sbImgs[sbIndex];
-      next.classList.add("is-active");
-      next.style.animation = "none";
-      void next.offsetWidth;
-      next.style.animation = "";
-    }, 700);
-  }
-
-  window.setTimeout(() => {
-    document.body.classList.remove("splash-lock");
-    splash.classList.add("is-hidden");
-  }, 1600); // shorter intro: ~1.2s hold + quick merge fade
-}
-
-/* ============ FIXED DARK GENTLE THEME (no switcher UI) ============ */
-document.documentElement.removeAttribute("data-theme");
-try { localStorage.removeItem("pato-theme"); } catch (e) { /* storage unavailable */ }
-
-/* ============ CATALOGUE ============ */
-const IMG = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1100&q=85`;
-const COLORS = [
-  { name: "Silver", hex: "#BBBFBF" },
-  { name: "Graphite", hex: "#878787" },
-  { name: "Jade", hex: "#05AD98" },
-  { name: "Pearl", hex: "#FFFFFF" },
-];
-const PRODUCTS = [
-  { id: "sovereign", name: "The Sovereign Silver", detail: "Automatic · 40 mm", price: 64900, tag: "Bestseller",
-    photos: [IMG("photo-1523275335684-37898b6baf30"), IMG("photo-1524592094714-0f0654e20314"), IMG("photo-1522312352255-9d8153d4d2d8")] },
-  { id: "onyx", name: "Chronograph Onyx", detail: "Chronograph · 42 mm", price: 108500, tag: "New",
-    photos: [IMG("photo-1524805444758-089113d48a6d"), IMG("photo-1533139501650-bd3c0b4e411a"), IMG("photo-1523170335258-f5ed11844a49")] },
-  { id: "heritage", name: "Heritage Vintage", detail: "Hand-wound · 38 mm", price: 45900, tag: "Offer", oldPrice: 52900,
-    photos: [IMG("photo-1542496658-e33a6d0d50f6"), IMG("photo-1508057198844-421ef382668a"), IMG("photo-1434056886845-dac89ffe9b56")] },
-  { id: "rose", name: "PATO Rose Edition", detail: "Automatic · 36 mm", price: 89500, tag: "Offer", oldPrice: 97500,
-    photos: [IMG("photo-1434056886845-dac89ffe9b56"), IMG("photo-1587836374828-8b3f44ae0e1a"), IMG("photo-1564423174718-4f2b2b1c4b1f")] },
-  { id: "meridian", name: "The Meridian", detail: "Automatic · 38 mm", price: 72500, tag: "",
-    photos: [IMG("photo-1614250318805-3de75d1c7a00"), IMG("photo-1523275335684-37898b6baf30"), IMG("photo-1524805444758-089113d48a6d")] },
-  { id: "navigator", name: "Navigator Steel", detail: "Quartz · 41 mm", price: 38900, tag: "Offer", oldPrice: 44900,
-    photos: [IMG("photo-1522312352255-9d8153d4d2d8"), IMG("photo-1542496658-e33a6d0d50f6"), IMG("photo-1533139501650-bd3c0b4e411a")] },
-];
-const formatPrice = (price) => `${new Intl.NumberFormat("en-EG", { maximumFractionDigits: 0 }).format(price)} EGP`;
-
-/* ============ PAGES (home + shop are one scroll flow) ============ */
-const pages = document.querySelectorAll(".page");
-const shopSection = document.getElementById("page-shop");
-let lastScrollY = 0;
-
-function showPage(id) {
-  closeViewer();
-  const goingHome = id === "page-home";
-  pages.forEach((p) => {
-    const active = p.id === id;
-    p.classList.toggle("is-active", active);
-    if (p !== document.getElementById("page-home")) p.hidden = !active;
-  });
-  if (goingHome) {
-    shopSection.hidden = false;
-    window.scrollTo({ top: lastScrollY || 0, behavior: "auto" });
-  } else {
-    lastScrollY = window.scrollY;
-    shopSection.hidden = true;
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }
-}
-
-document.body.addEventListener("click", (event) => {
-  const link = event.target.closest("[data-nav]");
-  if (!link) return;
-  event.preventDefault();
-  const target = link.dataset.nav;
-  closeMenuSheet();
-  if (target === "back") showPage("page-home");
-  else if (target === "basket") { renderCart(); showPage("page-basket"); }
-  else if (target === "home") showPage("page-home");
-  else if (target === "shop") {
-    showPage("page-home");
-    renderProducts(PRODUCTS);
-    window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-  }
-  else if (target === "offers") {
-    showPage("page-home");
-    renderProducts(PRODUCTS.filter((p) => p.oldPrice));
-    window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-  }
-  else if (target === "contact") showPage("page-contact");
-  else if (target === "pato") showPage("page-pato");
-});
-
-/* ============ HALF-PAGE MENU SHEET ============ */
-const menuBtn = document.getElementById("menu-btn");
-const menuSheet = document.getElementById("menu-sheet");
-const menuBackdrop = document.getElementById("menu-backdrop");
-
-function openMenuSheet() {
-  if (!menuSheet || menuBtn.getAttribute("aria-expanded") === "true") return;
-  menuBackdrop.hidden = false;
-  menuSheet.hidden = false;
-  menuBtn.setAttribute("aria-expanded", "true");
-  requestAnimationFrame(() => {
-    menuBackdrop.classList.add("is-open");
-    menuSheet.classList.add("is-open");
-  });
-}
-
-function closeMenuSheet() {
-  if (!menuSheet || menuSheet.hidden) return;
-  menuBtn && menuBtn.setAttribute("aria-expanded", "false");
-  menuBackdrop.classList.remove("is-open");
-  menuSheet.classList.remove("is-open");
-  window.setTimeout(() => { menuBackdrop.hidden = true; menuSheet.hidden = true; }, 280);
-}
-
-if (menuBtn) menuBtn.addEventListener("click", openMenuSheet);
-if (menuBackdrop) menuBackdrop.addEventListener("click", closeMenuSheet);
-if (menuSheet) {
-  menuSheet.querySelector(".sheet-close").addEventListener("click", closeMenuSheet);
-  /* when a nav item inside the sheet is clicked, the body listener closes it;
-     direct WhatsApp link should also dismiss the sheet visually */
-  menuSheet.querySelectorAll('a[href^="https://wa.me"]').forEach((a) => a.addEventListener("click", closeMenuSheet));
-}
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenuSheet(); });
-
-/* ============ PRODUCT GRID (tap card → fullscreen photos) ============ */
-const productGrid = document.getElementById("product-grid");
-
-function renderProducts(list) {
-  productGrid.replaceChildren();
-  list.forEach((product) => {
-    const card = document.createElement("article");
-    card.className = "product-card";
-    card.dataset.id = product.id;
-    card.innerHTML = `
-      <div class="product-image">
-        <img src="${product.photos[0]}" alt="${product.name}" loading="lazy">
-        ${product.tag ? `<span class="product-tag">${product.tag}</span>` : ""}
-      </div>
-      <div class="product-info">
-        <div><h3>${product.name}</h3><p class="product-detail">${product.detail}</p></div>
-        <p class="price">${formatPrice(product.price)}${product.oldPrice ? `<s>${formatPrice(product.oldPrice)}</s>` : ""}</p>
-      </div>
-      <button class="add-to-cart-btn" type="button" data-id="${product.id}">Add to basket <span aria-hidden="true">+</span></button>`;
-    card.querySelector(".product-image").addEventListener("click", () => openProductPage(product.id));
-    card.querySelector("h3").addEventListener("click", () => openProductPage(product.id));
-    card.classList.add("reveal");
-    productGrid.append(card);
-  });
-  observeReveals();
-}
-
-/* ---- scrollytelling: reveal-on-scroll observer ---- */
-const revealObserver = ("IntersectionObserver" in window)
-  ? new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-revealed");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 })
-  : null;
-
-function observeReveals() {
-  document.querySelectorAll(".reveal:not(.is-revealed)").forEach((el) => {
-    if (revealObserver) revealObserver.observe(el);
-    else el.classList.add("is-revealed");
-  });
-}
-
-/* ---- micro-animations: section headings reveal on scroll ---- */
-document.querySelectorAll(".section-heading, .story-copy, .story-image").forEach((el) => el.classList.add("reveal"));
-
-/* ---- parallax: hero content drifts slowly while scrolling (Scrollytelling 2.0) ---- */
-const heroContent = document.querySelector(".hero-content");
-let ticking = false;
-window.addEventListener("scroll", () => {
-  if (ticking || !heroContent) return;
-  ticking = true;
-  requestAnimationFrame(() => {
-    const y = window.scrollY;
-    if (y < window.innerHeight) {
-      heroContent.style.transform = `translateY(${y * 0.28}px)`;
-      heroContent.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.85)));
-    }
-    ticking = false;
-  });
-}, { passive: true });
-
-/* ============ FULLSCREEN PHOTO VIEWER (gentle professional animation) ============ */
-const viewer = document.getElementById("fullscreen-viewer");
-const fvMain = viewer.querySelector(".fv-main");
-const fvName = viewer.querySelector(".fv-name");
-const fvDetail = viewer.querySelector(".fv-detail");
-const fvPrice = viewer.querySelector(".fv-price");
-const fvThumbs = viewer.querySelector(".fv-thumbs");
-const fvAdd = viewer.querySelector(".fv-add");
-let currentProduct = null;
-let currentPhoto = 0;
-
-function openViewer(id) {
-  const product = PRODUCTS.find((p) => p.id === id);
-  if (!product) return;
-  currentProduct = product;
-  currentPhoto = 0;
-  fvName.textContent = product.name;
-  fvDetail.textContent = product.detail;
-  fvPrice.innerHTML = `${formatPrice(product.price)}${product.oldPrice ? ` <s>${formatPrice(product.oldPrice)}</s>` : ""}`;
-  fvThumbs.replaceChildren();
-  product.photos.forEach((src, i) => {
-    const thumb = document.createElement("button");
-    thumb.type = "button";
-    thumb.className = "fv-thumb";
-    thumb.setAttribute("aria-label", `Photo ${i + 1}`);
-    thumb.innerHTML = `<img src="${src}" alt="">`;
-    thumb.addEventListener("click", () => setPhoto(i));
-    fvThumbs.append(thumb);
-  });
-  setPhoto(0);
-  viewer.hidden = false;
-  requestAnimationFrame(() => viewer.classList.add("is-open"));
-  document.body.classList.add("viewer-lock");
-}
-
-function setPhoto(index) {
-  if (!currentProduct) return;
-  currentPhoto = (index + currentProduct.photos.length) % currentProduct.photos.length;
-  /* gentle crossfade: fade out, swap, fade in */
-  fvMain.classList.remove("is-swapping");
-  void fvMain.offsetWidth;
-  fvMain.classList.add("is-swapping");
-  window.setTimeout(() => {
-    fvMain.src = currentProduct.photos[currentPhoto];
-    fvMain.alt = `${currentProduct.name} — photo ${currentPhoto + 1}`;
-    fvMain.classList.remove("is-swapping");
-  }, 180);
-  viewer.querySelectorAll(".fv-thumb").forEach((t, i) => t.classList.toggle("is-active", i === currentPhoto));
-}
-
-function closeViewer() {
-  if (viewer.hidden) return;
-  viewer.classList.remove("is-open");
-  document.body.classList.remove("viewer-lock");
-  window.setTimeout(() => { viewer.hidden = true; currentProduct = null; }, 300);
-}
-
-viewer.querySelector(".fv-close").addEventListener("click", closeViewer);
-viewer.querySelector(".fv-backdrop").addEventListener("click", closeViewer);
-viewer.querySelector(".prev").addEventListener("click", () => setPhoto(currentPhoto - 1));
-viewer.querySelector(".next").addEventListener("click", () => setPhoto(currentPhoto + 1));
-document.addEventListener("keydown", (e) => {
-  if (viewer.hidden) return;
-  if (e.key === "Escape") closeViewer();
-  if (e.key === "ArrowLeft") setPhoto(currentPhoto - 1);
-  if (e.key === "ArrowRight") setPhoto(currentPhoto + 1);
-});
-
-/* swipe left/right on the fullscreen photo */
-let touchX = null;
-fvMain.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; }, { passive: true });
-fvMain.addEventListener("touchend", (e) => {
-  if (touchX === null) return;
-  const dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 45) setPhoto(currentPhoto + (dx < 0 ? 1 : -1));
-  touchX = null;
-});
-
-fvAdd.addEventListener("click", () => {
-  if (!currentProduct) return;
-  addToBasket(currentProduct.name, currentProduct.price, fvAdd);
-});
-
-/* ============ PRODUCT DETAIL PAGE (photos, colours, price, buy icon) ============ */
-const productPage = document.getElementById("page-product");
-const pdMain = productPage.querySelector(".pd-main");
-const pdName = productPage.querySelector(".pd-name");
-const pdDetail = productPage.querySelector(".pd-detail");
-const pdPrice = productPage.querySelector(".pd-price");
-const pdThumbs = productPage.querySelector(".pd-thumbs");
-const pdSwatches = productPage.querySelector(".swatches");
-const pdBuy = productPage.querySelector(".pd-buy");
-let pdProduct = null;
-let pdPhoto = 0;
-let pdColor = COLORS[0];
-
-function setPdPhoto(index) {
-  if (!pdProduct) return;
-  pdPhoto = (index + pdProduct.photos.length) % pdProduct.photos.length;
-  pdMain.classList.remove("is-swapping");
-  void pdMain.offsetWidth;
-  pdMain.classList.add("is-swapping");
-  window.setTimeout(() => {
-    pdMain.src = pdProduct.photos[pdPhoto];
-    pdMain.alt = `${pdProduct.name} — photo ${pdPhoto + 1}`;
-    pdMain.classList.remove("is-swapping");
-  }, 170);
-  pdThumbs.querySelectorAll(".fv-thumb").forEach((t, i) => t.classList.toggle("is-active", i === pdPhoto));
-}
-
-function openProductPage(id) {
-  const product = PRODUCTS.find((p) => p.id === id);
-  if (!product) return;
-  pdProduct = product;
-  pdColor = COLORS[0];
-  pdName.textContent = product.name;
-  pdDetail.textContent = product.detail;
-  pdPrice.innerHTML = `${formatPrice(product.price)}${product.oldPrice ? ` <s>${formatPrice(product.oldPrice)}</s>` : ""}`;
-  pdThumbs.replaceChildren();
-  product.photos.forEach((src, i) => {
-    const thumb = document.createElement("button");
-    thumb.type = "button";
-    thumb.className = "fv-thumb";
-    thumb.setAttribute("aria-label", `Photo ${i + 1}`);
-    thumb.innerHTML = `<img src="${src}" alt="">`;
-    thumb.addEventListener("click", () => setPdPhoto(i));
-    pdThumbs.append(thumb);
-  });
-  pdSwatches.replaceChildren();
-  COLORS.forEach((c) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "swatch" + (c === pdColor ? " is-active" : "");
-    chip.title = c.name;
-    chip.setAttribute("aria-label", `Colour: ${c.name}`);
-    chip.style.setProperty("--sw", c.hex);
-    chip.addEventListener("click", () => {
-      pdColor = c;
-      pdSwatches.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("is-active", s === chip));
-    });
-    pdSwatches.append(chip);
-  });
-  setPdPhoto(0);
-  showPage("page-product");
-}
-
-productPage.querySelector(".pd-arrow.prev").addEventListener("click", () => setPdPhoto(pdPhoto - 1));
-productPage.querySelector(".pd-arrow.next").addEventListener("click", () => setPdPhoto(pdPhoto + 1));
-
-/* buying icon → adds to basket and opens checkout */
-pdBuy.addEventListener("click", () => {
-  if (!pdProduct) return;
-  const label = pdColor && pdColor.name !== "Silver" ? `${pdProduct.name} · ${pdColor.name}` : pdProduct.name;
-  addToBasket(label, pdProduct.price, pdBuy);
-  openCheckout();
-});
-
-/* ============ BASKET ============ */
 const cart = new Map();
-const checkoutDialog = document.getElementById("checkout-dialog");
-const basketPage = document.getElementById("page-basket");
-const cartItems = basketPage.querySelector(".bk-items");
-const cartEmpty = basketPage.querySelector(".bk-empty");
-const bkFooter = basketPage.querySelector(".bk-footer");
-const cartTotal = basketPage.querySelector(".bk-subtotal strong");
-const checkoutButton = basketPage.querySelector(".bk-checkout");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-try {
-  const saved = JSON.parse(localStorage.getItem("pato-basket") || "[]");
-  saved.forEach(([name, item]) => { if (name && item && typeof item.price === "number") cart.set(name, { price: item.price, quantity: Number(item.quantity) || 1 }); });
-} catch (e) { /* ignore corrupt storage */ }
+/* ---------- money formatting (EGP) ---------- */
+const formatPrice = (price) => "LE " + Number(price).toLocaleString("en-EG", { maximumFractionDigits: 0 });
 
-function persistBasket() {
-  try { localStorage.setItem("pato-basket", JSON.stringify([...cart.entries()])); } catch (e) { /* storage unavailable */ }
+/* ============================================================
+   1) SPLASH — short kinetic/glitch intro that MERGES into the hero
+   ============================================================ */
+(function splash() {
+  const el = document.getElementById("splash");
+  if (!el) return;
+  if (reduceMotion) { el.remove(); return; }
+
+  // after ~1.4s of glitch/kinetic letters, the word scales & flies up to
+  // its position in the top bar while the page fades in underneath.
+  window.setTimeout(() => {
+    el.classList.add("is-morphing");
+    document.body.classList.add("site-ready");
+  }, 1400);
+
+  window.setTimeout(() => {
+    el.remove();
+  }, 2050);
+})();
+
+/* ============================================================
+   2) SCROLLYTELLING — reveal-on-scroll + parallax layers
+   ============================================================ */
+(function scrollytelling() {
+  const reveals = document.querySelectorAll("[data-reveal]");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.18 });
+    reveals.forEach((r) => io.observe(r));
+  } else {
+    reveals.forEach((r) => r.classList.add("is-visible"));
+  }
+
+  // gentle parallax on [data-parallax] elements
+  const layers = [...document.querySelectorAll("[data-parallax]")];
+  if (layers.length && !reduceMotion) {
+    let ticking = false;
+    const update = () => {
+      const vh = window.innerHeight;
+      for (const layer of layers) {
+        const speed = parseFloat(layer.dataset.parallax) || 0.15;
+        const rect = layer.getBoundingClientRect();
+        const offset = (rect.top + rect.height / 2 - vh / 2) * -speed;
+        layer.style.setProperty("--py", offset.toFixed(1) + "px");
+      }
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+  }
+})();
+
+/* ============================================================
+   3) MICRO-ANIMATIONS — magnetic buttons + press feedback
+   ============================================================ */
+(function micros() {
+  if (reduceMotion || !window.matchMedia("(hover:hover)").matches) return;
+  document.querySelectorAll(".magnetic").forEach((btn) => {
+    btn.addEventListener("pointermove", (ev) => {
+      const r = btn.getBoundingClientRect();
+      const x = (ev.clientX - r.left - r.width / 2) * 0.18;
+      const y = (ev.clientY - r.top - r.height / 2) * 0.18;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
+  });
+})();
+
+/* ============================================================
+   4) TOP BAR — menu toggle + smooth anchor clicks (all working)
+   ============================================================ */
+const menuToggle = document.querySelector(".menu-toggle");
+const navLinks = document.querySelector("#nav-links");
+
+menuToggle.addEventListener("click", () => {
+  const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+  menuToggle.setAttribute("aria-expanded", String(!isOpen));
+  menuToggle.setAttribute("aria-label", isOpen ? "Open menu" : "Close menu");
+  navLinks.classList.toggle("is-open", !isOpen);
+});
+
+// close menu + smooth scroll for in-page links
+navLinks.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", (ev) => {
+    menuToggle.setAttribute("aria-expanded", "false");
+    navLinks.classList.remove("is-open");
+    const href = link.getAttribute("href") || "";
+    if (href.startsWith("#")) {
+      ev.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    }
+  });
+});
+
+// logo -> home
+document.querySelector(".logo").addEventListener("click", (ev) => {
+  ev.preventDefault();
+  window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+});
+
+// "Explore the collection" button also scrolls smoothly
+document.querySelectorAll('a.btn[href^="#"]').forEach((a) => {
+  a.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    document.querySelector(a.getAttribute("href"))?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  });
+});
+
+/* ============================================================
+   5) PRODUCT DATA + detail page (photos, colors, price, buy icon)
+   ============================================================ */
+const IMG = (id, w = 900) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=85`;
+
+const PRODUCTS = {
+  sovereign: {
+    name: "The Sovereign Silver",
+    tagline: "Signature collection",
+    detail: "Automatic · 40 mm · Sapphire crystal",
+    price: 1250,
+    photos: ["photo-1523275335684-37898b6baf30", "photo-1524592094714-0f0654e20314", "photo-1522312346301-d07f2f69d2c0"],
+    colors: [
+      { name: "Silver", hex: "#BBBFBF" },
+      { name: "Steel Grey", hex: "#878787" },
+      { name: "Pure White", hex: "#FFFFFF" },
+      { name: "Mint Teal", hex: "#05AD98" }
+    ]
+  },
+  onyx: {
+    name: "Chronograph Onyx",
+    tagline: "New arrival",
+    detail: "Chronograph · 42 mm · Tachymeter bezel",
+    price: 2100,
+    photos: ["photo-1524805444758-089113d48a6d", "photo-1533139501610-f5d4dbfac34d", "photo-1526033638123-2f6f67560004"],
+    colors: [
+      { name: "Graphite", hex: "#878787" },
+      { name: "Frost", hex: "#BBBFBF" },
+      { name: "Teal Dial", hex: "#05AD98" },
+      { name: "White Dial", hex: "#FFFFFF" }
+    ]
+  },
+  heritage: {
+    name: "Heritage Vintage",
+    tagline: "Made to be kept",
+    detail: "Hand-wound · 38 mm · Leather strap",
+    price: 890,
+    photos: ["photo-1542496658-e33a6d0d50f6", "photo-1524592094714-0f0654e20314", "photo-1519296696839-01ba8e3cf1ff"],
+    colors: [
+      { name: "Sand Grey", hex: "#BBBFBF" },
+      { name: "Walnut Dark", hex: "#878787" },
+      { name: "Ivory", hex: "#FFFFFF" },
+      { name: "Jade Accent", hex: "#05AD98" }
+    ]
+  },
+  rose: {
+    name: "PATO Rose Edition",
+    tagline: "Limited edition",
+    detail: "Automatic · 36 mm · Rose-gold case",
+    price: 1750,
+    photos: ["photo-1434056886845-dac89ffe9b56", "photo-1547991547-f7a143d078c0", "photo-1523170335258-f5ed11844a49"],
+    colors: [
+      { name: "Blush Steel", hex: "#BBBFBF" },
+      { name: "Warm Grey", hex: "#878787" },
+      { name: "Pearl", hex: "#FFFFFF" },
+      { name: "Emerald Hand", hex: "#05AD98" }
+    ]
+  }
+};
+
+const productPage = document.getElementById("productPage");
+const ppMain = document.getElementById("ppMain");
+const ppThumbs = document.getElementById("ppThumbs");
+const ppName = document.getElementById("ppName");
+const ppDetail = document.getElementById("ppDetail");
+const ppPrice = document.getElementById("ppPrice");
+const ppTagline = document.getElementById("ppTagline");
+const ppSwatches = document.getElementById("ppSwatches");
+const ppBuy = document.getElementById("ppBuy");
+let currentProduct = null;
+
+function openProduct(id) {
+  const p = PRODUCTS[id];
+  if (!p) return;
+  currentProduct = { id, ...p };
+
+  ppName.textContent = p.name;
+  ppDetail.textContent = p.detail;
+  ppTagline.textContent = p.tagline;
+  ppPrice.textContent = formatPrice(p.price);
+
+  // photos
+  ppMain.src = IMG(p.photos[0], 1400);
+  ppMain.alt = p.name;
+  ppThumbs.replaceChildren();
+  p.photos.forEach((pid, i) => {
+    const t = document.createElement("button");
+    t.type = "button";
+    t.className = "pp-thumb" + (i === 0 ? " is-active" : "");
+    t.innerHTML = `<img src="${IMG(pid, 240)}" alt="View ${i + 1} of ${p.name}" loading="lazy">`;
+    t.addEventListener("click", () => {
+      ppMain.classList.remove("fade-in");
+      void ppMain.offsetWidth; // restart animation
+      ppMain.src = IMG(pid, 1400);
+      ppMain.classList.add("fade-in");
+      ppThumbs.querySelectorAll(".pp-thumb").forEach((x) => x.classList.remove("is-active"));
+      t.classList.add("is-active");
+    });
+    ppThumbs.append(t);
+  });
+
+  // colors
+  ppSwatches.replaceChildren();
+  p.colors.forEach((c, i) => {
+    const s = document.createElement("button");
+    s.type = "button";
+    s.className = "pp-swatch" + (i === 0 ? " is-active" : "");
+    s.style.setProperty("--sw", c.hex);
+    s.title = c.name;
+    s.setAttribute("aria-label", "Color: " + c.name);
+    s.addEventListener("click", () => {
+      ppSwatches.querySelectorAll(".pp-swatch").forEach((x) => x.classList.remove("is-active"));
+      s.classList.add("is-active");
+    });
+    ppSwatches.append(s);
+  });
+
+  productPage.classList.add("is-open");
+  productPage.setAttribute("aria-hidden", "false");
+  document.body.classList.add("no-scroll");
+  history.pushState({ page: "product" }, "", "#" + id);
 }
 
-function subtotal() {
-  return [...cart.values()].reduce((sum, item) => sum + item.price * item.quantity, 0);
+function closeProduct(pushback = true) {
+  productPage.classList.remove("is-open");
+  productPage.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("no-scroll");
+  currentProduct = null;
+  if (pushback && location.hash.length > 1) history.pushState({ page: "home" }, "", location.pathname);
 }
+
+// grid cards open their product page
+document.querySelectorAll(".product-card[data-id]").forEach((card) => {
+  card.addEventListener("click", () => openProduct(card.dataset.id));
+  card.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openProduct(card.dataset.id); }
+  });
+});
+
+document.querySelector(".pp-close").addEventListener("click", () => closeProduct());
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && productPage.classList.contains("is-open")) closeProduct();
+});
+window.addEventListener("popstate", () => closeProduct(false));
+
+// Buy icon -> adds to basket with micro-animation
+ppBuy.addEventListener("click", () => {
+  if (!currentProduct) return;
+  addToCart(currentProduct.name, currentProduct.price);
+  ppBuy.classList.add("is-bought");
+  ppBuy.childNodes[ppBuy.childNodes.length - 1].textContent = " Added ✓";
+  setTimeout(() => {
+    ppBuy.classList.remove("is-bought");
+    ppBuy.childNodes[ppBuy.childNodes.length - 1].textContent = " Buy now";
+  }, 1400);
+});
+
+/* ============================================================
+   6) BASKET + CHECKOUT
+   ============================================================ */
+const cartDialog = document.getElementById("cart-dialog");
+const cartItems = document.querySelector(".cart-items");
+const cartEmpty = document.querySelector(".cart-empty");
+const dialogCount = document.querySelector(".dialog-count");
+const cartTotal = document.querySelector(".cart-total strong");
+const checkoutButton = document.querySelector(".checkout-btn");
 
 function renderCart() {
-  const quantity = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
-  bkFooter.hidden = quantity === 0;
-  cartTotal.textContent = formatPrice(subtotal());
+  const quantity = [...cart.values()].reduce((s, i) => s + i.quantity, 0);
+  const subtotal = [...cart.values()].reduce((s, i) => s + i.price * i.quantity, 0);
+  dialogCount.textContent = `(LE ${quantity})`;
+  cartTotal.textContent = formatPrice(subtotal);
   cartEmpty.hidden = quantity > 0;
   checkoutButton.disabled = quantity === 0;
   cartItems.replaceChildren();
 
   for (const [name, item] of cart) {
     const row = document.createElement("article");
-    row.className = "cart-row reveal is-revealed";
-    row.innerHTML = `<div><h3>${name}</h3><p>Quantity: ${item.quantity} · ${formatPrice(item.price)} each</p></div><span class="cart-row-price">${formatPrice(item.price * item.quantity)}</span>`;
+    row.className = "cart-row";
+    const left = document.createElement("div");
+    const h3 = document.createElement("h3"); h3.textContent = name;
+    const qty = document.createElement("p"); qty.textContent = `Quantity: ${item.quantity}`;
+    left.append(h3, qty);
+    const price = document.createElement("span");
+    price.className = "cart-row-price";
+    price.textContent = formatPrice(item.price * item.quantity);
     const removeButton = document.createElement("button");
     removeButton.className = "cart-remove";
     removeButton.type = "button";
     removeButton.textContent = "Remove";
-    removeButton.addEventListener("click", () => { cart.delete(name); persistBasket(); renderCart(); });
-    row.append(removeButton);
+    removeButton.addEventListener("click", () => { cart.delete(name); renderCart(); });
+    row.append(left, price, removeButton);
     cartItems.append(row);
   }
 }
 
-/* guard for environments without native dialog support */
-function showModalSafe(dialog) {
-  if (typeof dialog.showModal === "function") dialog.showModal();
-  else dialog.setAttribute("open", "");
-}
-
-function addToBasket(name, price, button) {
-  const item = cart.get(name) ?? { price, quantity: 0 };
+function addToCart(name, price) {
+  const item = cart.get(name) ?? { price: Number(price), quantity: 0 };
   item.quantity += 1;
   cart.set(name, item);
-  persistBasket();
   renderCart();
-  button.classList.add("is-added");
-  button.innerHTML = 'Added to basket <span aria-hidden="true">✓</span>';
-  window.setTimeout(() => {
-    button.classList.remove("is-added");
-    button.innerHTML = 'Add to basket <span aria-hidden="true">+</span>';
-  }, 1400);
 }
 
-productGrid.addEventListener("click", (event) => {
-  const button = event.target.closest(".add-to-cart-btn[data-id]");
-  if (!button) return;
-  const product = PRODUCTS.find((p) => p.id === button.dataset.id);
-  if (product) addToBasket(product.name, product.price, button);
+document.querySelector(".cart-btn").addEventListener("click", () => cartDialog.showModal());
+document.querySelector(".cart-close").addEventListener("click", () => cartDialog.close());
+cartDialog.addEventListener("click", (ev) => { if (ev.target === cartDialog) cartDialog.close(); });
+
+// Checkout -> WhatsApp order message
+checkoutButton.addEventListener("click", () => {
+  if (cart.size === 0) return;
+  const lines = [...cart.entries()].map(([name, i]) => `• ${name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`);
+  const total = [...cart.values()].reduce((s, i) => s + i.price * i.quantity, 0);
+  const msg = encodeURIComponent(`Hello PATO! I'd like to order:\n${lines.join("\n")}\nTotal: ${formatPrice(total)}`);
+  window.open(`https://wa.me/201280001351?text=${msg}`, "_blank", "noopener");
 });
 
-/* basket icon on the first page opens the basket page */
-const basketBtn = document.getElementById("basket-btn");
-if (basketBtn) basketBtn.addEventListener("click", () => { closeMenuSheet(); renderCart(); showPage("page-basket"); });
-
-/* ============ CHECKOUT ============ */
-const SHIPPING_FLAT = 100;
-const FREE_SHIPPING_FROM = 5000;
-const summaryItems = document.querySelector(".summary-items");
-const sumSubtotal = document.querySelector(".sum-subtotal");
-const sumShipping = document.querySelector(".sum-shipping");
-const sumTotal = document.querySelector(".sum-total");
-const checkoutForm = document.getElementById("checkout-form");
-const orderSuccess = document.querySelector(".order-success");
-const successRef = document.querySelector(".success-ref");
-
-function shippingFor(amount) {
-  if (amount >= FREE_SHIPPING_FROM) return 0;
-  return amount > 0 ? SHIPPING_FLAT : null;
-}
-
-function renderSummary() {
-  const sub = subtotal();
-  const ship = shippingFor(sub);
-  summaryItems.replaceChildren();
-  for (const [name, item] of cart) {
-    const row = document.createElement("div");
-    row.className = "summary-row";
-    row.innerHTML = `<span>${item.quantity} × ${name}</span><strong>${formatPrice(item.price * item.quantity)}</strong>`;
-    summaryItems.append(row);
-  }
-  sumSubtotal.textContent = formatPrice(sub);
-  sumShipping.textContent = ship === null ? "—" : ship === 0 ? "Free" : formatPrice(ship);
-  sumTotal.textContent = ship === null ? "0 EGP" : formatPrice(sub + ship);
-}
-
-function openCheckout() {
-  renderSummary();
-  checkoutForm.hidden = false;
-  orderSuccess.hidden = true;
-  showModalSafe(checkoutDialog);
-}
-
-checkoutButton.addEventListener("click", openCheckout);
-
-document.querySelector(".checkout-close").addEventListener("click", () => checkoutDialog.close());
-checkoutDialog.addEventListener("click", (event) => { if (event.target === checkoutDialog) checkoutDialog.close(); });
-
-checkoutForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const data = new FormData(checkoutForm);
-  const fields = [
-    { el: checkoutForm.elements.name, ok: String(data.get("name") || "").trim().length >= 3 },
-    { el: checkoutForm.elements.phone, ok: /^01[0-9]{9}$/.test(String(data.get("phone") || "").replace(/\s|-/g, "")) },
-    { el: checkoutForm.elements.address, ok: String(data.get("address") || "").trim().length >= 10 },
-  ];
-  let valid = true;
-  fields.forEach(({ el, ok }) => {
-    el.classList.toggle("field-error", !ok);
-    if (!ok) { valid = false; if (el.reportValidity) { try { el.setCustomValidity(""); el.reportValidity(); } catch (e) {} } }
-  });
-  if (!valid) return;
-
-  const ref = `PATO-${Date.now().toString(36).toUpperCase().slice(-6)}`;
-  successRef.textContent = `Order reference: ${ref}`;
-  checkoutForm.hidden = true;
-  orderSuccess.hidden = false;
-
-  cart.clear();
-  persistBasket();
-  renderCart();
-});
-
-document.querySelector(".continue-btn").addEventListener("click", () => {
-  checkoutDialog.close();
-  checkoutForm.reset();
-  checkoutForm.querySelectorAll(".field-error").forEach((el) => el.classList.remove("field-error"));
-  showPage("page-home");
-  window.setTimeout(() => shopSection.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-});
-
-renderProducts(PRODUCTS);
 renderCart();
 observeReveals();
 

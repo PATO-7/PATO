@@ -2,221 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#FFFFFF">
-  <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection. Shop online with delivery across Egypt.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#05AD98">
+  <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection.">
   <title>PATO</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- PATO word/logo font: Spicy Rice (Cheee/Eckmannpsych-like alternative) -->
-  <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
+
+  <!-- ===== Fonts: PATO logo/wordmark = Eckmannpsych stack; everything else = Ribes (with graceful fallbacks) ===== -->
+  <style>
+    @font-face {
+      font-family: 'Eckmannpsych Small';
+      src: url('fonts/eckmannpsych-small.woff2') format('woff2'),
+           url('fonts/eckmannpsych-small.woff') format('woff');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Eckmannpsych Large';
+      src: url('fonts/eckmannpsych-large.woff2') format('woff2'),
+           url('fonts/eckmannpsych-large.woff') format('woff');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    /* Define the Ribes Font Family */
+    @font-face {
+      font-family: 'Ribes';
+      src: url('fonts/ribes-black.woff2') format('woff2'),
+           url('fonts/ribes-black.woff') format('woff'),
+           url('fonts/ribes-black.ttf') format('truetype');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    .psychedelic-title {
+      font-family: "Eckmannpsych Small", "Eckmannpsych Large", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+  </style>
+
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- ============ SPLASH SCREEN — animated wallpaper behind PATO ============ -->
+
+  <!-- ============ SPLASH — short kinetic/glitch intro that morphs into the hero ============ -->
   <div class="splash" id="splash" aria-hidden="true">
-    <div class="splash-bg">
-      <img class="sb-img is-active" src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1522312352255-9d8153d4d2d8?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1614250318805-3de75d1c7a00?auto=format&fit=crop&w=1800&q=85" alt="">
-      <span class="sb-glow g1"></span>
-      <span class="sb-glow g2"></span>
-      <span class="sb-glow g3"></span>
-      <span class="sb-ring r1"></span>
-      <span class="sb-ring r2"></span>
-    </div>
-    <div class="splash-inner">
-      <span class="splash-letter">P</span>
-      <span class="splash-letter">A</span>
-      <span class="splash-letter">T</span>
-      <span class="splash-letter">O</span>
-      <span class="splash-dot">.</span>
+    <div class="splash-bg"></div>
+    <div class="splash-word" id="splashWord">
+      <span class="glitch-letter" data-x="P" style="--i:0">P</span><span class="glitch-letter" data-x="A" style="--i:1">A</span><span class="glitch-letter" data-x="T" style="--i:2">T</span><span class="glitch-letter" data-x="O" style="--i:3">O</span>
     </div>
     <div class="splash-line"></div>
   </div>
 
+  <!-- ============ TOP BAR — full page width ============ -->
+  <header class="site-header">
+    <nav class="navbar" aria-label="Main navigation">
+      <a class="logo psychedelic-title" href="#home" aria-label="PATO home">PATO</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#collection">Category</a></li>
+        <li><a href="#collection">Offers</a></li>
+        <li><a href="https://wa.me/201280001351" target="_blank" rel="noopener">Contact</a></li>
+        <li><a href="#about">PATO</a></li>
+      </ul>
+      <button class="cart-btn" type="button" aria-haspopup="dialog" aria-controls="cart-dialog" aria-label="Open basket">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1.2 11a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      </button>
+    </nav>
+  </header>
+
   <main>
-    <!-- ============ PAGE 1: HOME (scroll down → watches) ============ -->
-    <section id="page-home" class="page is-active hero">
-      <!-- top bar on first page: PATO · menu (3 chars) · basket -->
-      <header class="site-header">
-        <a class="logo" href="#" data-nav="home">PATO<span>.</span></a>
-        <div class="header-actions">
-          <button class="icon-btn" type="button" id="basket-btn" aria-label="Open basket">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-          </button>
-          <button class="icon-btn" type="button" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            <span class="ham"></span><span class="ham"></span><span class="ham"></span>
-          </button>
-        </div>
-      </header>
-
-      <div class="hero-content">
+    <!-- ============ HERO ============ -->
+    <section id="home" class="hero">
+      <div class="hero-parallax" data-parallax="0.25">
+        <img class="hero-image" src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=2200&q=88" alt="A refined wristwatch in light">
+      </div>
+      <div class="hero-shade"></div>
+      <div class="hero-content reveal" data-reveal>
         <p class="eyebrow">A study in precision · Est. 1987</p>
-        <h1>Elegance<br>Written in Time</h1>
+        <h1 class="kinetic-h1">
+          <span class="k-line"><span class="k-word">Elegance</span></span>
+          <span class="k-line"><span class="k-word">Written</span> <span class="k-word">in</span> <span class="k-word accent">Time</span></span>
+        </h1>
         <p class="hero-copy">Hand-crafted timepieces, made for the moments that matter.</p>
-        <button class="btn" type="button" data-nav="shop">Explore the collection <span aria-hidden="true">↗</span></button>
+        <a href="#collection" class="btn magnetic">Explore the collection <span aria-hidden="true">↓</span></a>
       </div>
-      <p class="scroll-hint">Scroll down<span class="scroll-arrow">↓</span></p>
+      <div class="scroll-cue" aria-hidden="true"><span></span></div>
     </section>
 
-    <!-- ============ PAGE 2: WATCHES (same scroll flow) ============ -->
-    <section id="page-shop" class="products-section">
-      <div class="section-heading">
+    <!-- ============ FEATURES ============ -->
+    <section class="features" aria-label="The PATO standard">
+      <article class="feature-item reveal" data-reveal>
+        <span class="feature-index">01</span>
+        <div><h2>Swiss movement</h2><p>Precision, perfected over generations.</p></div>
+      </article>
+      <article class="feature-item reveal" data-reveal>
+        <span class="feature-index">02</span>
+        <div><h2>Sapphire crystal</h2><p>Exceptional clarity. Remarkable resilience.</p></div>
+      </article>
+      <article class="feature-item reveal" data-reveal>
+        <span class="feature-index">03</span>
+        <div><h2>Five-year warranty</h2><p>Confidence that travels with you.</p></div>
+      </article>
+    </section>
+
+    <!-- ============ COLLECTION ============ -->
+    <section id="collection" class="products-section">
+      <div class="section-heading reveal" data-reveal>
         <div>
-          <p class="eyebrow" id="shop-eyebrow">Considered in every detail</p>
-          <h2 id="shop-title">Our watches</h2>
+          <p class="eyebrow">Considered in every detail</p>
+          <h2>Featured timepieces</h2>
         </div>
-        <p>Tap a watch to open its photos full screen.</p>
+        <p>Tap any watch to open its full page.</p>
       </div>
-      <div class="product-grid" id="product-grid"><!-- cards injected by script.js --></div>
+      <div class="product-grid">
+        <article class="product-card reveal" data-reveal data-id="sovereign" tabindex="0" role="link" aria-label="Open The Sovereign Silver details">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85" alt="The Sovereign Silver wristwatch" loading="lazy"><span class="product-tag">Bestseller</span></div>
+          <div class="product-info"><div><h3>The Sovereign Silver</h3><p class="product-detail">Automatic · 40 mm</p></div><p class="price">$1,250</p></div>
+        </article>
+        <article class="product-card reveal" data-reveal data-id="onyx" tabindex="0" role="link" aria-label="Open Chronograph Onyx details">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=900&q=85" alt="Chronograph Onyx in a polished finish" loading="lazy"><span class="product-tag">New</span></div>
+          <div class="product-info"><div><h3>Chronograph Onyx</h3><p class="product-detail">Chronograph · 42 mm</p></div><p class="price">$2,100</p></div>
+        </article>
+        <article class="product-card reveal" data-reveal data-id="heritage" tabindex="0" role="link" aria-label="Open Heritage Vintage details">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=900&q=85" alt="Heritage Vintage watch with a leather strap" loading="lazy"></div>
+          <div class="product-info"><div><h3>Heritage Vintage</h3><p class="product-detail">Hand-wound · 38 mm</p></div><p class="price">$890</p></div>
+        </article>
+        <article class="product-card reveal" data-reveal data-id="rose" tabindex="0" role="link" aria-label="Open PATO Rose Edition details">
+          <div class="product-image"><img src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=900&q=85" alt="PATO Rose Edition wristwatch" loading="lazy"></div>
+          <div class="product-info"><div><h3>PATO Rose Edition</h3><p class="product-detail">Automatic · 36 mm</p></div><p class="price">$1,750</p></div>
+        </article>
+      </div>
     </section>
 
-    <!-- ============ PAGE 3: PATO (our story) ============ -->
-    <section id="page-pato" class="page story-section" hidden>
-      <div class="story-image"><img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=85" alt="A watchmaker's careful hands at work" loading="lazy"></div>
-      <div class="story-copy">
+    <!-- ============ STORY ============ -->
+    <section id="about" class="story-section">
+      <div class="story-image parallax-frame reveal" data-reveal><img data-parallax="0.12" src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=85" alt="A watchmaker's careful hands at work" loading="lazy"></div>
+      <div class="story-copy reveal" data-reveal>
         <p class="eyebrow">Made to be kept</p>
         <h2>Time deserves<br>a human touch.</h2>
-        <p>Since 1987, our watchmakers have brought together precise engineering and an enduring respect for materials. Every PATO timepiece is assembled by hand, then tested for a life of everyday moments.</p>
-        <p>The name PATO stands for patience — the virtue of every great watchmaker, and the promise inside every piece we send into the world.</p>
+        <p>Since 1987, our watchmakers have brought together Swiss engineering and an enduring respect for materials. Every PATO timepiece is assembled by hand, then tested for a life of everyday moments.</p>
+        <a class="text-link magnetic" href="https://wa.me/201280001351" target="_blank" rel="noopener">Talk to us on WhatsApp <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
-    <!-- ============ PAGE 4: CONTACT ============ -->
-    <section id="page-contact" class="page contact-section" hidden>
-      <span class="brand-big">PATO<span>.</span></span>
-      <h2>We are one message away.</h2>
-      <a class="wa-big" href="https://wa.me/201280001351" target="_blank" rel="noopener">
-        <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
-        Chat on WhatsApp · 01280001351
-      </a>
-      <p class="wa-note">Tap to open WhatsApp and send us a message.</p>
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="contact-section reveal" data-reveal>
+      <p class="eyebrow">A personal consultation</p>
+      <h2>Find your forever watch.</h2>
+      <a class="contact-link magnetic" href="tel:01289659621">Call 01289659621 <span aria-hidden="true">↗</span></a>
     </section>
   </main>
 
+  <!-- ============ FOOTER — brand + phone only, no basket ============ -->
   <footer class="site-footer">
-    <a class="logo footer-logo" href="#" data-nav="home">PATO<span>.</span></a>
-    <p class="footer-phone">
-      <a class="wa-icon" href="https://wa.me/201280001351" target="_blank" rel="noopener" aria-label="WhatsApp PATO">
-        <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
+    <div class="footer-center">
+      <p class="footer-logo psychedelic-title">PATO</p>
+      <div class="footer-divider"></div>
+      <a class="footer-phone" href="tel:01289659621">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
+        01289659621
       </a>
-      <a href="tel:01289659621">01289659621</a>
-    </p>
+    </div>
   </footer>
 
-  <!-- ============ BASKET PAGE (opens from the basket icon) ============ -->
-  <section id="page-basket" class="page basket-page" aria-label="Your basket">
-    <div class="bk-wrap">
-      <button class="pd-back" type="button" data-nav="back">← Continue shopping</button>
-      <h1>Your basket</h1>
-      <div class="bk-items"></div>
-      <p class="bk-empty">Your basket is waiting for something timeless.</p>
-      <div class="bk-footer" hidden>
-        <div class="bk-subtotal"><span>Subtotal</span><strong>0 EGP</strong></div>
-        <button class="checkout-btn bk-checkout" type="button">Checkout</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ HALF-PAGE MENU SHEET (Category / Offers / Contact / PATO) ============ -->
-  <div class="menu-backdrop" id="menu-backdrop" hidden></div>
-  <nav class="menu-sheet" id="menu-sheet" aria-label="Main menu" hidden>
-    <button class="sheet-close" type="button" aria-label="Close menu">×</button>
-    <a class="sheet-item" href="#" data-nav="shop"><span class="si-num">01</span>Category<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="#" data-nav="offers"><span class="si-num">02</span>Offers<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="https://wa.me/201280001351" target="_blank" rel="noopener"><span class="si-num">03</span>Contact<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="#" data-nav="pato"><span class="si-num">04</span>PATO<span class="si-arrow">→</span></a>
-  </nav>
-
-  <!-- ============ FULLSCREEN PHOTO VIEWER (opens over the page, gentle animation) ============ -->
-  <div class="fullscreen-viewer" id="fullscreen-viewer" hidden>
-    <div class="fv-backdrop"></div>
-    <button class="fv-close" type="button" aria-label="Close photos">×</button>
-    <div class="fv-stage">
-      <img class="fv-main" src="" alt="">
-      <button class="fv-arrow prev" type="button" aria-label="Previous photo">‹</button>
-      <button class="fv-arrow next" type="button" aria-label="Next photo">›</button>
-    </div>
-    <div class="fv-bar">
-      <div class="fv-info">
-        <h3 class="fv-name"></h3>
-        <p class="fv-detail"></p>
-      </div>
-      <p class="fv-price price"></p>
-    </div>
-    <div class="fv-colors" id="fv-colors"></div>
-    <div class="fv-thumbs"></div>
-    <button class="add-to-cart-btn fv-add" type="button">Add to basket <span aria-hidden="true">+</span></button>
-  </div>
-
-  <!-- ============ PRODUCT DETAIL PAGE (opens when a watch is clicked) ============ -->
-  <section id="page-product" class="page product-page" aria-label="Product details">
-    <div class="pd-wrap">
-      <button class="pd-back" type="button" data-nav="back">← Back</button>
-      <div class="pd-gallery">
-        <div class="pd-main-wrap">
-          <img class="pd-main" src="" alt="">
-          <button class="pd-arrow prev" type="button" aria-label="Previous photo">‹</button>
-          <button class="pd-arrow next" type="button" aria-label="Next photo">›</button>
+  <!-- ============ PRODUCT DETAIL PAGE (opens as its own view when a watch is clicked) ============ -->
+  <div class="product-page" id="productPage" aria-hidden="true">
+    <div class="pp-inner">
+      <button class="pp-close" type="button" aria-label="Close product page">×</button>
+      <div class="pp-gallery">
+        <div class="pp-stage" id="ppStage">
+          <img id="ppMain" src="" alt="">
         </div>
-        <div class="pd-thumbs"></div>
+        <div class="pp-thumbs" id="ppThumbs"></div>
       </div>
-      <div class="pd-info">
-        <p class="eyebrow pd-tagline">PATO Collection</p>
-        <h1 class="pd-name"></h1>
-        <p class="pd-detail"></p>
-        <p class="price pd-price"></p>
-        <div class="pd-colors">
-          <p class="pd-colors-label">Colour</p>
-          <div class="swatches" role="group" aria-label="Choose colour"></div>
+      <div class="pp-info">
+        <p class="eyebrow" id="ppTagline">Signature collection</p>
+        <h2 id="ppName">Watch</h2>
+        <p class="pp-detail" id="ppDetail"></p>
+        <p class="pp-price" id="ppPrice"></p>
+        <div class="pp-colors">
+          <p class="pp-colors-label">Colors</p>
+          <div class="pp-swatches" id="ppSwatches" role="group" aria-label="Choose color"></div>
         </div>
-        <button class="btn pd-buy" type="button">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <button class="pp-buy magnetic" id="ppBuy" type="button" aria-label="Add this watch to basket">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1.2 11a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
           Buy now
         </button>
-        <p class="pd-note">Delivery across Egypt · We confirm every order by phone</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ============ BASKET DIALOG ============ -->
+  <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="cart-title">
+    <div class="cart-header"><h2 id="cart-title">Your bag <span class="dialog-count">(LE 0)</span></h2><button class="cart-close" type="button" aria-label="Close bag">×</button></div>
+    <div class="cart-items"></div>
+    <div class="cart-empty">Your bag is waiting for something timeless.</div>
+    <div class="cart-footer">
+      <div class="cart-total"><span>Subtotal</span><strong>LE 0</strong></div>
+      <button class="checkout-btn" type="button" disabled>Continue to checkout</button>
     </div>
   </section>
 
-  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
-    <div class="checkout-scroll">
-      <div class="cart-header"><h2 id="checkout-title">Checkout</h2><button class="checkout-close" type="button" aria-label="Close checkout">×</button></div>
-
-      <section class="checkout-summary">
-        <h3 class="checkout-sub">Order summary</h3>
-        <div class="summary-items"></div>
-        <div class="summary-line"><span>Subtotal</span><strong class="sum-subtotal">0 EGP</strong></div>
-        <div class="summary-line"><span>Delivery</span><strong class="sum-shipping">—</strong></div>
-        <div class="summary-line total"><span>Total</span><strong class="sum-total">0 EGP</strong></div>
-      </section>
-
-      <form class="checkout-form" id="checkout-form" novalidate>
-        <h3 class="checkout-sub">Delivery details</h3>
-        <label>Full name<input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
-        <label>Phone number<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" title="Enter a valid 11-digit phone starting with 01"></label>
-        <label>Address<textarea name="address" rows="3" required placeholder="Street, building, area, city"></textarea></label>
-        <fieldset>
-          <legend>Payment method</legend>
-          <label class="radio"><input type="radio" name="pay" value="Cash on delivery" checked><span>Cash on delivery</span></label>
-          <label class="radio"><input type="radio" name="pay" value="Instapay"><span>Instapay transfer</span></label>
-          <label class="radio"><input type="radio" name="pay" value="Card on delivery"><span>Card on delivery</span></label>
-        </fieldset>
-        <button class="place-order-btn" type="submit">Place order</button>
-        <p class="form-hint">We will confirm your order by phone at <a href="tel:01289659621">01289659621</a>, or message us on <a href="https://wa.me/201280001351" target="_blank" rel="noopener">WhatsApp</a>.</p>
-      </form>
-
-      <section class="order-success" hidden>
-        <div class="success-mark">✓</div>
-        <h3>Thank you — your order is confirmed.</h3>
-        <p class="success-ref"></p>
-        <p>Our team will call you shortly to arrange delivery. For anything else, contact <a href="tel:01289659621">01289659621</a>.</p>
-        <button class="btn continue-btn" type="button">Continue shopping</button>
-      </section>
-    </div>
-  </dialog>
 </body>
 </html>

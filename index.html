@@ -2,221 +2,302 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#FFFFFF">
-  <meta name="description" content="PATO — hand-crafted timepieces designed for sophisticated perfection. Shop online with delivery across Egypt.">
-  <title>PATO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0B">
+  <meta name="description" content="PATO — hand-finished mechanical timepieces from the atelier. Obsidian, Ember and Lunar collections.">
+  <title>PATO · Horology Atelier</title>
+
+  <!-- Fonts: Cormorant Garamond (editorial serif) + Space Mono (detail type) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- PATO word/logo font: Spicy Rice (Cheee/Eckmannpsych-like alternative) -->
-  <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap">
+
   <link rel="stylesheet" href="style.css">
-  <script>document.documentElement.classList.add("js");</script>
-  <script src="script.js" defer></script>
 </head>
-<body class="no-js">
-  <!-- ============ SPLASH SCREEN — animated wallpaper behind PATO ============ -->
-  <div class="splash" id="splash" aria-hidden="true">
-    <div class="splash-bg">
-      <img class="sb-img is-active" src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1522312352255-9d8153d4d2d8?auto=format&fit=crop&w=1800&q=85" alt="">
-      <img class="sb-img" src="https://images.unsplash.com/photo-1614250318805-3de75d1c7a00?auto=format&fit=crop&w=1800&q=85" alt="">
-      <span class="sb-glow g1"></span>
-      <span class="sb-glow g2"></span>
-      <span class="sb-glow g3"></span>
-      <span class="sb-ring r1"></span>
-      <span class="sb-ring r2"></span>
-    </div>
-    <div class="splash-inner">
-      <span class="splash-letter">P</span>
-      <span class="splash-letter">A</span>
-      <span class="splash-letter">T</span>
-      <span class="splash-letter">O</span>
-    </div>
-    <div class="splash-line"></div>
+<body>
+
+  <!-- ============ AMBIENT LAYERS ============ -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="lightleak" aria-hidden="true"></div>
+
+  <!-- ============ CUSTOM CURSOR ============ -->
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"><span class="cursor-label"></span></div>
+
+  <!-- ============ INTRO LOADER (watch bezel) ============ -->
+  <div id="loader" aria-hidden="true">
+    <svg class="bezel" viewBox="0 0 200 200" width="220" height="220">
+      <circle class="bezel-line" cx="100" cy="100" r="80"></circle>
+      <g class="markers"></g>
+      <line class="hand hand-min" x1="100" y1="100" x2="100" y2="45"></line>
+      <line class="hand hand-hour" x1="100" y1="100" x2="100" y2="62"></line>
+      <circle class="bezel-pin" cx="100" cy="100" r="3.5"></circle>
+    </svg>
+    <p class="loader-word">P A T O</p>
   </div>
 
-  <main>
-    <!-- ============ PAGE 1: HOME (scroll down → watches) ============ -->
-    <section id="page-home" class="page is-active hero">
-      <!-- top bar on first page: PATO · menu (3 chars) · basket -->
-      <header class="site-header">
-        <a class="logo" href="#" data-nav="home">PATO</a>
-        <div class="header-actions">
-          <button class="icon-btn" type="button" id="basket-btn" aria-label="Open basket">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-          </button>
-          <button class="icon-btn" type="button" id="menu-btn" aria-label="Open menu" aria-expanded="false">
-            <span class="ham"></span><span class="ham"></span><span class="ham"></span>
-          </button>
+  <!-- ============ PAGE TRANSITION WIPE ============ -->
+  <div id="wipe" aria-hidden="true">
+    <svg viewBox="0 0 100 100" width="140" height="140"><line x1="50" y1="50" x2="50" y2="12" stroke="#B8964E" stroke-width="1.5"/></svg>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <header id="topbar">
+    <div class="utility-strip">
+      <span>Complimentary engraving &amp; shipping on every PATO</span>
+      <span class="u-hide">Cairo · Atelier No. 1</span>
+    </div>
+    <div class="bar-main">
+      <nav class="bar-left" aria-label="Primary">
+        <a href="#/collections" data-nav>Collections</a>
+        <a href="#/shop" data-nav>Shop</a>
+        <button type="button" id="search-open" aria-label="Search">Search</button>
+      </nav>
+      <a href="#/" data-nav class="logo-word" id="site-logo">PATO</a>
+      <div class="bar-right">
+        <button type="button" id="sound-toggle" aria-label="Toggle ambience" title="Tick ambience">♪</button>
+        <button type="button" id="currency-toggle" aria-label="Toggle currency" title="Currency">EGP</button>
+        <button type="button" id="wish-open" aria-label="Wishlist" title="Wishlist">♡</button>
+        <button type="button" id="cart-open" aria-label="Cart" title="Cart">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 8h12l-1.2 12H7.2L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span id="cart-count" class="dot hidden"></span>
+        </button>
+        <button type="button" id="menu-open" aria-label="Menu" class="burger"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- live analog clock ornament -->
+  <div id="clock-ornament" aria-hidden="true">
+    <svg viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="27" class="co-face"/>
+      <line x1="30" y1="30" x2="30" y2="16" class="co-hour"/>
+      <line x1="30" y1="30" x2="30" y2="11" class="co-min"/>
+      <line x1="30" y1="30" x2="30" y2="9"  class="co-sec"/>
+      <circle cx="30" cy="30" r="1.6" class="co-pin"/>
+    </svg>
+  </div>
+
+  <!-- ============ FULL-SCREEN MENU ============ -->
+  <div id="menu-sheet" role="dialog" aria-modal="true" aria-label="Menu">
+    <button type="button" id="menu-close" aria-label="Close menu">✕</button>
+    <nav class="menu-nav">
+      <a href="#/" data-menu style="--i:0"><em>I.</em> Home</a>
+      <a href="#/collections" data-menu style="--i:1"><em>II.</em> Collections</a>
+      <a href="#/shop" data-menu style="--i:2"><em>III.</em> Shop</a>
+      <a href="#/about" data-menu style="--i:3"><em>IV.</em> The Atelier</a>
+      <a href="#/journal" data-menu style="--i:4"><em>V.</em> Journal</a>
+      <a href="#/contact" data-menu style="--i:5"><em>VI.</em> Contact</a>
+    </nav>
+    <p class="menu-foot">Time · Craft · Silence · Legacy</p>
+  </div>
+
+  <!-- ============ SEARCH OVERLAY ============ -->
+  <div id="search-overlay" role="dialog" aria-modal="true" aria-label="Search">
+    <button type="button" id="search-close" aria-label="Close search">✕</button>
+    <input type="text" id="search-input" placeholder="Search references, names…" autocomplete="off">
+    <ul id="search-results" aria-live="polite"></ul>
+  </div>
+
+  <!-- ============ MAIN VIEWS (hash router) ============ -->
+  <main id="app">
+
+    <!-- HOME -->
+    <section class="view" id="view-home">
+      <div class="hero">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="particles" aria-hidden="true"></div>
+        <div class="beam" aria-hidden="true"></div>
+        <h1 class="hero-title" aria-label="Quiet Luxury, Loud Craft">
+          <span class="w"><i>Quiet</i></span>
+          <span class="w"><i>Luxury,</i></span>
+          <span class="w"><i class="accent">Loud</i></span>
+          <span class="w"><i class="accent">Craft</i></span>
+        </h1>
+        <p class="hero-sub mono">Mechanical timepieces — finished by hand, in three acts.</p>
+        <a href="#/shop" data-nav class="btn-magnet">Enter the vitrine</a>
+        <div class="scroll-hint mono">Scroll<i class="hint-arrow"></i></div>
+      </div>
+
+      <!-- pinned explode/reassemble storytelling -->
+      <div id="explode-wrap">
+        <div class="explode-sticky">
+          <svg id="explode-svg" viewBox="0 0 400 400" aria-hidden="true">
+            <g class="ex ex-case">
+              <circle cx="200" cy="200" r="150" class="ex-ring"/>
+              <rect x="342" y="188" width="16" height="24" rx="4" class="ex-crown"/>
+            </g>
+            <g class="ex ex-dial"><circle cx="200" cy="200" r="122" class="ex-disc"/></g>
+            <g class="ex ex-movement">
+              <circle cx="200" cy="200" r="60" class="ex-barrel"/>
+              <circle cx="240" cy="235" r="26" class="ex-wheel"/>
+              <circle cx="160" cy="238" r="18" class="ex-wheel small"/>
+            </g>
+            <g class="ex ex-hands">
+              <line x1="200" y1="200" x2="200" y2="110" class="ex-hand"/>
+              <line x1="200" y1="200" x2="258" y2="200" class="ex-hand"/>
+            </g>
+          </svg>
+          <div class="ex-caption mono" data-stage="0">I · THE CASE — cold-forged obsidian steel</div>
+          <div class="ex-caption mono" data-stage="1">II · THE DIAL — lacquered champagne light</div>
+          <div class="ex-caption mono" data-stage="2">III · THE MOVEMENT — 212 components, one breath</div>
+          <div class="ex-caption mono" data-stage="3">IV · THE HANDS — blued by candle flame</div>
+          <div class="ex-caption mono" data-stage="4">V · REASSEMBLED — a PATO is born</div>
         </div>
-      </header>
-
-      <div class="hero-content">
-        <p class="eyebrow">A study in precision · Est. 1987</p>
-        <h1>Elegance<br>Written in Time</h1>
-        <p class="hero-copy">Hand-crafted timepieces, made for the moments that matter.</p>
-        <button class="btn" type="button" data-nav="shop">Explore the collection <span aria-hidden="true">↗</span></button>
+        <div class="explode-track" aria-hidden="true"></div>
       </div>
-      <p class="scroll-hint">Scroll down<span class="scroll-arrow">↓</span></p>
-    </section>
 
-    <!-- ============ PAGE 2: WATCHES (same scroll flow) ============ -->
-    <section id="page-shop" class="products-section">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow" id="shop-eyebrow">Considered in every detail</p>
-          <h2 id="shop-title">Our watches</h2>
+      <!-- marquee -->
+      <div class="marquee" aria-hidden="true">
+        <div class="mq-inner">
+          <span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span><span>TIME · CRAFT · SILENCE · LEGACY ·&nbsp;</span>
         </div>
-        <p>Tap a watch to open its photos full screen.</p>
       </div>
-      <div class="product-grid" id="product-grid"><!-- cards injected by script.js --></div>
+
+      <!-- collections trio -->
+      <section class="triptych">
+        <h2 class="reveal">Three series</h2>
+        <div class="tri-grid">
+          <a href="#/collections?c=obsidian" data-nav class="tri-card reveal" style="--d:0">
+            <div class="tri-img grad-obsidian"></div><span class="roman">I</span><h3>Obsidian</h3><p class="mono">Midnight gallery steel</p>
+          </a>
+          <a href="#/collections?c=ember" data-nav class="tri-card reveal" style="--d:1">
+            <div class="tri-img grad-ember"></div><span class="roman">II</span><h3>Ember</h3><p class="mono">Candlelit oxblood warmth</p>
+          </a>
+          <a href="#/collections?c=lunar" data-nav class="tri-card reveal" style="--d:2">
+            <div class="tri-img grad-lunar"></div><span class="roman">III</span><h3>Lunar</h3><p class="mono">Champagne moon phases</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- stats count-up -->
+      <section class="stats hairline-top">
+        <div class="stat reveal"><b class="count" data-to="312">0</b><span class="mono">hours of hand finishing</span></div>
+        <div class="stat reveal"><b class="count" data-to="212">0</b><span class="mono">components per movement</span></div>
+        <div class="stat reveal"><b class="count" data-to="1847">0</b><span class="mono">hours power reserve test</span></div>
+      </section>
+
+      <!-- horizontal scroll gallery -->
+      <section class="h-gallery">
+        <h2 class="reveal">Selected pieces</h2>
+        <div class="hg-track" id="home-gallery"></div>
+      </section>
+
+      <!-- newsletter -->
+      <section class="newsletter reveal">
+        <h2>Join the quiet list</h2>
+        <p class="mono">One letter per season. No noise.</p>
+        <form id="news-form">
+          <input type="email" required placeholder="your@email.com" aria-label="Email">
+          <button type="submit" class="btn-magnet">Subscribe</button>
+        </form>
+        <p id="news-ok" class="hidden mono">Welcome to the quiet side.</p>
+      </section>
     </section>
 
-    <!-- ============ PAGE 3: PATO (our story) ============ -->
-    <section id="page-pato" class="page story-section" hidden>
-      <div class="story-image"><img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=85" alt="A watchmaker's careful hands at work" loading="lazy"></div>
-      <div class="story-copy">
-        <p class="eyebrow">Made to be kept</p>
-        <h2>Time deserves<br>a human touch.</h2>
-        <p>Since 1987, our watchmakers have brought together precise engineering and an enduring respect for materials. Every PATO timepiece is assembled by hand, then tested for a life of everyday moments.</p>
-        <p>The name PATO stands for patience — the virtue of every great watchmaker, and the promise inside every piece we send into the world.</p>
+    <!-- COLLECTIONS -->
+    <section class="view" id="view-collections">
+      <header class="page-head"><span class="roman big">II</span><h1>Collections</h1><p class="mono">Three series, one obsession.</p></header>
+      <div id="collections-body"></div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="view" id="view-shop">
+      <header class="page-head"><span class="roman big">III</span><h1>The Vitrine</h1><p class="mono">Every piece, lit for you.</p></header>
+      <div class="filters" id="filters">
+        <select id="f-collection" aria-label="Collection"><option value="">All collections</option><option>Obsidian</option><option>Ember</option><option>Lunar</option></select>
+        <select id="f-strap" aria-label="Strap"><option value="">All straps</option><option>Alligator</option><option>Steel bracelet</option><option>Calf leather</option></select>
+        <select id="f-material" aria-label="Material"><option value="">All materials</option><option>Obsidian steel</option><option>Rose gold</option><option>Champagne gold</option></select>
+        <select id="f-size" aria-label="Case size"><option value="">Any size</option><option>36</option><option>38</option><option>40</option><option>42</option></select>
+        <select id="f-price" aria-label="Price"><option value="">Any price</option><option value="lo">Under EGP 60k</option><option value="mid">EGP 60–100k</option><option value="hi">Over EGP 100k</option></select>
+        <select id="f-sort" aria-label="Sort"><option value="">Featured</option><option value="asc">Price ↑</option><option value="desc">Price ↓</option></select>
+        <button type="button" id="f-clear" class="mono">Clear</button>
+      </div>
+      <div class="grid" id="shop-grid"></div>
+    </section>
+
+    <!-- PRODUCT -->
+    <section class="view" id="view-product"><div id="product-body"></div></section>
+
+    <!-- ABOUT -->
+    <section class="view" id="view-about">
+      <header class="page-head"><span class="roman big">IV</span><h1>The Atelier</h1></header>
+      <div class="prose reveal">
+        <p class="dropcap">In a candlelit workshop where dust drifts through single beams of light, PATO assembles time by hand. No conveyors. No hurry. Each movement rests on 212 components, bevelled until they mirror the flame.</p>
+        <figure class="clip-reveal"><div class="fig-img grad-workshop"></div><figcaption class="mono">Atelier No. 1 — Cairo</figcaption></figure>
+        <p>We release only three series a year: Obsidian for the midnight gallery, Ember for those who keep candle hours, and Lunar for patient watchers of the sky. Every case is cold-forged, every dial lacquered in eleven passes, every second hand balanced like a whispered promise.</p>
+        <blockquote>“A watch should wind the wearer’s day, not the other way around.”<cite class="mono">— Head of Atelier</cite></blockquote>
       </div>
     </section>
 
-    <!-- ============ PAGE 4: CONTACT ============ -->
-    <section id="page-contact" class="page contact-section" hidden>
-      <span class="brand-big">PATO</span>
-      <h2>We are one message away.</h2>
-      <a class="wa-big" href="https://wa.me/201280001351" target="_blank" rel="noopener">
-        <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
-        Chat on WhatsApp · 01280001351
-      </a>
-      <p class="wa-note">Tap to open WhatsApp and send us a message.</p>
+    <!-- JOURNAL -->
+    <section class="view" id="view-journal">
+      <header class="page-head"><span class="roman big">V</span><h1>Journal</h1><p class="mono">Notes from the bench.</p></header>
+      <div class="journal-grid" id="journal-body"></div>
     </section>
+
+    <!-- CONTACT -->
+    <section class="view" id="view-contact">
+      <header class="page-head"><span class="roman big">VI</span><h1>Contact</h1><p class="mono">By appointment, or by whisper.</p></header>
+      <div class="contact-box reveal">
+        <a href="tel:+201289659621" class="contact-line"><span class="mono">Call the boutique</span><b>01289659621</b></a>
+        <a href="https://wa.me/201280001351" target="_blank" rel="noopener" class="contact-line"><span class="mono">WhatsApp the atelier</span><b>01280001351</b></a>
+        <p class="mono faint">Atelier No. 1 · Cairo · Tue–Sun, 12:00–20:00</p>
+      </div>
+    </section>
+
+    <!-- CART PAGE -->
+    <section class="view" id="view-cart">
+      <header class="page-head"><h1>Your Selection</h1></header>
+      <div id="cart-page-body"></div>
+    </section>
+
+    <!-- CHECKOUT -->
+    <section class="view" id="view-checkout">
+      <header class="page-head"><h1>Checkout</h1></header>
+      <div id="checkout-body"></div>
+    </section>
+
   </main>
 
-  <footer class="site-footer">
-    <a class="logo footer-logo" href="#" data-nav="home">PATO</a>
-    <p class="footer-phone">
-      <a class="wa-icon" href="https://wa.me/201280001351" target="_blank" rel="noopener" aria-label="WhatsApp PATO">
-        <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.5c1.2.5 2.5.8 3.8.8 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.2 0-2.4-.3-3.5-.9l-.5-.3-4.9.9 1-4.7-.3-.5A10 10 0 0 1 6 15c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 9.8-10 9.8zm5.5-7.3c-.3-.2-1.8-.9-2-1s-.5-.1-.8.2c-.2.3-.9 1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.4-.6.1-.2 0-.4 0-.6s-.8-1.8-1-2.5c-.3-.7-.6-.6-.8-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.6s1.2 3 1.3 3.2c.2.2 2.3 3.5 5.5 4.8.8.3 1.4.5 1.9.7.8.2 1.5.2 2 .1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4z"/></svg>
+  <!-- ============ CART DRAWER ============ -->
+  <aside id="cart-drawer" role="dialog" aria-modal="true" aria-label="Cart">
+    <div class="cd-head"><h2>Selection</h2><button type="button" id="cart-close" aria-label="Close cart">✕</button></div>
+    <div id="cart-items"></div>
+    <label class="cd-extra mono"><input type="checkbox" id="opt-engraving"> Free engraving</label>
+    <label class="cd-extra mono"><input type="checkbox" id="opt-gift"> Gift wrap (+EGP 250)</label>
+    <div class="cd-foot">
+      <div class="cd-total"><span class="mono">Subtotal</span><b id="cart-total">EGP 0</b></div>
+      <button type="button" id="cart-checkout" class="btn-magnet wide">Proceed to checkout</button>
+    </div>
+  </aside>
+  <div id="scrim"></div>
+
+  <!-- flying item for add-to-cart animation -->
+  <div id="fly-item" aria-hidden="true"></div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="site-footer">
+    <div class="foot-divider" aria-hidden="true"></div>
+    <a href="#/" data-nav class="foot-brand">PATO</a>
+    <p class="mono foot-tag">Horology Atelier</p>
+    <div class="hairline-rule" aria-hidden="true"></div>
+    <div class="foot-links">
+      <a href="tel:+201289659621" class="foot-phone"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg> 01289659621</a>
+      <a href="https://wa.me/201280001351" target="_blank" rel="noopener" class="foot-wa" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.1-.9-2.6-1.3-4.2-3.8-4.3-4-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2 .9.7 1.7 1 2 1.1.2 0 .4 0 .5-.2l.7-1c.2-.2.4-.1.6-.1l1.9.9c.3.1.5.2.5.4 0 .1 0 .7-.2 1.3z"/></svg>
       </a>
-      <a href="tel:01289659621">01289659621</a>
-    </p>
+    </div>
+    <p class="mono faint">© <span id="year"></span> PATO</p>
   </footer>
 
-  <!-- ============ BASKET PAGE (opens from the basket icon) ============ -->
-  <section id="page-basket" class="page basket-page" aria-label="Your basket">
-    <div class="bk-wrap">
-      <button class="pd-back" type="button" data-nav="back">← Continue shopping</button>
-      <h1>Your basket</h1>
-      <div class="bk-items"></div>
-      <p class="bk-empty">Your basket is waiting for something timeless.</p>
-      <div class="bk-footer" hidden>
-        <div class="bk-subtotal"><span>Subtotal</span><strong>0 EGP</strong></div>
-        <button class="checkout-btn bk-checkout" type="button">Checkout</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ HALF-PAGE MENU SHEET (Category / Offers / Contact / PATO) ============ -->
-  <div class="menu-backdrop" id="menu-backdrop" hidden></div>
-  <nav class="menu-sheet" id="menu-sheet" aria-label="Main menu" hidden>
-    <button class="sheet-close" type="button" aria-label="Close menu">×</button>
-    <a class="sheet-item" href="#" data-nav="shop"><span class="si-num">01</span>Category<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="#" data-nav="offers"><span class="si-num">02</span>Offers<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="https://wa.me/201280001351" target="_blank" rel="noopener"><span class="si-num">03</span>Contact<span class="si-arrow">→</span></a>
-    <a class="sheet-item" href="#" data-nav="pato"><span class="si-num">04</span>PATO<span class="si-arrow">→</span></a>
-  </nav>
-
-  <!-- ============ FULLSCREEN PHOTO VIEWER (opens over the page, gentle animation) ============ -->
-  <div class="fullscreen-viewer" id="fullscreen-viewer" hidden>
-    <div class="fv-backdrop"></div>
-    <button class="fv-close" type="button" aria-label="Close photos">×</button>
-    <div class="fv-stage">
-      <img class="fv-main" src="" alt="">
-      <button class="fv-arrow prev" type="button" aria-label="Previous photo">‹</button>
-      <button class="fv-arrow next" type="button" aria-label="Next photo">›</button>
-    </div>
-    <div class="fv-bar">
-      <div class="fv-info">
-        <h3 class="fv-name"></h3>
-        <p class="fv-detail"></p>
-      </div>
-      <p class="fv-price price"></p>
-    </div>
-    <div class="fv-colors" id="fv-colors"></div>
-    <div class="fv-thumbs"></div>
-    <button class="add-to-cart-btn fv-add" type="button">Add to basket <span aria-hidden="true">+</span></button>
-  </div>
-
-  <!-- ============ PRODUCT DETAIL PAGE (opens when a watch is clicked) ============ -->
-  <section id="page-product" class="page product-page" aria-label="Product details">
-    <div class="pd-wrap">
-      <button class="pd-back" type="button" data-nav="back">← Back</button>
-      <div class="pd-gallery">
-        <div class="pd-main-wrap">
-          <img class="pd-main" src="" alt="">
-          <button class="pd-arrow prev" type="button" aria-label="Previous photo">‹</button>
-          <button class="pd-arrow next" type="button" aria-label="Next photo">›</button>
-        </div>
-        <div class="pd-thumbs"></div>
-      </div>
-      <div class="pd-info">
-        <p class="eyebrow pd-tagline">PATO Collection</p>
-        <h1 class="pd-name"></h1>
-        <p class="pd-detail"></p>
-        <p class="price pd-price"></p>
-        <div class="pd-colors">
-          <p class="pd-colors-label">Colour</p>
-          <div class="swatches" role="group" aria-label="Choose colour"></div>
-        </div>
-        <button class="btn pd-buy" type="button">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-          Buy now
-        </button>
-        <p class="pd-note">Delivery across Egypt · We confirm every order by phone</p>
-      </div>
-    </div>
-  </section>
-
-  <dialog class="checkout-dialog" id="checkout-dialog" aria-labelledby="checkout-title">
-    <div class="checkout-scroll">
-      <div class="cart-header"><h2 id="checkout-title">Checkout</h2><button class="checkout-close" type="button" aria-label="Close checkout">×</button></div>
-
-      <section class="checkout-summary">
-        <h3 class="checkout-sub">Order summary</h3>
-        <div class="summary-items"></div>
-        <div class="summary-line"><span>Subtotal</span><strong class="sum-subtotal">0 EGP</strong></div>
-        <div class="summary-line"><span>Delivery</span><strong class="sum-shipping">—</strong></div>
-        <div class="summary-line total"><span>Total</span><strong class="sum-total">0 EGP</strong></div>
-      </section>
-
-      <form class="checkout-form" id="checkout-form" novalidate>
-        <h3 class="checkout-sub">Delivery details</h3>
-        <label>Full name<input name="name" type="text" autocomplete="name" required placeholder="Your name"></label>
-        <label>Phone number<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" title="Enter a valid 11-digit phone starting with 01"></label>
-        <label>Address<textarea name="address" rows="3" required placeholder="Street, building, area, city"></textarea></label>
-        <fieldset>
-          <legend>Payment method</legend>
-          <label class="radio"><input type="radio" name="pay" value="Cash on delivery" checked><span>Cash on delivery</span></label>
-          <label class="radio"><input type="radio" name="pay" value="Instapay"><span>Instapay transfer</span></label>
-          <label class="radio"><input type="radio" name="pay" value="Card on delivery"><span>Card on delivery</span></label>
-        </fieldset>
-        <button class="place-order-btn" type="submit">Place order</button>
-        <p class="form-hint">We will confirm your order by phone at <a href="tel:01289659621">01289659621</a>, or message us on <a href="https://wa.me/201280001351" target="_blank" rel="noopener">WhatsApp</a>.</p>
-      </form>
-
-      <section class="order-success" hidden>
-        <div class="success-mark">✓</div>
-        <h3>Thank you — your order is confirmed.</h3>
-        <p class="success-ref"></p>
-        <p>Our team will call you shortly to arrange delivery. For anything else, contact <a href="tel:01289659621">01289659621</a>.</p>
-        <button class="btn continue-btn" type="button">Continue shopping</button>
-      </section>
-    </div>
-  </dialog>
+  <!-- Libraries (vendored for GitHub Pages reliability) -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="vendor/three.min.js"></script>
+  <script src="products.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

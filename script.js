@@ -9,7 +9,8 @@
 
   const $ = (s, c) => (c || document).querySelector(s);
   const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
-  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COARSE = window.matchMedia('(pointer: coarse)').matches; /* phone/tablet touch */
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches || COARSE;
   const hasGSAP = typeof window.gsap !== 'undefined';
   const hasST = hasGSAP && typeof window.ScrollTrigger !== 'undefined';
   const hasTHREE = false; /* Three.js removed — hero is now 2D SVG */
@@ -665,11 +666,12 @@
       });
     }
 
-    // marquee speed follows scroll velocity
-    const mq = $('.mq-inner');
+    // marquee speed follows scroll velocity (desktop track only; mobile uses pure-CSS loop)
+    const mq = $('.mq-desktop');
+    if (mq && !COARSE) {
     let mqX = 0;
     gsap.ticker.add((t, dt) => {
-      const vel = ScrollTrigger.getScrollFunc(window) ? 0 : 0;
+      if (!mq.children.length) return;
       const base = .6;
       const boost = Math.min(4, Math.abs((ScrollTrigger.getAll()[0] ? 0 : 0)));
       mqX -= (base + boost);
@@ -684,6 +686,7 @@
         gsap.to(mq, { '--mqboost': Math.min(6, v), duration: .3 });
       }
     });
+    }
 
     // stats count-up
     $$('.count').forEach(el => {

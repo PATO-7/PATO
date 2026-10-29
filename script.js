@@ -20,13 +20,13 @@ if (splash) {
       next.style.animation = "none";
       void next.offsetWidth;
       next.style.animation = "";
-    }, 1500);
+    }, 900);
   }
 
   window.setTimeout(() => {
     document.body.classList.remove("splash-lock");
     splash.classList.add("is-hidden");
-  }, 3600); // 3s hold + 0.6s fade-out
+  }, 2000); // ~1.6s hold + 0.45s fade-out (shortened intro)
 }
 
 /* ============ FIXED DARK GENTLE THEME (no switcher UI) ============ */

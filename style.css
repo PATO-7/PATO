@@ -94,11 +94,11 @@
 .splash-tag {
   margin: 0; color: var(--muted); font-size: clamp(10px, 2.6vw, 13px);
   letter-spacing: .35em; text-transform: uppercase;
-  opacity: 0; animation: fade-up .6s .95s ease forwards;
+  opacity: 0; animation: fade-up .5s .45s ease forwards;
 }
 .splash-line {
   width: 0; height: 1px; margin-top: 18px; background: var(--accent);
-  animation: line-grow 1.1s .8s cubic-bezier(.4,0,.2,1) forwards;
+  animation: line-grow .9s .3s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes letter-in { to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -437,7 +437,7 @@ dialog::backdrop { background: rgba(5, 7, 6, .65); backdrop-filter: blur(2px); }
 .sb-img { position: absolute; inset: -6%; width: 112%; height: 112%; object-fit: cover; opacity: 0; filter: brightness(.5) saturate(.8); transition: opacity 1.1s ease; }
 .sb-img.is-active { opacity: 1; animation: sb-kenburns 3.2s ease-in-out both; }
 @keyframes sb-kenburns { from { transform: scale(1.14) translateX(2%); } to { transform: scale(1) translateX(0); } }
-.splash-inner, .splash-tag, .splash-line { position: relative; z-index: 2; }
+.splash-inner, .splash-line { position: relative; z-index: 2; }
 .splash::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,.15) 0%, rgba(0,0,0,.62) 75%); pointer-events: none; }
 
 /* soft drifting light glows */
@@ -455,25 +455,28 @@ dialog::backdrop { background: rgba(5, 7, 6, .65); backdrop-filter: blur(2px); }
 .r2 { width: 84vmin; height: 84vmin; animation: ring-grow 3s ease-out .5s forwards; }
 @keyframes ring-grow { 0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } 25% { opacity: .6; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
 
-/* ============ V5: IMPROVED OPENING ANIMATION ============ */
-/* letters rise with a gentle shimmer sweep, tag & line land after */
+/* ============ V6: SHORTER OPENING ANIMATION (~2s total) ============ */
+/* letters rise quickly with a gentle glow sweep */
 @keyframes letter-in-v5 {
   0%   { opacity: 0; transform: translateY(0.6em) scale(.88); filter: blur(8px); }
   60%  { opacity: 1; filter: blur(0); }
   100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); text-shadow: 0 0 34px color-mix(in srgb, var(--accent) 40%, transparent); }
 }
-.splash-letter, .splash-dot { animation-name: letter-in-v5; animation-duration: .7s; }
-.splash-dot { text-shadow: 0 0 30px var(--accent); }
-/* subtle whole-wordmark settle after the letters arrive */
-.splash-inner { animation: wordmark-settle 3.4s cubic-bezier(.2,.7,.2,1) both; }
+.splash-letter, .splash-dot { animation-name: letter-in-v5; animation-duration: .5s; }
+.splash-letter:nth-child(1) { animation-delay: .05s; }
+.splash-letter:nth-child(2) { animation-delay: .14s; }
+.splash-letter:nth-child(3) { animation-delay: .23s; }
+.splash-letter:nth-child(4) { animation-delay: .32s; }
+.splash-dot { animation-delay: .42s; text-shadow: 0 0 30px var(--accent); }
+/* subtle whole-wordmark settle, shortened */
+.splash-inner { animation: wordmark-settle 1.9s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes wordmark-settle { 0%, 38% { transform: scale(.965); } 100% { transform: scale(1); } }
-/* cinematic exit: fade + slight zoom, timed with JS (3s hold) */
-.splash { animation: splash-out .7s 2.9s cubic-bezier(.4,0,.2,1) forwards; }
-@keyframes splash-out-v5 { to { opacity: 0; visibility: hidden; transform: scale(1.06); filter: blur(3px); } }
+/* quick elegant exit: fade + slight zoom, timed with JS (~1.6s hold) */
+.splash { animation: splash-out .45s 1.55s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes splash-out-v5 { to { opacity: 0; visibility: hidden; transform: scale(1.05); filter: blur(3px); } }
 .splash { animation-name: splash-out-v5; }
-/* thin progress bar under the wordmark fills over 3s */
-.splash-line { animation: line-grow 2.7s .35s cubic-bezier(.4,0,.2,1) forwards; }
-.splash-tag { animation: fade-up .7s 1.05s ease forwards; }
+/* thin progress bar under the wordmark fills in sync */
+.splash-line { animation: line-grow 1.4s .2s cubic-bezier(.4,0,.2,1) forwards; }
 
 /* ============ V5: FIRST-PAGE HEADER (PATO · basket · 3-char menu) ============ */
 .hero { min-height: 100svh; position: relative; }
@@ -483,9 +486,12 @@ dialog::backdrop { background: rgba(5, 7, 6, .65); backdrop-filter: blur(2px); }
 .hero .site-header {
   display: flex; position: absolute; top: 0; left: 0; right: 0; z-index: 5;
   justify-content: space-between; align-items: center;
-  width: min(1100px, calc(100% - 32px)); margin: 0 auto;
-  padding: calc(12px + env(safe-area-inset-top)) 0 12px;
-  background: none; border-bottom: 0; backdrop-filter: none;
+  width: min(1100px, calc(100% - 24px)); margin: 0 auto;
+  padding: calc(8px + env(safe-area-inset-top)) 16px 8px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
 }
 .header-actions { display: flex; align-items: center; gap: 10px; }
 .icon-btn {

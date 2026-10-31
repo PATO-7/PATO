@@ -22,40 +22,38 @@
     b.textContent = n; b.hidden = n === 0;
   }
 
-  /* ---------- splash: live watch hands + dust + 3s then reveal ---------- */
+  /* ---------- splash: logo + flat 2D watch — merges seamlessly into the page ---------- */
   function initSplash() {
     const splash = $('#splash');
-    // hour markers on splash dial
+    if (!splash) return;
+    // hour markers around the flat dial (center 100,100)
     const marks = $('#sw-marks');
     if (marks) {
       let m = '';
       for (let i = 0; i < 12; i++) {
         const t = (i * 30 * Math.PI) / 180;
-        m += `<line x1="${(100 + 60 * Math.sin(t)).toFixed(1)}" y1="${(130 - 60 * Math.cos(t)).toFixed(1)}" x2="${(100 + 66 * Math.sin(t)).toFixed(1)}" y2="${(130 - 66 * Math.cos(t)).toFixed(1)}" stroke="#B8964E" stroke-width="2"/>`;
+        m += `<line x1="${(100 + 70 * Math.sin(t)).toFixed(1)}" y1="${(100 - 70 * Math.cos(t)).toFixed(1)}" x2="${(100 + 78 * Math.sin(t)).toFixed(1)}" y2="${(100 - 78 * Math.cos(t)).toFixed(1)}" stroke="#B8964E" stroke-width="2"/>`;
       }
       marks.innerHTML = m;
     }
-    // drifting gold dust particles in the light beam
-    const dustBox = $('#sp-dust');
-    if (dustBox && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      let d = '';
-      for (let i = 0; i < 26; i++) {
-        const size = (Math.random() * 3.5 + 1).toFixed(1);
-        d += `<span class="dust" style="left:${(Math.random() * 100).toFixed(1)}%;width:${size}px;height:${size}px;animation-duration:${(Math.random() * 5 + 4).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s"></span>`;
-      }
-      dustBox.innerHTML = d;
-    }
-    // sweep splash hands to current time
+    // set the watch hands to the current time
     const now = new Date();
-    const set = (id, deg) => { const el = $('#' + id); if (el) el.setAttribute('transform', `rotate(${deg} 100 130)`); };
+    const set = (id, deg) => { const el = $('#' + id); if (el) el.setAttribute('transform', `rotate(${deg} 100 100)`); };
     set('sw-hour', (now.getHours() % 12) * 30 + now.getMinutes() * 0.5);
     set('sw-min', now.getMinutes() * 6);
     set('sw-sec', now.getSeconds() * 6);
 
-    const hide = () => { if (splash) splash.classList.add('done'); };
-    setTimeout(hide, 3000);          // exactly 3 seconds
-    setTimeout(() => { if (splash) splash.remove(); }, 3700);
-    window.addEventListener('click', hide, { once: true }); // tap to skip
+    // fade the mark out and remove it — the page underneath is already visible,
+    // so the intro simply dissolves into it (a merge, not a cut)
+    let finished = false;
+    const hide = () => {
+      if (finished) return;
+      finished = true;
+      splash.classList.add('done');
+      setTimeout(() => splash.remove(), 1100);
+    };
+    setTimeout(hide, 2400);
+    window.addEventListener('click', hide, { once: true }); // tap to enter immediately
   }
 
   /* ---------- routing ---------- */

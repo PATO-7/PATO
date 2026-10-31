@@ -35,7 +35,7 @@
   }
 
   const RAW = [
-    { id: 'signature', name: 'richard mille Signature', ref: 'PT-0800', collection: 'Obsidian', price: 850,
+    { id: 'signature', name: 'richard mille Signature', ref: 'PT-0800', collection: 'Obsidian', price: 800,
       photo: 'images/watch.webp',
       desc: 'The house classic — a whisper of gold on obsidian, made to be worn every day and remembered forever.',
       specs: { Movement: 'Automatic, 38h reserve', Case: '40mm steel', Strap: 'Black leather', Water: '50m' } },

@@ -15,21 +15,18 @@
 </head>
 <body>
 
-  <!-- ============ OPENING ANIMATION (logo + 2D watch, merges into the page) ============ -->
+  <!-- ============ OPENING PAGE — full screen, 3 s, animated luxury watch behind the logo ============ -->
   <div id="splash" aria-hidden="true">
+    <!-- cinematic light sweep over everything -->
+    <span class="splash-sheen" aria-hidden="true"></span>
+
+    <!-- animated hyper-real watch (built by script.js) -->
+    <div class="splash-stage" id="sw-stage"></div>
+
+    <!-- the page logo sits in front of the watch -->
     <div class="splash-mark">
-      <!-- flat 2D watch dial -->
-      <svg class="splash-watch" viewBox="0 0 200 200" width="150" height="150" aria-hidden="true">
-        <circle cx="100" cy="100" r="92" fill="none" stroke="#B8964E" stroke-width="1.4" opacity=".85"/>
-        <circle cx="100" cy="100" r="82" fill="none" stroke="#B8964E" stroke-width=".6" opacity=".4"/>
-        <g id="sw-marks"></g>
-        <line id="sw-hour" x1="100" y1="100" x2="100" y2="62" stroke="#B8964E" stroke-width="4" stroke-linecap="round"/>
-        <line id="sw-min"  x1="100" y1="100" x2="100" y2="44" stroke="#EDE6D6" stroke-width="2.4" stroke-linecap="round"/>
-        <line id="sw-sec"  x1="100" y1="100" x2="100" y2="38" stroke="#5C1A1B" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="100" cy="100" r="4" fill="#B8964E"/>
-      </svg>
-      <!-- the page logo -->
       <h1 class="splash-word glow-word">PATO</h1>
+      <p class="splash-sub">Haute Horlogerie</p>
     </div>
   </div>
 

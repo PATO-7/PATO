@@ -48,21 +48,34 @@
     }
     .watch-tilt{
       position:absolute; inset:0; border-radius:50%;
-      animation:orbit 7s ease-in-out 1.2s infinite;
+      transform-style:preserve-3d;
       will-change:transform;
     }
-    .watch-photo{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:contain; border-radius:50%;
-      filter:brightness(.92) contrast(1.06) saturate(1.05)
-             drop-shadow(0 30px 70px rgba(0,0,0,.8))
-             drop-shadow(0 0 60px rgba(184,150,78,.25));
-      animation:kenburns 8s ease-in-out infinite alternate;
+    /* ANIMATION #1 — real 3D turntable: the watch's own photos rotate in a
+       carousel ring around the vertical axis, like a studio product spin. */
+    .carousel{
+      position:absolute; inset:0; transform-style:preserve-3d;
+      animation:spin 14s linear infinite;
+      will-change:transform;
     }
-    /* subtle Ken-Burns zoom inside the circle — keeps the still image alive */
-    @keyframes kenburns{
-      from{transform:scale(1)}
-      to  {transform:scale(1.07)}
+    .face{
+      position:absolute; inset:0; border-radius:50%; overflow:hidden;
+      backface-visibility:hidden;
+      box-shadow:inset 0 0 70px rgba(10,10,11,.55);
+    }
+    .face img{
+      width:100%; height:100%; object-fit:cover; display:block;
+      filter:brightness(.9) contrast(1.06) saturate(1.05);
+    }
+    /* ANIMATION #2 — slow cinematic camera drift on top of the spin */
+    @keyframes drift{
+      0%,100%{transform:rotateX(4deg) translateY(0)}
+      50%    {transform:rotateX(-4deg) translateY(-1.4vh)}
+    }
+    /* ANIMATION #3 — gentle breathing zoom so the scene never feels static */
+    @keyframes breathe{
+      0%,100%{transform:scale(1)}
+      50%    {transform:scale(1.06)}
     }
     /* gold ring around the photo — like a bezel */
     .watch-ring{
@@ -93,10 +106,10 @@
       from{transform:scale(.86) translateY(4vh); opacity:0; filter:blur(10px)}
       to{transform:scale(1) translateY(0); opacity:1; filter:blur(0)}
     }
-    /* slow cinematic drift — zoom + tilt, like a camera orbiting the piece */
-    @keyframes orbit{
-      0%,100%{transform:scale(1.02) rotateY(-7deg) rotateX(3deg) translateY(0)}
-      50%    {transform:scale(1.09) rotateY(7deg) rotateX(-3deg) translateY(-1.6vh)}
+    /* full 360° turntable spin (JS sets each face's angle + radius) */
+    @keyframes spin{
+      from{transform:rotateY(0deg)}
+      to  {transform:rotateY(-360deg)}
     }
     @keyframes sweep{
       0%{transform:rotate(16deg) translateX(-140%)}
@@ -163,11 +176,12 @@
 
   <!-- ============ PAGE 1 — OPENING (full screen, 3 s) ============ -->
   <div id="opening">
-    <!-- animated luxury-watch image behind the logo -->
+    <!-- animated real luxury watch behind the logo:
+         a 3D photo carousel built from the Naviforce NF9062M's own photos -->
     <div class="scene">
-      <div class="watch-frame">
-        <div class="watch-tilt">
-          <img class="watch-photo" src="images/naviforce-1.jpg" alt="PATO luxury watch">
+      <div class="watch-frame" id="watch-frame">
+        <div class="watch-tilt" id="watch-tilt">
+          <div class="carousel" id="carousel"></div>
           <span class="watch-shine"></span>
         </div>
         <span class="watch-ring"></span>
@@ -178,13 +192,45 @@
     <!-- the logo sits in FRONT of the watch -->
     <div class="mark">
       <h1 class="word">PATO</h1>
-      <p class="sub">Haute Horlogerie</p>
     </div>
 
     <div class="timer"><i></i></div>
   </div>
 
   <script>
+    /* Build the 3D turntable: each real product photo becomes a face of a
+       cylinder ring; the ring spins around the vertical axis like a studio
+       turntable video. Angles/radius are computed from the actual size. */
+    const WATCH_PHOTOS = [
+      'images/naviforce-1.jpg',   // Naviforce NF9062M — dial front
+      'images/naviforce-2.jpg',   // Naviforce NF9062M — wrist shot
+      'images/naviforce-3.jpg',   // Naviforce NF9062M — detail
+      'images/naviforce-4.jpg'    // Naviforce NF9062M — strap / clasp
+    ];
+    (function buildCarousel() {
+      const frame = document.getElementById('carousel');
+      const tilt  = document.getElementById('watch-tilt');
+      if (!frame || !tilt) return;
+      const n = WATCH_PHOTOS.length;
+      const w = frame.parentElement.offsetWidth || 480;
+      // radius so neighbouring faces overlap smoothly during the spin
+      const r = Math.round(w / (2 * Math.tan(Math.PI / n))) + 8;
+      WATCH_PHOTOS.forEach((src, i) => {
+        const face = document.createElement('div');
+        face.className = 'face';
+        face.style.transform = `rotateY(${(360 / n) * i}deg) translateZ(${r}px)`;
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Naviforce NF9062M luxury watch';
+        img.draggable = false;
+        face.appendChild(img);
+        frame.appendChild(face);
+      });
+      // layered cinematic motion on top of the turntable spin
+      tilt.style.animation = 'drift 6s ease-in-out .6s infinite';
+      frame.parentElement.style.animation += ', breathe 7s ease-in-out 1.4s infinite';
+    })();
+
     // Hold the opening page for exactly 3 seconds, then open the start page.
     const HOLD_MS = 3000;
     let finished = false;

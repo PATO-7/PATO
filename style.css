@@ -58,17 +58,25 @@ input,textarea,select{font-family:inherit;font-size:16px} /* no iOS zoom */
 }
 .sw-tilt{
   position:absolute; inset:0; border-radius:50%;
-  animation:swOrbit 7s ease-in-out 1.2s infinite; will-change:transform;
+  transform-style:preserve-3d; will-change:transform;
 }
-.sw-photo{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:contain; border-radius:50%;
-  filter:brightness(.92) contrast(1.06) saturate(1.05)
-         drop-shadow(0 30px 70px rgba(0,0,0,.8))
-         drop-shadow(0 0 60px rgba(184,150,78,.25));
-  animation:kenburns 8s ease-in-out infinite alternate;
+/* 3D turntable — real product photos rotate around the vertical axis */
+.sw-carousel{
+  position:absolute; inset:0; border-radius:50%;
+  transform-style:preserve-3d;
+  animation:swSpin 14s linear infinite;
+  will-change:transform;
 }
-@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
+.sw-face{
+  position:absolute; inset:0; border-radius:50%; overflow:hidden;
+  backface-visibility:hidden;
+  box-shadow:inset 0 0 70px rgba(10,10,11,.55);
+}
+.sw-face img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:brightness(.9) contrast(1.06) saturate(1.05);
+}
+@keyframes swSpin{from{transform:rotateY(0deg)}to{transform:rotateY(-360deg)}}
 /* gold halo ring around the photo — like a bezel */
 .sw-ring{
   position:absolute; inset:-14px; border-radius:50%; pointer-events:none;
@@ -100,10 +108,6 @@ input,textarea,select{font-family:inherit;font-size:16px} /* no iOS zoom */
 @keyframes swRiseIn{
   from{transform:scale(.86) translateY(4vh); opacity:0; filter:blur(10px)}
   to{transform:scale(1) translateY(0); opacity:1; filter:blur(0)}
-}
-@keyframes swOrbit{
-  0%,100%{transform:scale(1.02) rotateY(-7deg) rotateX(3deg) translateY(0)}
-  50%    {transform:scale(1.09) rotateY(7deg) rotateX(-3deg) translateY(-1.6vh)}
 }
 @keyframes swRingPulse{
   0%,100%{opacity:.55; transform:scale(1)}
@@ -144,12 +148,6 @@ input,textarea,select{font-family:inherit;font-size:16px} /* no iOS zoom */
   from{transform:translateY(22px);opacity:0;letter-spacing:.55em;filter:blur(6px)}
   to{transform:none;opacity:1;letter-spacing:.18em;filter:blur(0)}
 }
-.splash-sub{
-  font-family:var(--sans); font-weight:300; letter-spacing:.42em; text-transform:uppercase;
-  font-size:clamp(9px,2.4vw,12px); color:var(--champ); opacity:0;
-  animation:subIn 1.2s 1.1s ease both;
-}
-@keyframes subIn{from{opacity:0;transform:translateY(10px)}to{opacity:.8;transform:none}}
 
 /* thin gold progress line — shows the 3 seconds passing */
 .splash-timer{

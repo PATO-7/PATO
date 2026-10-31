@@ -41,7 +41,7 @@
       <div class="splash-stage" id="sw-stage">
         <div class="sw-frame">
           <div class="sw-tilt">
-            <img class="sw-photo" src="images/naviforce-1.jpg" alt="PATO luxury watch" draggable="false">
+            <div class="sw-carousel" id="sw-carousel"></div>
             <span class="sw-shine"></span>
           </div>
           <span class="sw-ring"></span>
@@ -49,9 +49,35 @@
       </div>
       <div class="splash-mark">
         <h1 class="splash-word glow-word">PATO</h1>
-        <p class="splash-sub">Haute Horlogerie</p>
       </div>`;
     document.body.insertBefore(d, document.body.firstChild);
+
+    // same 3D turntable as opening.html — real Naviforce photos spinning behind the logo
+    const carousel = $('#sw-carousel');
+    const tilt = d.querySelector('.sw-tilt');
+    const PHOTOS = ['images/naviforce-1.jpg', 'images/naviforce-2.jpg',
+                    'images/naviforce-3.jpg', 'images/naviforce-4.jpg'];
+    const n = PHOTOS.length;
+    const w = carousel.parentElement.offsetWidth || 480;
+    const r = Math.round(w / (2 * Math.tan(Math.PI / n))) + 8;
+    PHOTOS.forEach((src, i) => {
+      const face = document.createElement('div');
+      face.className = 'sw-face';
+      face.style.transform = `rotateY(${(360 / n) * i}deg) translateZ(${r}px)`;
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = 'Naviforce NF9062M luxury watch';
+      img.draggable = false;
+      face.appendChild(img);
+      carousel.appendChild(face);
+    });
+    if (tilt.animate) {
+      tilt.animate(
+        [{ transform: 'rotateX(4deg) translateY(0)' },
+         { transform: 'rotateX(-4deg) translateY(-1.4vh)' },
+         { transform: 'rotateX(4deg) translateY(0)' }],
+        { duration: 6000, delay: 600, iterations: Infinity, easing: 'ease-in-out' });
+    }
     return d;
   }
 

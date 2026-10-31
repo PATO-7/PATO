@@ -99,8 +99,11 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
   font-size:var(--pato-logo-size); line-height:1; letter-spacing:.08em;
   color:var(--pato-ivory);
 }
+/* start state (invisible + shifted down) is set here in CSS, NOT via GSAP
+   .from(), so nothing ever flashes before the timeline reaches t = 2 s */
 .pi-letter{
-  display:inline-block; opacity:0; will-change:transform,opacity;
+  display:inline-block; opacity:0; transform:translateY(26px);
+  will-change:transform,opacity;
   text-shadow:0 0 26px rgba(201,162,75,.28);
 }
 .pi-tag{
@@ -199,9 +202,14 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
   /* --------------------------------------------------------------
      Helpers
      -------------------------------------------------------------- */
+  /* sessionStorage wrapped in try/catch (private browsing can throw) */
   var store = {
-    get: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
-    set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+    get: function (k) {
+      try { return window.sessionStorage.getItem(k); } catch (e) { return null; }
+    },
+    set: function (k, v) {
+      try { window.sessionStorage.setItem(k, v); } catch (e) { /* ignore */ }
+    }
   };
   var reduced = window.matchMedia &&
                 window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -363,10 +371,15 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
      -------------------------------------------------------------- */
   function runReduced(el) {
     var mark = el.querySelector('.pi-mark');
+    /* hide the animated dial + shimmer; show a calm, static wordmark */
+    gsap.set('#pi-dial', { autoAlpha: 0 });
+    gsap.set('.pi-shimmer', { autoAlpha: 0 });
     gsap.set(mark, { autoAlpha: 1, y: 0 });
-    gsap.set(el.querySelectorAll('.pi-letter'), { autoAlpha: 1 });
+    gsap.set(el.querySelectorAll('.pi-letter'), { autoAlpha: 1, y: 0 });
+    gsap.set('.pi-tag', { autoAlpha: 1 });
+    el.querySelector('.pi-skip').style.display = 'none';   // nothing to skip
     gsap.to(el, {
-      autoAlpha: 0, delay: CONFIG.reducedFadeMs / 1000, duration: .01,
+      autoAlpha: 0, delay: CONFIG.reducedFadeMs / 1000, duration: .3,
       onComplete: function () { finish(el, true); }
     });
   }
@@ -404,11 +417,11 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
     });
     tl.to('#pi-second', { opacity: 1, duration: .2, ease: 'none' }, 'hands+=.05');
 
-    /* PHASE 3 — 2.0–2.8 s : P-A-T-O rise in one by one + gold shimmer */
+    /* PHASE 3 — 2.0–2.8 s : P-A-T-O rise in one by one + gold shimmer.
+       Letters start hidden/offset in CSS; we only animate TO the final
+       state (no flash, and no GSAP "overwriting" conflicts). */
     tl.to('.pi-letter', { autoAlpha: 1, y: 0, duration: .45,
                           stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
-      .from('.pi-letter', { y: 26, duration: .45,
-                            stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
       .to('.pi-tag', { autoAlpha: 1, duration: .4 }, T.logo.start + .45)
       /* shimmer = a soft gold band sweeping across the wordmark */
       .fromTo('.pi-shimmer',
@@ -439,17 +452,26 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
      Boot — show once per session, lock scrolling, guard errors
      -------------------------------------------------------------- */
   function boot() {
-    if (store.get(SEEN_KEY) === '1') return;      // already shown this session
-    if (typeof gsap === 'undefined') return;      // CDN blocked → just show page
-    store.set(SEEN_KEY, '1');
+    try {
+      if (store.get(SEEN_KEY) === '1') return;    // already shown this session
+      if (typeof gsap === 'undefined') return;    // CDN blocked → just show page
+      store.set(SEEN_KEY, '1');
 
-    var el = buildOverlay();
-    document.documentElement.classList.add('pato-intro-lock');
+      var el = buildOverlay();
+      document.documentElement.classList.add('pato-intro-lock');
 
-    /* safety net: never trap the user on the intro */
-    setTimeout(function () { finish(el, false); }, CONFIG.durationMs + 2500);
+      /* safety net: never trap the user on the intro */
+      setTimeout(function () { finish(el, false); }, CONFIG.durationMs + 2500);
 
-    if (reduced) runReduced(el); else runFull(el);
+      if (reduced) runReduced(el); else runFull(el);
+    } catch (err) {
+      /* any unexpected error must NEVER leave the site stuck behind a
+         black overlay — restore scrolling and remove the intro. */
+      console.error('[PATO intro]', err);
+      var stuck = document.getElementById('pato-intro');
+      if (stuck) finish(stuck, true);
+      document.documentElement.classList.remove('pato-intro-lock');
+    }
   }
 
   if (document.readyState === 'loading') {

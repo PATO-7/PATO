@@ -15,20 +15,10 @@
 </head>
 <body>
 
-  <!-- ============ OPENING PAGE — full screen, 3 s, animated luxury watch behind the logo ============ -->
-  <div id="splash" aria-hidden="true">
-    <!-- cinematic light sweep over everything -->
-    <span class="splash-sheen" aria-hidden="true"></span>
-
-    <!-- animated hyper-real watch (built by script.js) -->
-    <div class="splash-stage" id="sw-stage"></div>
-
-    <!-- the page logo sits in front of the watch -->
-    <div class="splash-mark">
-      <h1 class="splash-word glow-word">PATO</h1>
-      <p class="splash-sub">Haute Horlogerie</p>
-    </div>
-  </div>
+  <!-- The OPENING PAGE is a separate file: opening.html (full screen, 3 s,
+       animated luxury-watch image behind the PATO logo). It then opens this
+       start page. If this page is opened directly, script.js shows the same
+       intro overlay once before the store appears. -->
 
   <!-- ============ TOP BAR ============ -->
   <header id="topbar">

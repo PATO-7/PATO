@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0A">
+<title>PATO · Time, Perfected.</title>
+
+<!-- ============================================================
+     PATO — LUXURY INTRO (self-contained)
+     One file: HTML + CSS + vanilla JS + GSAP (from cdnjs).
+     Timeline (~3.5 s):  bezel draws → hands sweep to 10:10 →
+                        P·A·T·O shimmer + tagline → curtain split reveal.
+     Drop-in usage: see the "INTEGRATION" comment at the bottom.
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ------------------------------------------------------------
+   1) EASY-EDIT VARIABLES  (colors / text sizes / motion feel)
+   ------------------------------------------------------------ */
+:root{
+  --pato-bg:      #0A0A0A;              /* deep black backdrop        */
+  --pato-gold:    #C9A24B;              /* warm gold accents          */
+  --pato-gold-hi: #F3E3B8;              /* light gold for shimmer     */
+  --pato-ivory:   #F5F1E8;              /* ivory text                 */
+
+  --pato-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --pato-sans:  'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --pato-logo-size: clamp(44px, 12vw, 84px);   /* PATO wordmark       */
+  --pato-tag-size:  clamp(9px, 2.2vw, 12px);   /* tagline             */
+}
+
+/* ------------------------------------------------------------
+   2) DEMO HOMEPAGE STYLING  (delete this block when you merge
+      the intro into your own homepage — it only styles the
+      placeholder page behind the overlay in this demo file)
+   ------------------------------------------------------------ */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--pato-bg);color:var(--pato-ivory);font-family:var(--pato-sans);
+     -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.demo-hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;
+           justify-content:center;text-align:center;gap:22px;padding:8vh 6vw;
+           background:radial-gradient(70% 55% at 50% 38%,rgba(201,162,75,.09),transparent 70%),var(--pato-bg)}
+.demo-hero .kicker{letter-spacing:.5em;margin-left:.5em;text-transform:uppercase;
+                   font-size:11px;font-weight:300;color:var(--pato-gold)}
+.demo-hero h2{font-family:var(--pato-serif);font-weight:500;letter-spacing:.22em;
+              margin-left:.22em;font-size:clamp(56px,16vw,130px);color:var(--pato-ivory)}
+.demo-hero p{max-width:44ch;line-height:1.8;font-weight:300;font-size:14px;color:rgba(245,241,232,.66)}
+.demo-btn{display:inline-block;margin-top:10px;padding:15px 42px;border:1px solid var(--pato-gold);
+          color:var(--pato-gold);text-decoration:none;letter-spacing:.3em;margin-left:.3em;
+          text-transform:uppercase;font-size:11px;transition:background .4s,color .4s}
+.demo-btn:hover{background:var(--pato-gold);color:#0A0A0A}
+.demo-strip{padding:16vh 6vw;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:34px}
+.demo-card{border:1px solid rgba(201,162,75,.22);padding:34px 26px;text-align:center}
+.demo-card b{font-family:var(--pato-serif);font-weight:500;font-size:22px;letter-spacing:.12em;
+             display:block;margin-bottom:10px;color:var(--pato-ivory)}
+.demo-card span{font-size:12px;font-weight:300;color:rgba(245,241,232,.55)}
+footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em;
+       text-transform:uppercase;color:rgba(201,162,75,.55)}
+
+/* ------------------------------------------------------------
+   3) THE INTRO OVERLAY
+   Full-screen, fixed, above everything; removed from the DOM
+   when finished. Only transform/opacity are animated (60 fps).
+   ------------------------------------------------------------ */
+#pato-intro{
+  position:fixed; inset:0; z-index:99999;
+  width:100vw; height:100svh; min-height:100vh;
+  overflow:hidden; display:block;
+  background:var(--pato-bg);
+}
+/* subtle warm pool of light behind the dial */
+#pato-intro::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(46% 40% at 50% 46%,rgba(201,162,75,.10),transparent 72%);
+}
+.pi-center{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(72vmin,520px); aspect-ratio:1/1;
+}
+/* the SVG dial scales with the viewport through its parent box */
+.pi-dial{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+
+/* logo + tagline sit in the middle of the dial, above the hands */
+.pi-mark{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  pointer-events:none; white-space:nowrap;
+}
+.pi-word{
+  display:flex; font-family:var(--pato-serif); font-weight:500;
+  font-size:var(--pato-logo-size); line-height:1; letter-spacing:.08em;
+  color:var(--pato-ivory);
+}
+.pi-letter{
+  display:inline-block; opacity:0; will-change:transform,opacity;
+  text-shadow:0 0 26px rgba(201,162,75,.28);
+}
+.pi-tag{
+  font-family:var(--pato-sans); font-weight:300; text-transform:uppercase;
+  font-size:var(--pato-tag-size); letter-spacing:.5em; margin-left:.5em;
+  color:var(--pato-gold); opacity:0;
+}
+/* soft gold shimmer that passes across the letters (phase 3) */
+.pi-shimmer{
+  position:absolute; top:-25%; left:0; width:26%; height:150%;
+  opacity:0; mix-blend-mode:screen; pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(243,227,184,.10) 42%,
+             rgba(243,227,184,.34) 50%,rgba(243,227,184,.10) 58%,transparent 100%);
+}
+
+/* two panels that slide up / down like curtains (phase 4) */
+.pi-curtain{position:absolute;left:0;width:100%;height:50.6%;z-index:2;pointer-events:none;
+            background:var(--pato-bg);will-change:transform}
+.pi-curtain.top{top:0}
+.pi-curtain.bottom{bottom:0}
+/* thin gold seam along the curtain edges while they part */
+.pi-curtain.top::after,.pi-curtain.bottom::after{
+  content:''; position:absolute; left:0; width:100%; height:1px;
+  background:linear-gradient(90deg,transparent,var(--pato-gold),transparent);opacity:.5}
+.pi-curtain.top::after{bottom:0}
+.pi-curtain.bottom::after{top:0}
+
+/* Skip button — small, bottom corner, above the curtains */
+.pi-skip{
+  position:absolute; right:max(18px,env(safe-area-inset-right));
+  bottom:max(16px,env(safe-area-inset-bottom)); z-index:3;
+  background:transparent; border:1px solid rgba(201,162,75,.4);
+  color:var(--pato-gold); font-family:var(--pato-sans); font-weight:400;
+  font-size:10px; letter-spacing:.32em; margin-left:.32em; text-transform:uppercase;
+  padding:10px 18px; cursor:pointer; border-radius:2px;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.pi-skip:hover{background:rgba(201,162,75,.12);border-color:var(--pato-gold)}
+.pi-skip:focus-visible{outline:2px solid var(--pato-gold);outline-offset:3px}
+
+/* body scroll is locked while the intro plays (class added by JS) */
+.pato-intro-lock{overflow:hidden!important}
+</style>
+</head>
+<body>
+
+<!-- ============ PLACEHOLDER HOMEPAGE (replace with your own) ============ -->
+<main class="demo-hero">
+  <span class="kicker">Genève · Since 1989</span>
+  <h2>PATO</h2>
+  <p>Quiet luxury, worn gently on the wrist. Mechanical timepieces chosen
+     with patience, delivered with care.</p>
+  <a class="demo-btn" href="#collection">Explore the collection</a>
+</main>
+<section class="demo-strip" id="collection">
+  <div class="demo-card"><b>Sovereign</b><span>Automatic · 40 mm · Rose gold</span></div>
+  <div class="demo-card"><b>Régate</b><span>Chronometer · 38 mm · Steel &amp; gold</span></div>
+  <div class="demo-card"><b>Nocturne</b><span>Moonphase · 41 mm · Onyx dial</span></div>
+</section>
+<footer>PATO — Time, Perfected.</footer>
+
+
+<!-- ================================================================
+     4) THE INTRO SCRIPT  (config → markup → GSAP timeline → hooks)
+     ================================================================ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* --------------------------------------------------------------
+     CONFIG — edit these values to retime or re-text the whole intro
+     -------------------------------------------------------------- */
+  var CONFIG = {
+    logoText:      'PATO',          // wordmark letters, revealed one by one
+    tagline:       'Time, Perfected.',
+    durationMs:    3500,            // total animation length (approx.)
+    skipAfterMs:   3000,            // keep the Skip button this long, then fade it
+    reducedFadeMs: 500,             // simple logo fade for prefers-reduced-motion
+    colors: {
+      gold:  '#C9A24B',
+      ivory: '#F5F1E8'
+    },
+    /* classic watch-advert pose: hour hand at 10, minute hand at 2 (10:10) */
+    hands: { hourDeg: -55, minuteDeg: 60 }
+  };
+
+  /* Phase timings (seconds) — sum ≈ 3.5 s. Keep in sync with durationMs. */
+  var T = {
+    bezel:   { start: 0.0,  draw: 0.7,  tickStagger: 0.012 }, // 0.0–0.8  circle + ticks
+    hands:   { start: 0.8,  spin: 1.2 },                      // 0.8–2.0  sweep & settle
+    logo:    { start: 2.0,  stagger: 0.11, shimmerDur: 0.55 },// 2.0–2.8  PATO + tagline
+    exit:    { start: 2.8,  dur: 0.7 }                        // 2.8–3.5  scale-out + curtains
+  };
+
+  /* --------------------------------------------------------------
+     Helpers
+     -------------------------------------------------------------- */
+  var store = {
+    get: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+  };
+  var reduced = window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SEEN_KEY = 'patoIntroSeen';
+
+  /* Polar → cartesian around the dial centre (viewBox 0..200, r=100) */
+  function polar(r, deg) {
+    var a = (deg - 90) * Math.PI / 180;          // 0° = 12 o'clock
+    return { x: 100 + r * Math.cos(a), y: 100 + r * Math.sin(a) };
+  }
+
+  /* Build the dial as inline SVG so it scales perfectly with the viewport */
+  function buildDialSVG() {
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 200');
+    svg.setAttribute('class', 'pi-dial');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.id = 'pi-dial';
+
+    /* defs: metallic gradient for the hands */
+    var defs = document.createElementNS(NS, 'defs');
+    defs.innerHTML =
+      '<linearGradient id="pi-hand" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0" stop-color="#8a6c2f"/>' +
+        '<stop offset=".5" stop-color="' + CONFIG.colors.gold + '"/>' +
+        '<stop offset="1" stop-color="#f0dca6"/>' +
+      '</linearGradient>';
+    svg.appendChild(defs);
+
+    /* faint outer halo ring */
+    var halo = document.createElementNS(NS, 'circle');
+    halo.setAttribute('cx', 100); halo.setAttribute('cy', 100);
+    halo.setAttribute('r', 92);   halo.setAttribute('fill', 'none');
+    halo.setAttribute('stroke', 'rgba(201,162,75,.16)');
+    halo.setAttribute('stroke-width', '.6');
+    halo.setAttribute('stroke-dasharray', '579.8');
+    halo.setAttribute('stroke-dashoffset', '579.8');
+    halo.id = 'pi-halo';
+    svg.appendChild(halo);
+
+    /* main bezel circle — drawn by animating stroke-dashoffset */
+    var CIRC = 2 * Math.PI * 80;                  // circumference of r=80
+    var ring = document.createElementNS(NS, 'circle');
+    ring.setAttribute('cx', 100); ring.setAttribute('cy', 100);
+    ring.setAttribute('r', 80);   ring.setAttribute('fill', 'none');
+    ring.setAttribute('stroke', CONFIG.colors.gold);
+    ring.setAttribute('stroke-width', '1');
+    ring.setAttribute('stroke-linecap', 'round');
+    ring.setAttribute('transform', 'rotate(-90 100 100)'); // start at 12 o'clock
+    ring.setAttribute('stroke-dasharray', CIRC.toFixed(1));
+    ring.setAttribute('stroke-dashoffset', CIRC.toFixed(1));
+    ring.id = 'pi-ring';
+    svg.appendChild(ring);
+
+    /* tiny tick marks — appear one by one (JS sets each one's angle) */
+    var gTicks = document.createElementNS(NS, 'g');
+    gTicks.id = 'pi-ticks';
+    for (var i = 0; i < 60; i++) {
+      var major = (i % 5 === 0);
+      var p1 = polar(major ? 71 : 75, i * 6);
+      var p2 = polar(80, i * 6);
+      var ln = document.createElementNS(NS, 'line');
+      ln.setAttribute('x1', p1.x.toFixed(2)); ln.setAttribute('y1', p1.y.toFixed(2));
+      ln.setAttribute('x2', p2.x.toFixed(2)); ln.setAttribute('y2', p2.y.toFixed(2));
+      ln.setAttribute('stroke', major ? CONFIG.colors.ivory : CONFIG.colors.gold);
+      ln.setAttribute('stroke-width', major ? '1.5' : '.6');
+      ln.setAttribute('stroke-linecap', 'round');
+      ln.style.opacity = '0';                     // GSAP fades them in, in order
+      gTicks.appendChild(ln);
+    }
+    svg.appendChild(gTicks);
+
+    /* hands group (rotates about the dial centre) */
+    var gHands = document.createElementNS(NS, 'g');
+    gHands.id = 'pi-hands';
+
+    function hand(id, d, w) {
+      var p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', 'url(#pi-hand)');
+      p.setAttribute('stroke', 'rgba(10,10,10,.35)');
+      p.setAttribute('stroke-width', '.3');
+      p.id = id;
+      p.style.transformOrigin = '100px 100px';
+      p.style.transform = 'rotate(0deg)';
+      p.style.opacity = '0';
+      gHands.appendChild(p);
+      return p;
+    }
+    /* dauphine-style hour & minute hands */
+    hand('pi-hour',   'M98.6 104 L99.1 44 L100 38 L100.9 44 L101.4 104 Z');
+    hand('pi-minute', 'M98.9 104 L99.4 28 L100 22 L100.6 28 L101.1 104 Z');
+
+    /* thin second hand + counterweight */
+    var gSec = document.createElementNS(NS, 'g');
+    gSec.id = 'pi-second';
+    gSec.style.transformOrigin = '100px 100px';
+    gSec.style.opacity = '0';
+    gSec.innerHTML =
+      '<line x1="100" y1="112" x2="100" y2="18" stroke="' + CONFIG.colors.gold + '" stroke-width=".8" stroke-linecap="round"/>' +
+      '<circle cx="100" cy="112" r="2.4" fill="' + CONFIG.colors.gold + '"/>';
+    gHands.appendChild(gSec);
+
+    /* centre cap */
+    var cap = document.createElementNS(NS, 'circle');
+    cap.setAttribute('cx', 100); cap.setAttribute('cy', 100);
+    cap.setAttribute('r', 3.4);  cap.setAttribute('fill', CONFIG.colors.gold);
+    cap.setAttribute('stroke', '#0A0A0A'); cap.setAttribute('stroke-width', '.8');
+    cap.style.opacity = '0'; cap.id = 'pi-cap';
+    gHands.appendChild(cap);
+
+    svg.appendChild(gHands);
+    return svg;
+  }
+
+  /* Assemble the whole overlay and inject it above the page */
+  function buildOverlay() {
+    var root = document.createElement('div');
+    root.id = 'pato-intro';
+    root.setAttribute('role', 'status');
+    root.setAttribute('aria-label', 'PATO intro loading');
+
+    var letters = CONFIG.logoText.split('').map(function (ch) {
+      return '<span class="pi-letter">' + ch + '</span>';
+    }).join('');
+
+    root.innerHTML =
+      '<div class="pi-curtain top"></div>' +
+      '<div class="pi-curtain bottom"></div>' +
+      '<div class="pi-center">' +
+        '<div class="pi-mark">' +
+          '<div class="pi-word">' + letters + '</div>' +
+          '<div class="pi-tag">' + CONFIG.tagline + '</div>' +
+          '<span class="pi-shimmer"></span>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="pi-skip">Skip</button>';
+
+    root.querySelector('.pi-center').insertBefore(buildDialSVG(),
+                                                  root.querySelector('.pi-mark'));
+    document.body.insertBefore(root, document.body.firstChild);
+    return root;
+  }
+
+  /* --------------------------------------------------------------
+     Teardown — restore scroll and REMOVE the intro from the DOM
+     -------------------------------------------------------------- */
+  function finish(el, instant) {
+    if (!el || el.dataset.done) return;
+    el.dataset.done = '1';
+    document.documentElement.classList.remove('pato-intro-lock');
+    if (instant) { el.remove(); return; }
+    gsap.to(el, { autoAlpha: 0, duration: .3, onComplete: function () { el.remove(); } });
+  }
+
+  /* --------------------------------------------------------------
+     Reduced motion: simple 0.5 s logo fade, nothing else
+     -------------------------------------------------------------- */
+  function runReduced(el) {
+    var mark = el.querySelector('.pi-mark');
+    gsap.set(mark, { autoAlpha: 1, y: 0 });
+    gsap.set(el.querySelectorAll('.pi-letter'), { autoAlpha: 1 });
+    gsap.to(el, {
+      autoAlpha: 0, delay: CONFIG.reducedFadeMs / 1000, duration: .01,
+      onComplete: function () { finish(el, true); }
+    });
+  }
+
+  /* --------------------------------------------------------------
+     Main timeline (~3.5 s)
+     -------------------------------------------------------------- */
+  function runFull(el) {
+    var tl = gsap.timeline({ defaults: { ease: 'power2.out' },
+                            onComplete: function () { finish(el); } });
+
+    /* PHASE 1 — 0.0–0.8 s : bezel draws itself, ticks pop in one by one */
+    tl.to('#pi-ring', { strokeDashoffset: 0, duration: T.bezel.draw, ease: 'power1.inOut' }, T.bezel.start)
+      .to('#pi-halo', { strokeDashoffset: 0, duration: T.bezel.draw + .15, ease: 'power1.inOut' }, T.bezel.start + .05)
+      .to('#pi-ticks line', { opacity: 1, duration: .08,
+                              stagger: T.bezel.tickStagger, ease: 'none' }, T.bezel.start + .12);
+
+    /* PHASE 2 — 0.8–2.0 s : hands sweep in, spin fast, settle at 10:10 */
+    tl.addLabel('hands', T.hands.start);
+    tl.to(['#pi-hour', '#pi-minute'], { opacity: 1, duration: .25, ease: 'none' }, 'hands')
+      .to('#pi-cap', { opacity: 1, duration: .25, ease: 'none' }, 'hands')
+      .fromTo('#pi-minute', { rotation: 0 },
+              { rotation: 360 * 3 + CONFIG.hands.minuteDeg,
+                duration: T.hands.spin, ease: 'power3.inOut' }, 'hands')
+      .fromTo('#pi-hour', { rotation: 0 },
+              { rotation: 360 * 2 + CONFIG.hands.hourDeg,
+                duration: T.hands.spin, ease: 'power3.inOut' }, 'hands');
+
+    /* ticking second hand: discrete steps, eased slightly for realism */
+    var secSteps = [];
+    for (var s = 1; s <= 24; s++) secSteps.push(s * 15);   // fast mechanical ticks
+    secSteps.forEach(function (deg, i) {
+      tl.to('#pi-second', { rotation: deg, duration: .05, ease: 'power1.in' },
+          'hands+=' + (i * .05));
+    });
+    tl.to('#pi-second', { opacity: 1, duration: .2, ease: 'none' }, 'hands+=.05');
+
+    /* PHASE 3 — 2.0–2.8 s : P-A-T-O rise in one by one + gold shimmer */
+    tl.to('.pi-letter', { autoAlpha: 1, y: 0, duration: .45,
+                          stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
+      .from('.pi-letter', { y: 26, duration: .45,
+                            stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
+      .to('.pi-tag', { autoAlpha: 1, duration: .4 }, T.logo.start + .45)
+      /* shimmer = a soft gold band sweeping across the wordmark */
+      .fromTo('.pi-shimmer',
+          { xPercent: -220, autoAlpha: 0 },
+          { xPercent: 320, autoAlpha: 1, duration: T.logo.shimmerDur,
+            ease: 'power1.inOut' },
+          T.logo.start + .35);
+
+    /* PHASE 4 — 2.8–3.5 s : dial & hands scale up + fade, curtains part */
+    var ex = T.exit.start, du = T.exit.dur;
+    tl.to('#pi-dial', { scale: 1.7, opacity: 0, duration: du,
+                        ease: 'power2.in', transformOrigin: '50% 50%' }, ex)
+      .to('.pi-mark', { scale: 1.12, opacity: 0, duration: du,
+                        ease: 'power2.in', transformOrigin: '50% 50%' }, ex)
+      .to('.pi-curtain.top',    { yPercent: -100, duration: du, ease: 'power3.inOut' }, ex)
+      .to('.pi-curtain.bottom', { yPercent:  100, duration: du, ease: 'power3.inOut' }, ex);
+
+    /* Skip button: visible during the intro, fades away near the end */
+    gsap.fromTo('.pi-skip', { autoAlpha: 0 }, { autoAlpha: 1, duration: .4, delay: .6 });
+    gsap.to('.pi-skip', { autoAlpha: 0, duration: .3, delay: CONFIG.skipAfterMs / 1000 });
+    el.querySelector('.pi-skip').addEventListener('click', function () {
+      tl.progress(1);          // jump to the final state…
+      finish(el);              // …then clean up immediately
+    });
+  }
+
+  /* --------------------------------------------------------------
+     Boot — show once per session, lock scrolling, guard errors
+     -------------------------------------------------------------- */
+  function boot() {
+    if (store.get(SEEN_KEY) === '1') return;      // already shown this session
+    if (typeof gsap === 'undefined') return;      // CDN blocked → just show page
+    store.set(SEEN_KEY, '1');
+
+    var el = buildOverlay();
+    document.documentElement.classList.add('pato-intro-lock');
+
+    /* safety net: never trap the user on the intro */
+    setTimeout(function () { finish(el, false); }, CONFIG.durationMs + 2500);
+
+    if (reduced) runReduced(el); else runFull(el);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else { boot(); }
+})();
+</script>
+
+<!-- ================================================================
+     INTEGRATION INTO YOUR EXISTING HOMEPAGE (2 minutes)
+
+     A) Quickest way (recommended): keep this as its own landing file
+        1. Save this file at your site root as `index.html` (or move the
+           real store to `shop.html`).
+        2. Nothing else to do — the overlay plays once per browser
+           session (sessionStorage), locks scrolling, then removes
+           itself from the DOM and reveals the homepage underneath.
+
+     B) Merge into an existing homepage:
+        1. Copy the CSS between the markers "1) EASY-EDIT VARIABLES" and
+           "3) THE INTRO OVERLAY" — take ONLY section 3 + the
+           `.pato-intro-lock` rule (skip section 2, the demo styling).
+        2. Paste the two <script> tags (GSAP from cdnjs + the IIFE)
+           just before your closing </body>.
+        3. Add the Google Fonts <link> from this file's <head> to yours.
+        4. Done. The script builds all of its markup itself — you do not
+           need to add any HTML. It sits at z-index 99999, covers the
+           page, animates ~3.5 s, then deletes itself.
+
+     Tweaks live in one place: the CONFIG object (logo text, tagline,
+     durations, colours) and the T object (per-phase timing offsets).
+     If you prefer your brand palette, change --pato-gold / --pato-bg /
+     --pato-ivory plus CONFIG.colors. To always show the intro again,
+     remove the SEEN_KEY check inside boot().
+     ================================================================ -->
+</body>
+</html>

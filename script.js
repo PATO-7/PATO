@@ -82,6 +82,11 @@
   }
 
   function initSplash() {
+    /* DISABLED: replaced by the new GSAP watch-dial intro (pato-intro.html).
+       Without this guard, both overlays would play back-to-back on index.
+       To restore the old image splash, delete the next line + its try/catch. */
+    try { if (sessionStorage.getItem('patoIntroSeen') === '1') return; } catch (e) {}
+
     // entered via opening.html already, or came straight from the intro page
     const fromIntro = /[?&]started=1/.test(location.search);
     let seen = false;

@@ -452,17 +452,26 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
      Boot — show once per session, lock scrolling, guard errors
      -------------------------------------------------------------- */
   function boot() {
-    if (store.get(SEEN_KEY) === '1') return;      // already shown this session
-    if (typeof gsap === 'undefined') return;      // CDN blocked → just show page
-    store.set(SEEN_KEY, '1');
+    try {
+      if (store.get(SEEN_KEY) === '1') return;    // already shown this session
+      if (typeof gsap === 'undefined') return;    // CDN blocked → just show page
+      store.set(SEEN_KEY, '1');
 
-    var el = buildOverlay();
-    document.documentElement.classList.add('pato-intro-lock');
+      var el = buildOverlay();
+      document.documentElement.classList.add('pato-intro-lock');
 
-    /* safety net: never trap the user on the intro */
-    setTimeout(function () { finish(el, false); }, CONFIG.durationMs + 2500);
+      /* safety net: never trap the user on the intro */
+      setTimeout(function () { finish(el, false); }, CONFIG.durationMs + 2500);
 
-    if (reduced) runReduced(el); else runFull(el);
+      if (reduced) runReduced(el); else runFull(el);
+    } catch (err) {
+      /* any unexpected error must NEVER leave the site stuck behind a
+         black overlay — restore scrolling and remove the intro. */
+      console.error('[PATO intro]', err);
+      var stuck = document.getElementById('pato-intro');
+      if (stuck) finish(stuck, true);
+      document.documentElement.classList.remove('pato-intro-lock');
+    }
   }
 
   if (document.readyState === 'loading') {

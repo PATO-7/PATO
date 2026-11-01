@@ -22,92 +22,30 @@
     b.textContent = n; b.hidden = n === 0;
   }
 
-  /* ---------- opening overlay (fallback for index.html) ----------
-     The dedicated opening page lives in its own file: opening.html.
-     It shows a full-screen intro with an animated luxury-watch IMAGE
-     behind the PATO logo for exactly 3 seconds, then opens this start
-     page. If someone opens index.html directly (or lands on it without
-     passing through opening.html), we show the same image-based intro
-     here once, so the experience is identical either way. */
-  const SPLASH_MS = 3000;
-
-  function buildSplashDOM() {
-    if ($('#splash')) return $('#splash');
-    const d = document.createElement('div');
-    d.id = 'splash';
-    d.setAttribute('aria-hidden', 'true');
-    d.innerHTML = `
-      <span class="splash-sheen" aria-hidden="true"></span>
-      <div class="splash-stage" id="sw-stage">
-        <div class="sw-frame">
-          <div class="sw-tilt">
-            <div class="sw-carousel" id="sw-carousel"></div>
-            <span class="sw-shine"></span>
-          </div>
-          <span class="sw-ring"></span>
-        </div>
-      </div>
-      <div class="splash-mark">
-        <h1 class="splash-word glow-word">PATO</h1>
-      </div>`;
-    document.body.insertBefore(d, document.body.firstChild);
-
-    // same 3D turntable as opening.html — real Naviforce photos spinning behind the logo
-    const carousel = $('#sw-carousel');
-    const tilt = d.querySelector('.sw-tilt');
-    const PHOTOS = ['images/naviforce-1.jpg', 'images/naviforce-2.jpg',
-                    'images/naviforce-3.jpg', 'images/naviforce-4.jpg'];
-    const n = PHOTOS.length;
-    const w = carousel.parentElement.offsetWidth || 480;
-    const r = Math.round(w / (2 * Math.tan(Math.PI / n))) + 8;
-    PHOTOS.forEach((src, i) => {
-      const face = document.createElement('div');
-      face.className = 'sw-face';
-      face.style.transform = `rotateY(${(360 / n) * i}deg) translateZ(${r}px)`;
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Naviforce NF9062M luxury watch';
-      img.draggable = false;
-      face.appendChild(img);
-      carousel.appendChild(face);
-    });
-    if (tilt.animate) {
-      tilt.animate(
-        [{ transform: 'rotateX(4deg) translateY(0)' },
-         { transform: 'rotateX(-4deg) translateY(-1.4vh)' },
-         { transform: 'rotateX(4deg) translateY(0)' }],
-        { duration: 6000, delay: 600, iterations: Infinity, easing: 'ease-in-out' });
-    }
-    return d;
-  }
+  /* ---------- opening overlay (luxury watch intro) ----------
+     The old image-based splash was replaced by the GSAP "PATO —
+     Time, Perfected." watch-dial intro. Its markup, styles and
+     timeline live in index.html + style.css (ported from
+     pato-intro.html). This shim keeps the old call-sites working:
+     initSplash() is now a no-op, and safetyNet()/hide() simply
+     finish the new intro overlay if it is still on screen. */
+  const SPLASH_MS = 3500; // approx. total length of the new intro
 
   function initSplash() {
-    // entered via opening.html already, or came straight from the intro page
-    const fromIntro = /[?&]started=1/.test(location.search);
-    let seen = false;
-    try { seen = localStorage.getItem('pato-intro-seen') === '1'; } catch (e) {}
-    if (fromIntro || seen) return;
-    try { localStorage.setItem('pato-intro-seen', '1'); } catch (e) {}
-
-    const splash = buildSplashDOM();
-
-    // thin gold line that fills over the 3 seconds
-    const timer = document.createElement('div');
-    timer.className = 'splash-timer';
-    timer.innerHTML = '<i></i>';
-    splash.appendChild(timer);
-
-    // hold the opening scene for exactly 3 s, then dissolve into the store
-    let finished = false;
-    const hide = () => {
-      if (finished) return;
-      finished = true;
-      splash.classList.add('done');
-      setTimeout(() => splash.remove(), 1300);
-    };
-    setTimeout(hide, SPLASH_MS);
-    window.addEventListener('click', hide, { once: true }); // tap to enter immediately
+    /* No-op: the luxury intro boots itself from the inline script
+       at the end of index.html (sessionStorage-guarded). */
   }
+
+  /* Utility used elsewhere: instantly remove the intro overlay
+     (e.g. when navigating away mid-animation). */
+  window.patoFinishIntro = function () {
+    const el = document.getElementById('pato-intro');
+    if (el && !el.dataset.done) {
+      el.dataset.done = '1';
+      document.documentElement.classList.remove('pato-intro-lock');
+      el.remove();
+    }
+  };
 
   /* ---------- routing ---------- */
   const VIEWS = ['home', 'category', 'product', 'about', 'contact', 'basket', 'checkout'];
@@ -314,7 +252,8 @@
   function safetyNet() {
     setTimeout(() => {
       document.body.classList.add('force-show');
-      const sp = $('#splash'); if (sp) sp.classList.add('done');
+      // if the luxury intro is somehow still on screen, remove it now
+      window.patoFinishIntro();
     }, SPLASH_MS + 1500);
   }
 

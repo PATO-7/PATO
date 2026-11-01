@@ -100,13 +100,14 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
   color:var(--pato-ivory);
 }
 .pi-letter{
-  display:inline-block; opacity:0; will-change:transform,opacity;
+  display:inline-block; opacity:0; transform:translateY(26px);
+  will-change:transform,opacity;
   text-shadow:0 0 26px rgba(201,162,75,.28);
 }
 .pi-tag{
   font-family:var(--pato-sans); font-weight:300; text-transform:uppercase;
   font-size:var(--pato-tag-size); letter-spacing:.5em; margin-left:.5em;
-  color:var(--pato-gold); opacity:0;
+  color:var(--pato-gold); opacity:0; transform:translateY(10px);
 }
 /* soft gold shimmer that passes across the letters (phase 3) */
 .pi-shimmer{
@@ -405,11 +406,12 @@ footer{padding:10vh 6vw 8vh;text-align:center;font-size:11px;letter-spacing:.3em
     tl.to('#pi-second', { opacity: 1, duration: .2, ease: 'none' }, 'hands+=.05');
 
     /* PHASE 3 — 2.0–2.8 s : P-A-T-O rise in one by one + gold shimmer */
-    tl.to('.pi-letter', { autoAlpha: 1, y: 0, duration: .45,
-                          stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
-      .from('.pi-letter', { y: 26, duration: .45,
-                            stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
-      .to('.pi-tag', { autoAlpha: 1, duration: .4 }, T.logo.start + .45)
+    tl.fromTo('.pi-letter', { autoAlpha: 0, y: 26 },
+                              { autoAlpha: 1, y: 0, duration: .45,
+                                stagger: T.logo.stagger, ease: 'power3.out' }, T.logo.start)
+      .fromTo('.pi-tag', { autoAlpha: 0, y: 10 },
+                        { autoAlpha: 1, y: 0, duration: .45,
+                          ease: 'power3.out' }, T.logo.start + .45)
       /* shimmer = a soft gold band sweeping across the wordmark */
       .fromTo('.pi-shimmer',
           { xPercent: -220, autoAlpha: 0 },
